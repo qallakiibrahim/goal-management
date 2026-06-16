@@ -124,28 +124,42 @@ export default function LoginView({
                 <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 animate-pulse" /> Inloggningsfel
               </span>
               
-              {authState.error === 'auth/unauthorized-domain' ? (
+              {authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain'))) ? (
                 <div className="space-y-2.5 text-[11px] leading-relaxed">
                   <p>
-                    <strong>Domän ej godkänd i Firebase!</strong> Detta beror på att molndomänen där denna webbapp körs inte har registrerats i ditt Firebase-projekts OAuth-redirect-lista än.
+                    <strong>Domän ej godkänd i Firebase!</strong> Detta beror på att den molndomän där denna webbapp körs inte har registrerats i ditt Firebase-projekts lista över godkända omdirigeringsdomäner (Authorized domains) än.
                   </p>
                   <p className="font-semibold text-white">Så här löser du det på 1 minut:</p>
                   <ol className="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans text-[10.5px]">
                     <li>Gå till <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-indigo-400 font-bold underline hover:text-indigo-300">Firebase Console</a></li>
                     <li>Välj fliken <strong>Authentication</strong> &rarr; klicka på fliken <strong>Settings</strong> längst upp</li>
                     <li>Klicka på sektionen <strong>Authorized domains</strong> (Godkända domäner)</li>
-                    <li>Klicka på <strong>Add domain</strong> (Lägg till domän) och klistra in dessa två:</li>
+                    <li>Klicka på <strong>Add domain</strong> (Lägg till domän) och lägg till den här domänen:</li>
                   </ol>
-                  <div className="bg-slate-900 border border-slate-700 rounded-xl p-2.5 font-mono text-[10px] space-y-1 text-emerald-400 select-all shadow-inner">
-                    <div className="flex items-center justify-between">
-                      <span>ais-dev-xff74cxo63c2kpjxzogy5g-473512404356.europe-west2.run.app</span>
+                  
+                  <div className="bg-slate-950 border border-slate-750 rounded-xl p-3 font-mono text-[10px] space-y-2 shadow-inner">
+                    <div className="text-slate-400 flex justify-between items-center text-[9px] uppercase tracking-wider font-semibold border-b border-slate-800 pb-1.5">
+                      <span>Kopiera din aktuella domän:</span>
+                      <span className="text-emerald-400">Aktiv</span>
                     </div>
-                    <div className="flex items-center justify-between border-t border-slate-800/80 pt-1 mt-1">
-                      <span>ais-pre-xff74cxo63c2kpjxzogy5g-473512404356.europe-west2.run.app</span>
+                    <div className="flex items-center justify-between gap-2 text-emerald-400">
+                      <span className="break-all select-all font-semibold font-mono text-xs">{typeof window !== 'undefined' ? window.location.hostname : 'goal-management-alpha.vercel.app'}</span>
+                      <button 
+                        onClick={() => {
+                          if (typeof window !== 'undefined') {
+                            navigator.clipboard.writeText(window.location.hostname);
+                            alert('Domänen kopierades till urklipp!');
+                          }
+                        }}
+                        className="py-1 px-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[9px] font-bold font-sans cursor-pointer transition-all shrink-0 active:scale-95"
+                      >
+                        Kopiera
+                      </button>
                     </div>
                   </div>
+
                   <p className="text-[10px] text-slate-400 leading-normal">
-                    💡 <strong>Tips:</strong> Allt sparas automatiskt i bakgrunden. Klicka gärna på den grå knappen <strong>"Fortsätt lokalt (Offline-gäst)"</strong> ovanför för att komma in direkt och börja testa appen direkt utan att vänta!
+                    💡 <strong>Tips:</strong> Om du vill starta direkt utan att ändra Firebase-inställningar nu, klicka bara på den grå knappen <strong>"Fortsätt lokalt (Offline-gäst)"</strong> ovanför så kommer du in direkt och surfar helt lokalt!
                   </p>
                 </div>
               ) : (

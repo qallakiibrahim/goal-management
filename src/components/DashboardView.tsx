@@ -33,6 +33,9 @@ interface DashboardViewProps {
   kataSessions: KataSession[];
   onNavigateToView: (view: string) => void;
   onStartKata: () => void;
+  onQuickAddKpi?: (kpi: KPI) => void;
+  onQuickAddProject?: (proj: Project) => void;
+  onQuickAddKata?: (session: KataSession) => void;
 }
 
 export default function DashboardView({
@@ -44,7 +47,10 @@ export default function DashboardView({
   kpis,
   kataSessions,
   onNavigateToView,
-  onStartKata
+  onStartKata,
+  onQuickAddKpi,
+  onQuickAddProject,
+  onQuickAddKata
 }: DashboardViewProps) {
   // Trace path state: users can select which Goal to expand
   const [selectedGoalId, setSelectedGoalId] = useState<string>(
@@ -151,6 +157,9 @@ export default function DashboardView({
         projects={projects} 
         kpis={kpis} 
         kataSessions={kataSessions} 
+        onQuickAddKpi={onQuickAddKpi}
+        onQuickAddProject={onQuickAddProject}
+        onQuickAddKata={onQuickAddKata}
       />
 
       {/* Main Framework Column Section */}

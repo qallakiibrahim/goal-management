@@ -868,6 +868,9 @@ export default function App() {
               kataSessions={kataSessions}
               onNavigateToView={(v) => setCurrentView(v)}
               onStartKata={openAddKataModal}
+              onQuickAddKpi={(kpi) => saveKpis([...kpis, kpi])}
+              onQuickAddProject={(proj) => saveProjects([...projects, proj])}
+              onQuickAddKata={(session) => saveKata([...kataSessions, session])}
             />
           )}
 

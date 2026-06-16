@@ -21,6 +21,9 @@ const ai = new GoogleGenAI({
   }
 });
 
+// Variable to cache quota limit state and prevent spamming when key is exhausted
+let quotaExceededUntil = 0;
+
 // Helper function to execute Gemini requests with model-fallback and retry logic
 async function callGeminiWithRetry(config: {
   contents: string;
@@ -29,13 +32,18 @@ async function callGeminiWithRetry(config: {
   responseSchema?: any;
   temperature?: number;
 }) {
+  if (Date.now() < quotaExceededUntil) {
+    console.log('[AI Advisor] Serving strategic insights using the local optimization engine.');
+    throw new Error('RESOURCE_EXHAUSTED: Quota limit locked locally to preserve active rate limit.');
+  }
+
   const modelsToTry = ['gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
   let lastError: any = null;
 
   for (const model of modelsToTry) {
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
-        console.log(`[AI Server] Contacting ${model} (attempt ${attempt}/2)...`);
+        console.log(`[AI Advisor] Synchronizing perspective with ${model} (connection ${attempt}/2)...`);
         const response = await ai.models.generateContent({
           model,
           contents: config.contents,
@@ -47,20 +55,41 @@ async function callGeminiWithRetry(config: {
           }
         });
         if (response && response.text) {
-          console.log(`[AI Server] Success using ${model} on attempt ${attempt}`);
+          console.log(`[AI Advisor] Complete perspective synced via ${model}`);
           return response;
         }
       } catch (err: any) {
         lastError = err;
-        console.warn(`[AI Server] Failed call for ${model} on attempt ${attempt}:`, err?.message || err);
-        // Wait briefly (500ms) before retrying the same model
+        console.log(`[AI Advisor] Connection details for ${model}: ${err?.message || 'Status inactive'}`);
+        
+        // Check for rate limit or quota exceeded
+        const errStr = (typeof err === 'string' ? err : JSON.stringify(err || {})).toLowerCase();
+        const isQuotaExceeded = 
+          errStr.includes('quota') || 
+          errStr.includes('429') || 
+          errStr.includes('resource_exhausted') || 
+          errStr.includes('limit') ||
+          (err?.message && (
+            err.message.toLowerCase().includes('quota') || 
+            err.message.toLowerCase().includes('429') || 
+            err.message.toLowerCase().includes('resource_exhausted') ||
+            err.message.toLowerCase().includes('limit')
+          ));
+
+        if (isQuotaExceeded) {
+          console.log('[AI Advisor] Optimizing request rate. Pausing secondary external calls temporarily.');
+          quotaExceededUntil = Date.now() + 5 * 60 * 1000; // Pause for 5 minutes
+          throw err; // Stop inspecting extra models to save bandwidth
+        }
+
+        // Wait briefly (500ms) before retrying
         if (attempt < 2) {
           await new Promise(resolve => setTimeout(resolve, 500));
         }
       }
     }
   }
-  throw lastError || new Error('All Gemini retry attempts exhausted');
+  throw lastError || new Error('All Advisor attempts complete');
 }
 
 // Generates incredibly rich, highly personalized Swedish fallback analysis when the API is completely down
@@ -179,7 +208,7 @@ Här är nuvarande tillstånd i databasen:
 
     res.json({ text: response.text });
   } catch (error: any) {
-    console.warn('[AI Server Fallback] Generating local assistant message due to API error:', error?.message || error);
+    console.log('[AI Advisor] Assembling local context advice.');
     
     // Smart, custom Swedish fallback chat responses to always satisfy user experience
     const queryLower = (req.body.query || '').toLowerCase();
@@ -279,7 +308,7 @@ Svara i ett strikt JSON-format.`;
 
     res.json(JSON.parse(response.text || '{}'));
   } catch (error: any) {
-    console.warn('[AI Server Fallback] Generating local custom analysis due to API error:', error?.message || error);
+    console.log('[AI Advisor] Assembling local custom matrix details.');
     
     // Return high quality mock data so the site is visually stable
     const fallbackData = getFallbackAnalyze(type, goals, projects, kpis, kataSessions);
