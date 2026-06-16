@@ -14,7 +14,8 @@ import {
   HelpCircle,
   Bell,
   Sparkles,
-  Info
+  Info,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -54,6 +55,21 @@ import HierarchyEditorView from './components/HierarchyEditorView';
 import SettingsView from './components/SettingsView';
 import AIAssistant from './components/AIAssistant';
 
+// Firestore Integration imports
+import { collection, onSnapshot, doc } from 'firebase/firestore';
+import { getFirebaseDb } from './firebase';
+import {
+  bootstrapFirestore,
+  syncGoalsToFirestore,
+  syncObjectivesToFirestore,
+  syncProjectsToFirestore,
+  syncInitiativesToFirestore,
+  syncTasksToFirestore,
+  syncKpisToFirestore,
+  syncKataSessionsToFirestore,
+  syncUserProfileToFirestore
+} from './firebaseSync';
+
 export default function App() {
   // Navigation
   const [currentView, setCurrentView] = useState<string>('dashboard');
@@ -87,9 +103,11 @@ export default function App() {
 
   // System alert displays
   const [showDemoAlert, setShowDemoAlert] = useState(true);
+  const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
-  // 1. Initial State bootstrapping
+  // 1. Initial State bootstrapping with Firebase Realtime Sync + Local Backup
   useEffect(() => {
+    // Force immediate local storage load for zero empty-screen flash
     const localGoals = localStorage.getItem('goals');
     const localObjectives = localStorage.getItem('objectives');
     const localProjects = localStorage.getItem('projects');
@@ -100,39 +118,161 @@ export default function App() {
     const localProfile = localStorage.getItem('userProfile');
 
     if (localGoals) setGoals(JSON.parse(localGoals));
-    else { setGoals(DEFAULT_GOALS); localStorage.setItem('goals', JSON.stringify(DEFAULT_GOALS)); }
-
     if (localObjectives) setObjectives(JSON.parse(localObjectives));
-    else { setObjectives(DEFAULT_OBJECTIVES); localStorage.setItem('objectives', JSON.stringify(DEFAULT_OBJECTIVES)); }
-
     if (localProjects) setProjects(JSON.parse(localProjects));
-    else { setProjects(DEFAULT_PROJECTS); localStorage.setItem('projects', JSON.stringify(DEFAULT_PROJECTS)); }
-
     if (localInitiatives) setInitiatives(JSON.parse(localInitiatives));
-    else { setInitiatives(DEFAULT_INITIATIVES); localStorage.setItem('initiatives', JSON.stringify(DEFAULT_INITIATIVES)); }
-
     if (localTasks) setTasks(JSON.parse(localTasks));
-    else { setTasks(DEFAULT_TASKS); localStorage.setItem('tasks', JSON.stringify(DEFAULT_TASKS)); }
-
     if (localKpis) setKpis(JSON.parse(localKpis));
-    else { setKpis(DEFAULT_KPIS); localStorage.setItem('kpis', JSON.stringify(DEFAULT_KPIS)); }
-
     if (localKata) setKataSessions(JSON.parse(localKata));
-    else { setKataSessions(DEFAULT_KATA_SESSIONS); localStorage.setItem('kataSessions', JSON.stringify(DEFAULT_KATA_SESSIONS)); }
-
     if (localProfile) setUserProfile(JSON.parse(localProfile));
-    else { setUserProfile(DEFAULT_USER_PROFILE); localStorage.setItem('userProfile', JSON.stringify(DEFAULT_USER_PROFILE)); }
+
+    // Initialize cloud syncing
+    const db = getFirebaseDb();
+    let unsubGoals: () => void = () => {};
+    let unsubObjectives: () => void = () => {};
+    let unsubProjects: () => void = () => {};
+    let unsubInitiatives: () => void = () => {};
+    let unsubTasks: () => void = () => {};
+    let unsubKpis: () => void = () => {};
+    let unsubKata: () => void = () => {};
+    let unsubProfile: () => void = () => {};
+
+    const handleSyncError = (error: any) => {
+      console.warn('[Firestore] sync connection restricted/denied:', error);
+      if (error && (error.code === 'permission-denied' || error.message?.includes('permission'))) {
+        setFirebaseError('rules_restricted');
+      }
+    };
+
+    bootstrapFirestore().then(() => {
+      unsubGoals = onSnapshot(collection(db, 'goals'), (snapshot) => {
+        const items: Goal[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Goal); });
+        if (items.length > 0) {
+          setGoals(items);
+          localStorage.setItem('goals', JSON.stringify(items));
+        }
+      }, handleSyncError);
+
+      unsubObjectives = onSnapshot(collection(db, 'objectives'), (snapshot) => {
+        const items: Objective[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Objective); });
+        if (items.length > 0) {
+          setObjectives(items);
+          localStorage.setItem('objectives', JSON.stringify(items));
+        }
+      }, handleSyncError);
+
+      unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
+        const items: Project[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Project); });
+        if (items.length > 0) {
+          setProjects(items);
+          localStorage.setItem('projects', JSON.stringify(items));
+        }
+      }, handleSyncError);
+
+      unsubInitiatives = onSnapshot(collection(db, 'initiatives'), (snapshot) => {
+        const items: Initiative[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Initiative); });
+        if (items.length > 0) {
+          setInitiatives(items);
+          localStorage.setItem('initiatives', JSON.stringify(items));
+        }
+      }, handleSyncError);
+
+      unsubTasks = onSnapshot(collection(db, 'tasks'), (snapshot) => {
+        const items: Task[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Task); });
+        if (items.length > 0) {
+          setTasks(items);
+          localStorage.setItem('tasks', JSON.stringify(items));
+        }
+      }, handleSyncError);
+
+      unsubKpis = onSnapshot(collection(db, 'kpis'), (snapshot) => {
+        const items: KPI[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as KPI); });
+        if (items.length > 0) {
+          setKpis(items);
+          localStorage.setItem('kpis', JSON.stringify(items));
+        }
+      }, handleSyncError);
+
+      unsubKata = onSnapshot(collection(db, 'kataSessions'), (snapshot) => {
+        const items: KataSession[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as KataSession); });
+        if (items.length > 0) {
+          setKataSessions(items);
+          localStorage.setItem('kataSessions', JSON.stringify(items));
+        }
+      }, handleSyncError);
+
+      unsubProfile = onSnapshot(doc(db, 'userProfile', 'current'), (snapshot) => {
+        if (snapshot.exists()) {
+          const profile = snapshot.data() as UserProfile;
+          setUserProfile(profile);
+          localStorage.setItem('userProfile', JSON.stringify(profile));
+        }
+      }, handleSyncError);
+    }).catch((err) => {
+      console.warn('[Firestore] Bootstrap process failed or resolved with error:', err);
+      handleSyncError(err);
+    });
+
+    return () => {
+      unsubGoals();
+      unsubObjectives();
+      unsubProjects();
+      unsubInitiatives();
+      unsubTasks();
+      unsubKpis();
+      unsubKata();
+      unsubProfile();
+    };
   }, []);
 
-  // 2. State-to-localStorage synchronization functions
-  const saveGoals = (items: Goal[]) => { setGoals(items); localStorage.setItem('goals', JSON.stringify(items)); };
-  const saveObjectives = (items: Objective[]) => { setObjectives(items); localStorage.setItem('objectives', JSON.stringify(items)); };
-  const saveProjects = (items: Project[]) => { setProjects(items); localStorage.setItem('projects', JSON.stringify(items)); };
-  const saveInitiatives = (items: Initiative[]) => { setInitiatives(items); localStorage.setItem('initiatives', JSON.stringify(items)); };
-  const saveTasks = (items: Task[]) => { setTasks(items); localStorage.setItem('tasks', JSON.stringify(items)); };
-  const saveKpis = (items: KPI[]) => { setKpis(items); localStorage.setItem('kpis', JSON.stringify(items)); };
-  const saveKata = (items: KataSession[]) => { setKataSessions(items); localStorage.setItem('kataSessions', JSON.stringify(items)); };
-  const saveProfile = (p: UserProfile) => { setUserProfile(p); localStorage.setItem('userProfile', JSON.stringify(p)); };
+  // 2. State-to-localStorage & CLOUD dual-write synchronizations
+  const saveGoals = (items: Goal[]) => { 
+    setGoals(items); 
+    localStorage.setItem('goals', JSON.stringify(items)); 
+    syncGoalsToFirestore(items);
+  };
+  const saveObjectives = (items: Objective[]) => { 
+    setObjectives(items); 
+    localStorage.setItem('objectives', JSON.stringify(items)); 
+    syncObjectivesToFirestore(items);
+  };
+  const saveProjects = (items: Project[]) => { 
+    setProjects(items); 
+    localStorage.setItem('projects', JSON.stringify(items)); 
+    syncProjectsToFirestore(items);
+  };
+  const saveInitiatives = (items: Initiative[]) => { 
+    setInitiatives(items); 
+    localStorage.setItem('initiatives', JSON.stringify(items)); 
+    syncInitiativesToFirestore(items);
+  };
+  const saveTasks = (items: Task[]) => { 
+    setTasks(items); 
+    localStorage.setItem('tasks', JSON.stringify(items)); 
+    syncTasksToFirestore(items);
+  };
+  const saveKpis = (items: KPI[]) => { 
+    setKpis(items); 
+    localStorage.setItem('kpis', JSON.stringify(items)); 
+    syncKpisToFirestore(items);
+  };
+  const saveKata = (items: KataSession[]) => { 
+    setKataSessions(items); 
+    localStorage.setItem('kataSessions', JSON.stringify(items)); 
+    syncKataSessionsToFirestore(items);
+  };
+  const saveProfile = (p: UserProfile) => { 
+    setUserProfile(p); 
+    localStorage.setItem('userProfile', JSON.stringify(p)); 
+    syncUserProfileToFirestore(p);
+  };
 
   // 3. Action callbacks
   const handleAddNewNode = (type: string, data: any) => {
@@ -243,14 +383,14 @@ export default function App() {
 
   const handleResetDatabase = () => {
     localStorage.clear();
-    setGoals(DEFAULT_GOALS);
-    setObjectives(DEFAULT_OBJECTIVES);
-    setProjects(DEFAULT_PROJECTS);
-    setInitiatives(DEFAULT_INITIATIVES);
-    setTasks(DEFAULT_TASKS);
-    setKpis(DEFAULT_KPIS);
-    setKataSessions(DEFAULT_KATA_SESSIONS);
-    setUserProfile(DEFAULT_USER_PROFILE);
+    saveGoals(DEFAULT_GOALS);
+    saveObjectives(DEFAULT_OBJECTIVES);
+    saveProjects(DEFAULT_PROJECTS);
+    saveInitiatives(DEFAULT_INITIATIVES);
+    saveTasks(DEFAULT_TASKS);
+    saveKpis(DEFAULT_KPIS);
+    saveKata(DEFAULT_KATA_SESSIONS);
+    saveProfile(DEFAULT_USER_PROFILE);
   };
 
   const handleExportData = () => {
@@ -441,6 +581,27 @@ export default function App() {
         {/* Dynamic viewport container */}
         <div className="flex-1 px-8 pb-12 w-full max-w-7xl mx-auto space-y-6">
           
+          {/* Firebase rules restriction warning */}
+          {firebaseError === 'rules_restricted' && (
+            <div className="p-4 bg-amber-50 text-amber-900 border border-amber-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs text-xs font-semibold text-left">
+              <span className="flex items-start gap-2.5">
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5 animate-bounce" />
+                <div>
+                  <strong className="block text-amber-950 font-bold mb-0.5">Firebase/Firestore: Åtkomst Nekad (Permission Denied)</strong>
+                  Applikationen använder lokalt minne som reserv (så att allt fungerar offline), men dina säkerhetsregler i Firebase blockerar moln-synkning. 
+                  Gå till din <span className="font-mono text-indigo-900 bg-amber-100 px-1 py-0.5 rounded">Firebase Console</span> under 
+                  <strong className="text-slate-900"> Firestore Database ➔ Rules</strong> och ändra raden till <code className="font-mono bg-lime-100 text-lime-800 px-1.5 py-0.5 rounded">allow read, write: if true;</code> för att tillåta läsning och skrivning under utveckling.
+                </div>
+              </span>
+              <button 
+                onClick={() => setFirebaseError(null)}
+                className="hover:bg-amber-100 p-1.5 rounded-lg text-amber-600 hover:text-amber-950 transition self-end md:self-center cursor-pointer font-mono text-[10px]"
+              >
+                Ignorera
+              </button>
+            </div>
+          )}
+
           {/* Demo Alert banner */}
           {showDemoAlert && (
             <div className="p-3 bg-indigo-900 text-indigo-50 border border-indigo-950/20 rounded-2xl flex items-center justify-between shadow-xs text-xs font-semibold select-none leading-relaxed text-left">

@@ -1,0 +1,135 @@
+{
+  "entities": {
+    "Goal": {
+      "title": "Goal",
+      "description": "Företagets strategiska målvisioner",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unikt mål ID" },
+        "title": { "type": "string", "description": "Titel" },
+        "description": { "type": "string", "description": "Beskrivning" },
+        "kpi": { "type": "string", "description": "Huvudsakligt mätetal" },
+        "category": { "type": "string", "enum": ["financial", "customer", "process", "learning"] },
+        "progress": { "type": "number", "description": "Procentuell framgång (0-100)" },
+        "deadline": { "type": "string", "description": "Slutdatum" }
+      },
+      "required": ["id", "title", "description", "kpi", "category", "progress", "deadline"]
+    },
+    "Objective": {
+      "title": "Objective",
+      "description": "Målsättningar kopplade till strategiska mål",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unikt ID" },
+        "goalId": { "type": "string", "description": "Refererat mål ID" },
+        "title": { "type": "string", "description": "Titel" },
+        "description": { "type": "string", "description": "Beskrivning" },
+        "kpi": { "type": "string", "description": "Mätetal" },
+        "progress": { "type": "number", "description": "Procentuell framgång (0-100)" },
+        "deadline": { "type": "string", "description": "Slutdatum" }
+      },
+      "required": ["id", "goalId", "title", "description", "kpi", "progress", "deadline"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Operativa projekt",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unikt ID" },
+        "objectiveId": { "type": "string", "description": "Refererad målsättning ID (valfri)" },
+        "goalId": { "type": "string", "description": "Refererat mål ID (valfri)" },
+        "title": { "type": "string", "description": "Titel" },
+        "description": { "type": "string", "description": "Beskrivning" },
+        "progress": { "type": "number", "description": "Procentuell framgång" },
+        "deadline": { "type": "string", "description": "Slutdatum" }
+      },
+      "required": ["id", "title", "description", "progress", "deadline"]
+    },
+    "Initiative": {
+      "title": "Initiative",
+      "description": "Målinriktat arbetspaket",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unikt ID" },
+        "projectId": { "type": "string", "description": "Refererat projekt ID" },
+        "title": { "type": "string", "description": "Titel" },
+        "description": { "type": "string", "description": "Beskrivning" },
+        "kpi": { "type": "string", "description": "Mätetal" },
+        "progress": { "type": "number", "description": "Procentuell framgång" }
+      },
+      "required": ["id", "projectId", "title", "description", "kpi", "progress"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Underliggande operativ uppgift",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unikt ID" },
+        "projectId": { "type": "string", "description": "Refererat projekt ID (valfri)" },
+        "initiativeId": { "type": "string", "description": "Refererat initiativ ID (valfri)" },
+        "title": { "type": "string", "description": "Titel" },
+        "description": { "type": "string", "description": "Beskrivning" },
+        "completed": { "type": "boolean", "description": "Status" },
+        "kpi": { "type": "string", "description": "Mätetal (valfri)" },
+        "progress": { "type": "number", "description": "Procentuell framgång (valfri)" }
+      },
+      "required": ["id", "title", "completed"]
+    },
+    "KPI": {
+      "title": "KPI",
+      "description": "Finansiella och operativa nyckeltal för Balanced Scorecard",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Nyckeltal ID" },
+        "title": { "type": "string", "description": "Benämning" },
+        "value": { "type": "string", "description": "Nuvarande värde" },
+        "target": { "type": "string", "description": "Bör-värde" },
+        "progress": { "type": "number", "description": "Procent (%)" },
+        "deadline": { "type": "string", "description": "Måldatum" },
+        "category": { "type": "string", "description": "Perspektiv" }
+      },
+      "required": ["id", "title", "value", "target", "progress", "deadline"]
+    },
+    "KataSession": {
+      "title": "KataSession",
+      "description": "Toyota Kata experiment- och förbättringslogg",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Logg ID" },
+        "title": { "type": "string", "description": "Tema/Fokus" },
+        "date": { "type": "string", "description": "Datum" },
+        "goal": { "type": "string", "description": "Måltillstånd" },
+        "current": { "type": "string", "description": "Nuvarande tillstånd" },
+        "obstacles": { "type": "string", "description": "Hinder till målet" },
+        "nextStep": { "type": "string", "description": "Nästa experimentella steg" },
+        "learnings": { "type": "string", "description": "Lärdomar från förra steget" },
+        "progress": { "type": "number", "description": "Status" }
+      },
+      "required": ["id", "title", "date", "goal", "current", "obstacles", "nextStep", "learnings", "progress"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Användarinställningar och roll",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Namn" },
+        "email": { "type": "string", "description": "E-post" },
+        "role": { "type": "string", "description": "Befattning/Roll" },
+        "language": { "type": "string", "description": "Språkkultur" },
+        "dateFormat": { "type": "string", "description": "Datumformat" },
+        "notificationFrequency": { "type": "string", "description": "Aviseringsstatus" }
+      },
+      "required": ["name", "email", "role", "language", "dateFormat", "notificationFrequency"]
+    }
+  },
+  "firestore": {
+    "goals": { "schema": { "$ref": "#/entities/Goal" }, "description": "Målvisioner" },
+    "objectives": { "schema": { "$ref": "#/entities/Objective" }, "description": "Målsättningar" },
+    "projects": { "schema": { "$ref": "#/entities/Project" }, "description": "Operativa projekt" },
+    "initiatives": { "schema": { "$ref": "#/entities/Initiative" }, "description": "Arbetspaket och initiativ" },
+    "tasks": { "schema": { "$ref": "#/entities/Task" }, "description": "Uppgifter kopplade till projekt/initiativ" },
+    "kpis": { "schema": { "$ref": "#/entities/KPI" }, "description": "Balanced Scorecard mätetal" },
+    "kataSessions": { "schema": { "$ref": "#/entities/KataSession" }, "description": "Förbättrings- och experimentloggar" },
+    "userProfile": { "schema": { "$ref": "#/entities/UserProfile" }, "description": "Inställningar" }
+  }
+}
