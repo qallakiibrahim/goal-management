@@ -83,32 +83,56 @@ export default function AIAssistant({
     triggerAIResponse(suggestionText);
   };
 
-  const triggerAIResponse = (query: string) => {
+  const triggerAIResponse = async (query: string) => {
     setIsTyping(true);
 
-    const avgKpiProgress = kpis.length > 0 
-      ? Math.round(kpis.reduce((acc, k) => acc + k.progress, 0) / kpis.length)
-      : 0;
+    try {
+      const response = await fetch('/api/gemini/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query,
+          state: { goals, projects, kpis, kataSessions }
+        })
+      });
 
-    setTimeout(() => {
+      if (!response.ok) {
+        throw new Error('Server returned unsafe status');
+      }
+
+      const data = await response.json();
+      if (!data.text) {
+        throw new Error('Received empty response text');
+      }
+
+      const botMsg: Message = {
+        id: `bot-${Date.now()}`,
+        sender: 'bot',
+        text: data.text,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botMsg]);
+    } catch (err) {
+      console.warn('Real Gemini API failed, falling back to heuristics:', err);
+      
+      const avgKpiProgress = kpis.length > 0 
+        ? Math.round(kpis.reduce((acc, k) => acc + k.progress, 0) / kpis.length)
+        : 0;
+
       let reply = '';
       const text = query.toLowerCase();
 
-      // Heuristic context checking with dynamic data parsing
       if (text.includes('mål') || text.includes('strategi') || text.includes('vision')) {
         const goalNames = goals.map(g => `"${g.title}" (${g.progress}% klart)`).join(', ');
         const avgGoals = goals.length > 0 
           ? Math.round(goals.reduce((sum, g) => sum + g.progress, 0) / goals.length) 
           : 0;
-
         reply = `Jag har analyserat era **${goals.length} aktiva målvisioner** i databasen. Medeluppfyllnaden ligger för närvarande på **${avgGoals}%**.\n\nEra nuvarande registrerade mål är: ${goalNames || 'inga registrerade än'}.\n\n*Rekommendation*: Målet "Bli den mest hållbara aktören" är särskilt viktigt, men har en utmanande CO₂-mätning. Du bör para ihop detta mål med en Kata-session för att experimentera med lösningar på transporthinder!`;
       } 
       else if (text.includes('projekt') || text.includes('aktivitet') || text.includes('schema')) {
         const progressList = projects.map(p => `"${p.title}" (${p.progress}% slutfört)`);
         const lagging = projects.filter(p => p.progress < 45);
-
         reply = `Just nu övervakar jag **${projects.length} operativa projekt**.\n\n${progressList.map(p => `• ${p}`).join('\n')}\n\n`;
-        
         if (lagging.length > 0) {
           reply += `⚠️ **Risk-notis:** Projektet ${lagging.map(p => `"${p.title}"`).join(', ')} utvecklas långsamt och riskerar flaskhalsar. Det är starkt rekommenderat att omfördela 10% av kapaciteten eller lägga till konkreta underuppgifter (Tasks) för att få fart på framdriften!`;
         } else {
@@ -120,7 +144,6 @@ export default function AIAssistant({
           ? Math.round(kpis.reduce((acc, k) => acc + k.progress, 0) / kpis.length)
           : 0;
         const lowestKpi = kpis.reduce((min, k) => k.progress < min.progress ? k : min, kpis[0] || { title: 'Inga', progress: 100 });
-
         reply = `Era KPI:er uppvisar en genomsnittlig uppfyllelsegrad på **${avgKpi}%**.\n\n`;
         if (lowestKpi && lowestKpi.title !== 'Inga') {
           reply += `Mätaren som kräver omedelbara åtgärder är **"${lowestKpi.title}"** som just nu bara uppnår **${lowestKpi.progress}%** måluppfyllnad.\n\n*Strategisk åtgärd:* Eftersom mätetalen är uppdelade över de 4 BSC-perspektiven, tenderar svaga ekonomiska siffror ofta att bero på att lärande eller marknadsaktiviteter släpar efter. Investera mer i interna kompetensutbildningar!`;
@@ -137,14 +160,8 @@ export default function AIAssistant({
           reply += `Du har inte skapat några Toyota Kata-sessioner ännu. Klicka på "Starta Kata" på Dashboarden för att påbörja ditt första experiment!`;
         }
       }
-      else if (text.includes('balans') || text.includes('bsc') || text.includes('scorecard')) {
-        reply = `Balanced Scorecard delar upp er verksamhetsstyrning i fyra jämbördiga perspektiv:\n\n1. **💰 Finansiellt:** Ekonomiska utfall\n2. **🤝 Kund:** Kundreaktioner & varumärke\n3. **⚙️ Interna Processer:** Operativ excellens\n4. **📚 Lärande & Utveckling:** Innovation och utbildning\n\n*Hälsoanalys:* Vi ser att processerna (⚙️) presterar starkast hos er just nu, medan Lärande (📚) behöver stöd. Fyll på dem med fler anpassade KPI-mätare!`;
-      }
-      else if (text.includes('hjälp') || text.includes('hej') || text.includes('tjena') || text.includes('hello')) {
-        reply = `Jag kan hjälpa dig med följande handlingar:\n\n• Analysera dina **Mål** och mätetal\n• Identifiera sena eller blockerade **Projekt**\n• Granska och föreslå förbättringar för **KPI:er**\n• Uppmuntra din **Toyota Kata** coaching och ge coachtips\n\nSkriv t.ex. "visa mina mål" eller "granska projekt" så sätter jag igång!`;
-      }
       else {
-        reply = `Intressant fråga! Baserat på systemets nuvarande register ({ Mål: ${goals.length}, Projekt: ${projects.length}, KPI-medel: ${avgKpiProgress}% }) rekommenderar jag att fokusera på **📚 Lärande och välmående**. Att öka teamets experimentella Kata-frekvenser hjälper er att snabbare övervinna operativa trösklar.`;
+        reply = `Baserat på systemets nuvarande register ({ Mål: ${goals.length}, Projekt: ${projects.length}, KPI-medel: ${avgKpiProgress}% }) rekommenderar jag att fokusera på **📚 Lärande och välmående** för att övervinna operativa trösklar.`;
       }
 
       const botMsg: Message = {
@@ -153,10 +170,10 @@ export default function AIAssistant({
         text: reply,
         timestamp: new Date()
       };
-
       setMessages(prev => [...prev, botMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1100);
+    }
   };
 
   const suggestions = [
