@@ -119,11 +119,38 @@ export default function LoginView({
           </div>
 
           {authState.error && (
-            <div className="p-3.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-left text-xs space-y-1">
-              <span className="font-bold flex items-center gap-1.5">
+            <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-350 rounded-2xl text-left text-xs space-y-3">
+              <span className="font-bold flex items-center gap-1.5 text-red-400 font-display text-xs">
                 <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 animate-pulse" /> Inloggningsfel
               </span>
-              <p className="text-[11px] leading-normal font-mono opacity-90">{authState.error}</p>
+              
+              {authState.error === 'auth/unauthorized-domain' ? (
+                <div className="space-y-2.5 text-[11px] leading-relaxed">
+                  <p>
+                    <strong>Domän ej godkänd i Firebase!</strong> Detta beror på att molndomänen där denna webbapp körs inte har registrerats i ditt Firebase-projekts OAuth-redirect-lista än.
+                  </p>
+                  <p className="font-semibold text-white">Så här löser du det på 1 minut:</p>
+                  <ol className="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans text-[10.5px]">
+                    <li>Gå till <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-indigo-400 font-bold underline hover:text-indigo-300">Firebase Console</a></li>
+                    <li>Välj fliken <strong>Authentication</strong> &rarr; klicka på fliken <strong>Settings</strong> längst upp</li>
+                    <li>Klicka på sektionen <strong>Authorized domains</strong> (Godkända domäner)</li>
+                    <li>Klicka på <strong>Add domain</strong> (Lägg till domän) och klistra in dessa två:</li>
+                  </ol>
+                  <div className="bg-slate-900 border border-slate-700 rounded-xl p-2.5 font-mono text-[10px] space-y-1 text-emerald-400 select-all shadow-inner">
+                    <div className="flex items-center justify-between">
+                      <span>ais-dev-xff74cxo63c2kpjxzogy5g-473512404356.europe-west2.run.app</span>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-slate-800/80 pt-1 mt-1">
+                      <span>ais-pre-xff74cxo63c2kpjxzogy5g-473512404356.europe-west2.run.app</span>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 leading-normal">
+                    💡 <strong>Tips:</strong> Allt sparas automatiskt i bakgrunden. Klicka gärna på den grå knappen <strong>"Fortsätt lokalt (Offline-gäst)"</strong> ovanför för att komma in direkt och börja testa appen direkt utan att vänta!
+                  </p>
+                </div>
+              ) : (
+                <p className="text-[11px] leading-normal font-mono opacity-90">{authState.error}</p>
+              )}
             </div>
           )}
 

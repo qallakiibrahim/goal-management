@@ -653,7 +653,11 @@ export default function App() {
       }
     } catch (err: any) {
       console.error('[OAuth] Google Auth Popup Error:', err);
-      setAuthError(err.message || 'Kunde inte slutföra inloggningen med Google. Kontrollera dina nätverksinställningar.');
+      if (err?.code === 'auth/unauthorized-domain' || (err?.message && err.message.includes('auth/unauthorized-domain'))) {
+        setAuthError('auth/unauthorized-domain');
+      } else {
+        setAuthError(err.message || 'Kunde inte slutföra inloggningen med Google. Kontrollera dina nätverksinställningar.');
+      }
     } finally {
       setAuthLoading(false);
     }
