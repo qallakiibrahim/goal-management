@@ -1,0 +1,87 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export type GoalCategory = 'financial' | 'customer' | 'process' | 'learning';
+
+export interface Goal {
+  id: string;
+  title: string;
+  description: string;
+  kpi: string;
+  category: GoalCategory;
+  progress: number;
+  deadline: string;
+}
+
+export interface Objective {
+  id: string;
+  goalId: string;
+  title: string;
+  description: string;
+  kpi: string;
+  progress: number;
+  deadline: string;
+}
+
+export interface Project {
+  id: string;
+  objectiveId?: string;
+  goalId?: string;
+  title: string;
+  description: string;
+  progress: number;
+  deadline: string;
+}
+
+export interface Initiative {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string;
+  kpi: string;
+  progress: number;
+}
+
+export interface Task {
+  id: string;
+  projectId?: string;
+  initiativeId?: string;
+  title: string;
+  description?: string;
+  completed: boolean;
+  kpi?: string;
+  progress?: number;
+}
+
+export interface KPI {
+  id: string;
+  title: string;
+  value: string;
+  target: string;
+  progress: number;
+  deadline: string;
+  category?: GoalCategory;
+}
+
+export interface KataSession {
+  id: string;
+  title: string;
+  date: string;
+  goal: string;       // Target Condition (Önskat tillstånd)
+  current: string;    // Current State (Nuvarande tillstånd)
+  obstacles: string;  // Obstacles (Hinder)
+  nextStep: string;   // Next actions (Nästa experimentella steg)
+  learnings: string;  // Lessons learned (Lärdomar)
+  progress: number;
+}
+
+export interface UserProfile {
+  name: string;
+  email: string;
+  role: string;
+  language: string;
+  dateFormat: string;
+  notificationFrequency: string;
+}

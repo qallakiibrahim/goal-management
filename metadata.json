@@ -1,0 +1,6 @@
+{
+  "name": "MålRamverk",
+  "description": "Ett interaktivt strategiskt måluppfyllelseramverk baserat på Balanced Scorecard och Toyota Kata-metodiken.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
