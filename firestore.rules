@@ -9,7 +9,7 @@ service cloud.firestore {
 
     // Helper functions for validating typical formats
     function isValidId(id) {
-      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-@.]+$');
     }
 
     function incoming() {
@@ -127,6 +127,19 @@ service cloud.firestore {
         && (!('language' in incoming()) || (incoming().language is string && incoming().language.size() <= 50))
         && (!('dateFormat' in incoming()) || (incoming().dateFormat is string && incoming().dateFormat.size() <= 50))
         && (!('notificationFrequency' in incoming()) || (incoming().notificationFrequency is string && incoming().notificationFrequency.size() <= 50));
+    }
+
+    // --- 9. MEMBERS ---
+    match /members/{memberId} {
+      allow read: if true;
+      allow delete: if true;
+      allow create, update: if isValidId(memberId)
+        && (!('email' in incoming()) || (incoming().email is string && incoming().email.size() <= 150))
+        && (!('name' in incoming()) || (incoming().name is string && incoming().name.size() <= 150))
+        && (!('role' in incoming()) || (incoming().role is string && incoming().role.size() <= 150))
+        && (!('status' in incoming()) || (incoming().status is string && incoming().status in ['invited', 'active']))
+        && (!('invitedAt' in incoming()) || (incoming().invitedAt is string && incoming().invitedAt.size() <= 100))
+        && (!('invitedBy' in incoming()) || (incoming().invitedBy is string && incoming().invitedBy.size() <= 150));
     }
   }
 }

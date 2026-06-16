@@ -85,3 +85,14 @@ export interface UserProfile {
   dateFormat: string;
   notificationFrequency: string;
 }
+
+export interface Member {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  status: 'invited' | 'active';
+  invitedAt: string;
+  invitedBy?: string;
+}
+

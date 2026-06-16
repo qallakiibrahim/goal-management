@@ -15,7 +15,8 @@ import {
   Bell,
   Sparkles,
   Info,
-  AlertTriangle
+  AlertTriangle,
+  LogOut
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -30,7 +31,8 @@ import {
   KPI, 
   KataSession, 
   UserProfile, 
-  GoalCategory 
+  GoalCategory,
+  Member
 } from './types';
 import { 
   DEFAULT_GOALS, 
@@ -54,10 +56,19 @@ import KataView from './components/KataView';
 import HierarchyEditorView from './components/HierarchyEditorView';
 import SettingsView from './components/SettingsView';
 import AIAssistant from './components/AIAssistant';
+import LoginView from './components/LoginView';
+import MembersView from './components/MembersView';
 
 // Firestore Integration imports
 import { collection, onSnapshot, doc } from 'firebase/firestore';
-import { getFirebaseDb } from './firebase';
+import { getFirebaseDb, getFirebaseAuth } from './firebase';
+import {
+  signInWithPopup,
+  signOut,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  User as FirebaseUser
+} from 'firebase/auth';
 import {
   bootstrapFirestore,
   syncGoalsToFirestore,
@@ -67,7 +78,8 @@ import {
   syncTasksToFirestore,
   syncKpisToFirestore,
   syncKataSessionsToFirestore,
-  syncUserProfileToFirestore
+  syncUserProfileToFirestore,
+  syncMembersToFirestore
 } from './firebaseSync';
 
 export default function App() {
@@ -105,6 +117,15 @@ export default function App() {
   const [showDemoAlert, setShowDemoAlert] = useState(true);
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
+  // Authentication & Membership States
+  const [authUser, setAuthUser] = useState<FirebaseUser | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authOfflineBypass, setAuthOfflineBypass] = useState<boolean>(() => {
+    return localStorage.getItem('authOfflineBypass') === 'true';
+  });
+  const [members, setMembers] = useState<Member[]>([]);
+
   // 1. Initial State bootstrapping with Firebase Realtime Sync + Local Backup
   useEffect(() => {
     // Force immediate local storage load for zero empty-screen flash
@@ -116,6 +137,7 @@ export default function App() {
     const localKpis = localStorage.getItem('kpis');
     const localKata = localStorage.getItem('kataSessions');
     const localProfile = localStorage.getItem('userProfile');
+    const localMembers = localStorage.getItem('members');
 
     if (localGoals) setGoals(JSON.parse(localGoals));
     if (localObjectives) setObjectives(JSON.parse(localObjectives));
@@ -125,6 +147,7 @@ export default function App() {
     if (localKpis) setKpis(JSON.parse(localKpis));
     if (localKata) setKataSessions(JSON.parse(localKata));
     if (localProfile) setUserProfile(JSON.parse(localProfile));
+    if (localMembers) setMembers(JSON.parse(localMembers));
 
     // Initialize cloud syncing
     const db = getFirebaseDb();
@@ -136,6 +159,7 @@ export default function App() {
     let unsubKpis: () => void = () => {};
     let unsubKata: () => void = () => {};
     let unsubProfile: () => void = () => {};
+    let unsubMembers: () => void = () => {};
 
     const handleSyncError = (error: any) => {
       console.warn('[Firestore] sync connection restricted/denied:', error);
@@ -215,9 +239,25 @@ export default function App() {
           localStorage.setItem('userProfile', JSON.stringify(profile));
         }
       }, handleSyncError);
+
+      unsubMembers = onSnapshot(collection(db, 'members'), (snapshot) => {
+        const items: Member[] = [];
+        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Member); });
+        setMembers(items);
+        localStorage.setItem('members', JSON.stringify(items));
+      }, handleSyncError);
     }).catch((err) => {
       console.warn('[Firestore] Bootstrap process failed or resolved with error:', err);
       handleSyncError(err);
+    });
+
+    const authInstance = getFirebaseAuth();
+    const unsubAuth = onAuthStateChanged(authInstance, (user) => {
+      setAuthUser(user as FirebaseUser);
+      setAuthLoading(false);
+    }, (err) => {
+      console.error('onAuthStateChanged error:', err);
+      setAuthLoading(false);
     });
 
     return () => {
@@ -229,6 +269,8 @@ export default function App() {
       unsubKpis();
       unsubKata();
       unsubProfile();
+      unsubMembers();
+      unsubAuth();
     };
   }, []);
 
@@ -272,6 +314,30 @@ export default function App() {
     setUserProfile(p); 
     localStorage.setItem('userProfile', JSON.stringify(p)); 
     syncUserProfileToFirestore(p);
+  };
+
+  const saveMembers = (items: Member[]) => {
+    setMembers(items);
+    localStorage.setItem('members', JSON.stringify(items));
+    syncMembersToFirestore(items);
+  };
+
+  const handleInviteMember = (email: string, name: string, role: string) => {
+    const newMember: Member = {
+      id: email.toLowerCase().replace(/[^a-zA-Z0-9]/g, '_'),
+      email: email.toLowerCase(),
+      name: name || email.split('@')[0],
+      role: role,
+      status: 'invited',
+      invitedAt: new Date().toISOString(),
+      invitedBy: authUser?.email || 'Huvudadministratör'
+    };
+    saveMembers([...members, newMember]);
+  };
+
+  const handleRemoveMember = (id: string) => {
+    const updated = members.filter(m => m.id !== id);
+    saveMembers(updated);
   };
 
   // 3. Action callbacks
@@ -535,6 +601,92 @@ export default function App() {
     setActiveModal(null);
   };
 
+  // Google sign in / sign out / Continue offline functions
+  const handleGoogleSignIn = async () => {
+    setAuthError(null);
+    setAuthLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(getFirebaseAuth(), provider);
+      const user = result.user;
+      if (user && user.email) {
+        const emailLower = user.email.toLowerCase();
+        
+        // If there are zero members in local/cloud, make this first user an Administrator
+        if (members.length === 0) {
+          const firstAdmin: Member = {
+            id: emailLower.replace(/[^a-zA-Z0-9]/g, '_'),
+            email: emailLower,
+            name: user.displayName || emailLower.split('@')[0],
+            role: 'Administratör',
+            status: 'active',
+            invitedAt: new Date().toISOString(),
+            invitedBy: 'Självregistrerad (Ägare)'
+          };
+          saveMembers([firstAdmin]);
+          saveProfile({
+            name: user.displayName || emailLower.split('@')[0],
+            email: emailLower,
+            role: 'Administratör',
+            language: 'Svenska',
+            dateFormat: 'YYYY-MM-DD',
+            notificationFrequency: 'Dagligen'
+          });
+        } else {
+          // Otherwise check if email is in matching members list
+          const matching = members.find(m => m.email.toLowerCase() === emailLower);
+          if (matching) {
+            if (matching.status === 'invited') {
+              const updated = members.map(m => m.id === matching.id ? { ...m, status: 'active' as const, name: user.displayName || m.name } : m);
+              saveMembers(updated);
+            }
+            saveProfile({
+              name: user.displayName || matching.name || emailLower.split('@')[0],
+              email: emailLower,
+              role: matching.role,
+              language: userProfile.language || 'Svenska',
+              dateFormat: userProfile.dateFormat || 'YYYY-MM-DD',
+              notificationFrequency: userProfile.notificationFrequency || 'Dagligen'
+            });
+          }
+        }
+      }
+    } catch (err: any) {
+      console.error('[OAuth] Google Auth Popup Error:', err);
+      setAuthError(err.message || 'Kunde inte slutföra inloggningen med Google. Kontrollera dina nätverksinställningar.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleContinueOffline = () => {
+    setAuthOfflineBypass(true);
+    localStorage.setItem('authOfflineBypass', 'true');
+    // Set custom guest profile if not already configured
+    if (userProfile.email === DEFAULT_USER_PROFILE.email) {
+      saveProfile({
+        ...userProfile,
+        name: 'Gästanvändare',
+        role: 'Administratör'
+      });
+    }
+  };
+
+  const handleSignOut = async () => {
+    setAuthLoading(true);
+    try {
+      await signOut(getFirebaseAuth());
+      setAuthOfflineBypass(false);
+      localStorage.removeItem('authOfflineBypass');
+      // Reset user profile to default
+      setUserProfile(DEFAULT_USER_PROFILE);
+    } catch (err) {
+      console.error('[OAuth] Sign Out Error:', err);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   // Compute stats for Sidebar
   const stats = {
     goalsCount: goals.length,
@@ -544,6 +696,75 @@ export default function App() {
       : 0,
     kataSessionsCount: kataSessions.length
   };
+
+  const emailLower = authUser?.email?.toLowerCase() || '';
+  const isMember = members.length === 0 || members.some(m => m.email.toLowerCase() === emailLower);
+
+  // Overwrite role depending on true active member info
+  const activeMember = authUser ? members.find(m => m.email.toLowerCase() === emailLower) : null;
+  const activeRole = activeMember ? activeMember.role : (authOfflineBypass ? 'Administratör' : userProfile.role);
+  
+  // Create a customized profile for the current session representation
+  const activeProfile = {
+    ...userProfile,
+    role: activeRole,
+    name: authUser?.displayName || (activeMember?.name) || (authOfflineBypass ? 'Gästanvändare' : userProfile.name),
+    email: authUser?.email || (authOfflineBypass ? 'offline@localhost' : userProfile.email)
+  };
+
+  // If loading auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center text-slate-200 font-sans">
+        <div className="text-center space-y-4">
+          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-mono tracking-wider text-slate-400">Verifierar behörighetsstatus...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not bypassed and not logged in
+  if (!authOfflineBypass && !authUser) {
+    return (
+      <LoginView 
+        onGoogleSignIn={handleGoogleSignIn}
+        onContinueOffline={handleContinueOffline}
+        authState={{ loading: authLoading, error: authError }}
+        hasLocalBackup={members.length > 0}
+      />
+    );
+  }
+
+  // If logged in but NOT on the invitations/members register
+  if (!authOfflineBypass && authUser && !isMember) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-6 font-sans">
+        <div className="bg-slate-800 border border-slate-700 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center space-y-6">
+          <div className="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto text-red-500">
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0-6V9m0-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="space-y-2 text-center">
+            <h3 className="text-lg font-display font-bold text-white">Åtkomst nekad</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Ditt Google-konto <strong className="text-slate-200">{authUser.email}</strong> är verifierat, men du saknar en aktiv inbjudan till denna plattform.
+            </p>
+            <p className="text-[11px] text-indigo-400 bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-900/30 font-mono text-center">
+              Tips: Kontakta systemets huvudadministratör och be dem lägga till din e-post.
+            </p>
+          </div>
+          <button
+            onClick={handleSignOut}
+            className="w-full py-2.5 px-4 bg-slate-700 hover:bg-slate-650 text-white rounded-xl text-xs font-semibold transition cursor-pointer"
+          >
+            Logga ut / Byt konto
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 font-sans antialiased text-slate-800">
@@ -562,18 +783,31 @@ export default function App() {
         <header className="sticky top-0 bg-white border-b border-slate-200 z-10 px-8 py-4 flex items-center justify-between shadow-xs mb-8">
           <div className="flex items-center gap-2 text-left">
             <span className="text-sm font-semibold text-slate-400 capitalize tracking-wide">
-              {userProfile.role} Dashboard
+              {activeProfile.role} Dashboard
             </span>
             <span className="text-slate-350">•</span>
             <span className="text-xs text-slate-500 font-mono">
-              Inloggad som: <strong className="text-indigo-900">{userProfile.name}</strong>
+              Inloggad som: <strong className="text-indigo-900">{activeProfile.name}</strong>
             </span>
           </div>
           
           <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 font-mono">
             <span>{new Date().toLocaleDateString('sv-SE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-            <div className="w-8 h-8 rounded-full bg-indigo-900 text-white font-bold flex items-center justify-center font-display shadow-xs shrink-0 select-none">
-              {userProfile.name.slice(0, 2).toUpperCase()}
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-indigo-900 text-white font-bold flex items-center justify-center font-display shadow-xs shrink-0 select-none">
+                {activeProfile.name.slice(0, 2).toUpperCase()}
+              </div>
+              
+              {/* Logout button */}
+              {(authUser || authOfflineBypass) && (
+                <button
+                  onClick={handleSignOut}
+                  title="Logga ut"
+                  className="p-1.5 text-slate-400 hover:text-red-650 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         </header>
@@ -695,9 +929,19 @@ export default function App() {
             />
           )}
 
+          {currentView === 'members' && (
+            <MembersView
+              members={members}
+              onInviteMember={handleInviteMember}
+              onRemoveMember={handleRemoveMember}
+              currentUserIdEmail={authUser?.email || 'guest'}
+              currentUserRole={activeRole}
+            />
+          )}
+
           {currentView === 'settings' && (
             <SettingsView
-              userProfile={userProfile}
+              userProfile={activeProfile}
               onUpdateProfile={handleUpdateProfile}
               onResetDatabase={handleResetDatabase}
             />

@@ -120,6 +120,21 @@
         "notificationFrequency": { "type": "string", "description": "Aviseringsstatus" }
       },
       "required": ["name", "email", "role", "language", "dateFormat", "notificationFrequency"]
+    },
+    "Member": {
+      "title": "Member",
+      "description": "Inbjudna teammedlemmar i systemet",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unikt ID (e-post eller genererat)" },
+        "email": { "type": "string", "description": "Användarens e-postadress för inloggning" },
+        "name": { "type": "string", "description": "Användarens fullständiga namn" },
+        "role": { "type": "string", "description": "Befattningsroll (Administratör/Operativ ledare/Coachee/Skrivskyddad)" },
+        "status": { "type": "string", "enum": ["invited", "active"] },
+        "invitedAt": { "type": "string", "description": "Inbjudningsdatum ISO" },
+        "invitedBy": { "type": "string", "description": "E-post till den som bjöd in medlemmen" }
+      },
+      "required": ["id", "email", "name", "role", "status", "invitedAt"]
     }
   },
   "firestore": {
@@ -130,6 +145,7 @@
     "tasks": { "schema": { "$ref": "#/entities/Task" }, "description": "Uppgifter kopplade till projekt/initiativ" },
     "kpis": { "schema": { "$ref": "#/entities/KPI" }, "description": "Balanced Scorecard mätetal" },
     "kataSessions": { "schema": { "$ref": "#/entities/KataSession" }, "description": "Förbättrings- och experimentloggar" },
-    "userProfile": { "schema": { "$ref": "#/entities/UserProfile" }, "description": "Inställningar" }
+    "userProfile": { "schema": { "$ref": "#/entities/UserProfile" }, "description": "Inställningar" },
+    "members": { "schema": { "$ref": "#/entities/Member" }, "description": "Inbjudna användare & Medlemmar" }
   }
 }

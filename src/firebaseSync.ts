@@ -235,3 +235,26 @@ export async function syncUserProfileToFirestore(item: UserProfile) {
     console.error('[Firestore] UserProfile Sync failure:', err);
   }
 }
+
+export async function syncMembersToFirestore(items: any[]) {
+  try {
+    const colRef = collection(db, 'members');
+    const snapshot = await getDocs(colRef);
+    const existingIds = snapshot.docs.map(d => d.id);
+    const newIds = items.map(i => i.id);
+
+    const batch = writeBatch(db);
+    items.forEach(item => {
+      const docRef = doc(db, 'members', item.id);
+      batch.set(docRef, item);
+    });
+    existingIds.forEach(id => {
+      if (!newIds.includes(id)) {
+        batch.delete(doc(db, 'members', id));
+      }
+    });
+    await batch.commit();
+  } catch (err) {
+    console.error('[Firestore] Members Sync failure:', err);
+  }
+}

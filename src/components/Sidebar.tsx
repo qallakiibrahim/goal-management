@@ -14,7 +14,8 @@ import {
   Layers, 
   Users, 
   Activity, 
-  Award 
+  Award,
+  UserPlus
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -37,6 +38,7 @@ export default function Sidebar({ currentView, onViewChange, stats }: SidebarPro
     { id: 'kpis', name: 'KPI:er', icon: TrendingUp, color: 'text-emerald-600', subText: `${stats.kpiPercentage}%` },
     { id: 'kata', name: 'Kata Coaching', icon: RefreshCw, color: 'text-rose-600', badge: stats.kataSessionsCount },
     { id: 'hierarchy-editor', name: 'Hierarkiredigerare', icon: Layers, color: 'text-blue-500' },
+    { id: 'members', name: 'Användare & Inbjudna', icon: UserPlus, color: 'text-violet-655' },
     { id: 'settings', name: 'Inställningar', icon: Settings, color: 'text-slate-500' },
   ];
 
