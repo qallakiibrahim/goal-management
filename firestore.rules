@@ -2,144 +2,38 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // 1. Global Safety Net: Deny undefined resources by default
+    // Allow read & write access to all application collections
+    match /goals/{id} {
+      allow read, write: if true;
+    }
+    match /objectives/{id} {
+      allow read, write: if true;
+    }
+    match /projects/{id} {
+      allow read, write: if true;
+    }
+    match /initiatives/{id} {
+      allow read, write: if true;
+    }
+    match /tasks/{id} {
+      allow read, write: if true;
+    }
+    match /kpis/{id} {
+      allow read, write: if true;
+    }
+    match /kataSessions/{id} {
+      allow read, write: if true;
+    }
+    match /userProfile/{id} {
+      allow read, write: if true;
+    }
+    match /members/{id} {
+      allow read, write: if true;
+    }
+    
+    // Deny access to other unmapped documents by default
     match /{document=**} {
       allow read, write: if false;
-    }
-
-    // Helper functions for validating typical formats
-    function isValidId(id) {
-      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-@.]+$');
-    }
-
-    function incoming() {
-      return request.resource.data;
-    }
-
-    // --- 1. GOALS ---
-    match /goals/{goalId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(goalId) 
-        && incoming().id == goalId
-        && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 250))
-        && (!('description' in incoming()) || (incoming().description is string && incoming().description.size() <= 3000))
-        && (!('kpi' in incoming()) || (incoming().kpi is string && incoming().kpi.size() <= 500))
-        && (!('category' in incoming()) || (incoming().category is string && incoming().category in ['financial', 'customer', 'process', 'learning']))
-        && (!('progress' in incoming()) || (incoming().progress is number && incoming().progress >= 0 && incoming().progress <= 100))
-        && (!('deadline' in incoming()) || (incoming().deadline is string && incoming().deadline.size() <= 100));
-    }
-
-    // --- 2. OBJECTIVES ---
-    match /objectives/{objectiveId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(objectiveId)
-        && incoming().id == objectiveId
-        && (!('goalId' in incoming()) || isValidId(incoming().goalId))
-        && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 250))
-        && (!('description' in incoming()) || (incoming().description is string && incoming().description.size() <= 3000))
-        && (!('kpi' in incoming()) || (incoming().kpi is string && incoming().kpi.size() <= 500))
-        && (!('progress' in incoming()) || (incoming().progress is number && incoming().progress >= 0 && incoming().progress <= 100))
-        && (!('deadline' in incoming()) || (incoming().deadline is string && incoming().deadline.size() <= 100));
-    }
-
-    // --- 3. PROJECTS ---
-    match /projects/{projectId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(projectId)
-        && incoming().id == projectId
-        && (!('objectiveId' in incoming()) || isValidId(incoming().objectiveId))
-        && (!('goalId' in incoming()) || isValidId(incoming().goalId))
-        && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 250))
-        && (!('description' in incoming()) || (incoming().description is string && incoming().description.size() <= 3000))
-        && (!('progress' in incoming()) || (incoming().progress is number && incoming().progress >= 0 && incoming().progress <= 100))
-        && (!('deadline' in incoming()) || (incoming().deadline is string && incoming().deadline.size() <= 100));
-    }
-
-    // --- 4. INITIATIVES ---
-    match /initiatives/{initiativeId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(initiativeId)
-        && incoming().id == initiativeId
-        && (!('projectId' in incoming()) || isValidId(incoming().projectId))
-        && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 250))
-        && (!('description' in incoming()) || (incoming().description is string && incoming().description.size() <= 3000))
-        && (!('kpi' in incoming()) || (incoming().kpi is string && incoming().kpi.size() <= 500))
-        && (!('progress' in incoming()) || (incoming().progress is number && incoming().progress >= 0 && incoming().progress <= 100));
-    }
-
-    // --- 5. TASKS ---
-    match /tasks/{taskId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(taskId)
-        && incoming().id == taskId
-        && (!('projectId' in incoming()) || isValidId(incoming().projectId))
-        && (!('initiativeId' in incoming()) || isValidId(incoming().initiativeId))
-        && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 250))
-        && (!('description' in incoming()) || (incoming().description is string && incoming().description.size() <= 3000))
-        && (!('completed' in incoming()) || (incoming().completed is bool))
-        && (!('kpi' in incoming()) || (incoming().kpi is string && incoming().kpi.size() <= 500))
-        && (!('progress' in incoming()) || (incoming().progress is number && incoming().progress >= 0 && incoming().progress <= 100));
-    }
-
-    // --- 6. KPIS ---
-    match /kpis/{kpiId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(kpiId)
-        && incoming().id == kpiId
-        && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 250))
-        && (!('value' in incoming()) || (incoming().value is string && incoming().value.size() <= 150))
-        && (!('target' in incoming()) || (incoming().target is string && incoming().target.size() <= 150))
-        && (!('progress' in incoming()) || (incoming().progress is number && incoming().progress >= 0 && incoming().progress <= 100))
-        && (!('deadline' in incoming()) || (incoming().deadline is string && incoming().deadline.size() <= 100))
-        && (!('category' in incoming()) || (incoming().category is string && incoming().category in ['financial', 'customer', 'process', 'learning']));
-    }
-
-    // --- 7. KATA SESSIONS ---
-    match /kataSessions/{sessionId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(sessionId)
-        && incoming().id == sessionId
-        && (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 250))
-        && (!('date' in incoming()) || (incoming().date is string && incoming().date.size() <= 100))
-        && (!('goal' in incoming()) || (incoming().goal is string && incoming().goal.size() <= 3000))
-        && (!('current' in incoming()) || (incoming().current is string && incoming().current.size() <= 3000))
-        && (!('obstacles' in incoming()) || (incoming().obstacles is string && incoming().obstacles.size() <= 3000))
-        && (!('nextStep' in incoming()) || (incoming().nextStep is string && incoming().nextStep.size() <= 3000))
-        && (!('learnings' in incoming()) || (incoming().learnings is string && incoming().learnings.size() <= 3000))
-        && (!('progress' in incoming()) || (incoming().progress is number && incoming().progress >= 0 && incoming().progress <= 100));
-    }
-
-    // --- 8. USER PROFILE ---
-    match /userProfile/{profileId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(profileId)
-        && (!('name' in incoming()) || (incoming().name is string && incoming().name.size() <= 150))
-        && (!('email' in incoming()) || (incoming().email is string && incoming().email.size() <= 150))
-        && (!('role' in incoming()) || (incoming().role is string && incoming().role.size() <= 150))
-        && (!('language' in incoming()) || (incoming().language is string && incoming().language.size() <= 50))
-        && (!('dateFormat' in incoming()) || (incoming().dateFormat is string && incoming().dateFormat.size() <= 50))
-        && (!('notificationFrequency' in incoming()) || (incoming().notificationFrequency is string && incoming().notificationFrequency.size() <= 50));
-    }
-
-    // --- 9. MEMBERS ---
-    match /members/{memberId} {
-      allow read: if true;
-      allow delete: if true;
-      allow create, update: if isValidId(memberId)
-        && (!('email' in incoming()) || (incoming().email is string && incoming().email.size() <= 150))
-        && (!('name' in incoming()) || (incoming().name is string && incoming().name.size() <= 150))
-        && (!('role' in incoming()) || (incoming().role is string && incoming().role.size() <= 150))
-        && (!('status' in incoming()) || (incoming().status is string && incoming().status in ['invited', 'active']))
-        && (!('invitedAt' in incoming()) || (incoming().invitedAt is string && incoming().invitedAt.size() <= 100))
-        && (!('invitedBy' in incoming()) || (incoming().invitedBy is string && incoming().invitedBy.size() <= 150));
     }
   }
 }

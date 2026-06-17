@@ -168,88 +168,93 @@ export default function App() {
       }
     };
 
-    bootstrapFirestore().then(() => {
-      unsubGoals = onSnapshot(collection(db, 'goals'), (snapshot) => {
-        const items: Goal[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Goal); });
-        if (items.length > 0) {
-          setGoals(items);
-          localStorage.setItem('goals', JSON.stringify(items));
-        }
-      }, handleSyncError);
+    // 1. Run bootstrap in background, non-blocking
+    bootstrapFirestore()
+      .then(() => {
+        console.log('[Firestore] Bootstrapping completed successfully.');
+      })
+      .catch((err) => {
+        console.warn('[Firestore] Bootstrap process failed or restricted (listeners will still register):', err);
+      });
 
-      unsubObjectives = onSnapshot(collection(db, 'objectives'), (snapshot) => {
-        const items: Objective[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Objective); });
-        if (items.length > 0) {
-          setObjectives(items);
-          localStorage.setItem('objectives', JSON.stringify(items));
-        }
-      }, handleSyncError);
+    // 2. Set up realtime listeners immediately and independently
+    unsubGoals = onSnapshot(collection(db, 'goals'), (snapshot) => {
+      const items: Goal[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as Goal); });
+      if (items.length > 0) {
+        setGoals(items);
+        localStorage.setItem('goals', JSON.stringify(items));
+      }
+    }, handleSyncError);
 
-      unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
-        const items: Project[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Project); });
-        if (items.length > 0) {
-          setProjects(items);
-          localStorage.setItem('projects', JSON.stringify(items));
-        }
-      }, handleSyncError);
+    unsubObjectives = onSnapshot(collection(db, 'objectives'), (snapshot) => {
+      const items: Objective[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as Objective); });
+      if (items.length > 0) {
+        setObjectives(items);
+        localStorage.setItem('objectives', JSON.stringify(items));
+      }
+    }, handleSyncError);
 
-      unsubInitiatives = onSnapshot(collection(db, 'initiatives'), (snapshot) => {
-        const items: Initiative[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Initiative); });
-        if (items.length > 0) {
-          setInitiatives(items);
-          localStorage.setItem('initiatives', JSON.stringify(items));
-        }
-      }, handleSyncError);
+    unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
+      const items: Project[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as Project); });
+      if (items.length > 0) {
+        setProjects(items);
+        localStorage.setItem('projects', JSON.stringify(items));
+      }
+    }, handleSyncError);
 
-      unsubTasks = onSnapshot(collection(db, 'tasks'), (snapshot) => {
-        const items: Task[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Task); });
-        if (items.length > 0) {
-          setTasks(items);
-          localStorage.setItem('tasks', JSON.stringify(items));
-        }
-      }, handleSyncError);
+    unsubInitiatives = onSnapshot(collection(db, 'initiatives'), (snapshot) => {
+      const items: Initiative[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as Initiative); });
+      if (items.length > 0) {
+        setInitiatives(items);
+        localStorage.setItem('initiatives', JSON.stringify(items));
+      }
+    }, handleSyncError);
 
-      unsubKpis = onSnapshot(collection(db, 'kpis'), (snapshot) => {
-        const items: KPI[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as KPI); });
-        if (items.length > 0) {
-          setKpis(items);
-          localStorage.setItem('kpis', JSON.stringify(items));
-        }
-      }, handleSyncError);
+    unsubTasks = onSnapshot(collection(db, 'tasks'), (snapshot) => {
+      const items: Task[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as Task); });
+      if (items.length > 0) {
+        setTasks(items);
+        localStorage.setItem('tasks', JSON.stringify(items));
+      }
+    }, handleSyncError);
 
-      unsubKata = onSnapshot(collection(db, 'kataSessions'), (snapshot) => {
-        const items: KataSession[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as KataSession); });
-        if (items.length > 0) {
-          setKataSessions(items);
-          localStorage.setItem('kataSessions', JSON.stringify(items));
-        }
-      }, handleSyncError);
+    unsubKpis = onSnapshot(collection(db, 'kpis'), (snapshot) => {
+      const items: KPI[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as KPI); });
+      if (items.length > 0) {
+        setKpis(items);
+        localStorage.setItem('kpis', JSON.stringify(items));
+      }
+    }, handleSyncError);
 
-      unsubProfile = onSnapshot(doc(db, 'userProfile', 'current'), (snapshot) => {
-        if (snapshot.exists()) {
-          const profile = snapshot.data() as UserProfile;
-          setUserProfile(profile);
-          localStorage.setItem('userProfile', JSON.stringify(profile));
-        }
-      }, handleSyncError);
+    unsubKata = onSnapshot(collection(db, 'kataSessions'), (snapshot) => {
+      const items: KataSession[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as KataSession); });
+      if (items.length > 0) {
+        setKataSessions(items);
+        localStorage.setItem('kataSessions', JSON.stringify(items));
+      }
+    }, handleSyncError);
 
-      unsubMembers = onSnapshot(collection(db, 'members'), (snapshot) => {
-        const items: Member[] = [];
-        snapshot.forEach((doc) => { items.push({ ...doc.data() } as Member); });
-        setMembers(items);
-        localStorage.setItem('members', JSON.stringify(items));
-      }, handleSyncError);
-    }).catch((err) => {
-      console.warn('[Firestore] Bootstrap process failed or resolved with error:', err);
-      handleSyncError(err);
-    });
+    unsubProfile = onSnapshot(doc(db, 'userProfile', 'current'), (snapshot) => {
+      if (snapshot.exists()) {
+        const profile = snapshot.data() as UserProfile;
+        setUserProfile(profile);
+        localStorage.setItem('userProfile', JSON.stringify(profile));
+      }
+    }, handleSyncError);
+
+    unsubMembers = onSnapshot(collection(db, 'members'), (snapshot) => {
+      const items: Member[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as Member); });
+      setMembers(items);
+      localStorage.setItem('members', JSON.stringify(items));
+    }, handleSyncError);
 
     const authInstance = getFirebaseAuth();
     const unsubAuth = onAuthStateChanged(authInstance, (user) => {
