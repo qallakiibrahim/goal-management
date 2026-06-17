@@ -11,7 +11,8 @@ import {
   ShieldAlert, 
   ChevronRight, 
   Info,
-  Laptop
+  Laptop,
+  ExternalLink
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -105,15 +106,31 @@ export default function LoginView({
             <button
               onClick={onContinueOffline}
               disabled={authState.loading}
-              className="w-full flex items-center justify-between bg-slate-700/40 hover:bg-slate-700/80 border border-slate-650 text-slate-300 py-3.5 px-5 rounded-2xl text-xs font-semibold transition cursor-pointer"
+              className={`w-full flex items-center justify-between border transition duration-200 cursor-pointer py-3.5 px-5 rounded-2xl text-xs font-semibold ${
+                authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain')))
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border-emerald-500 shadow-lg animate-pulse'
+                  : 'bg-slate-700/40 hover:bg-slate-700/80 border-slate-650 text-slate-300'
+              }`}
             >
               <div className="flex items-center gap-2">
-                <Laptop className="w-4 h-4 text-slate-400" />
-                <span className="text-left font-display">Fortsätt lokalt (Offline-gäst)</span>
+                <Laptop className={`w-4 h-4 ${
+                  authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain')))
+                    ? 'text-white'
+                    : 'text-slate-400'
+                }`} />
+                <span className="text-left font-display">
+                  {authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain')))
+                    ? 'Börja genast! Starta i Demoläge / Gäst'
+                    : 'Fortsätt lokalt (Offline-gäst)'}
+                </span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-[10px] text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded font-mono font-medium">Backup</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
+                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-medium ${
+                  authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain')))
+                    ? 'bg-emerald-800 text-emerald-200'
+                    : 'bg-slate-800 text-slate-400'
+                }`}>Fungerar direkt</span>
+                <ChevronRight className="w-4 h-4 text-slate-300" />
               </div>
             </button>
           </div>
@@ -127,14 +144,22 @@ export default function LoginView({
               {authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain'))) ? (
                 <div className="space-y-2.5 text-[11px] leading-relaxed">
                   <p>
-                    <strong>Domän ej godkänd i Firebase!</strong> Detta beror på att den molndomän där denna webbapp körs inte har registrerats i ditt Firebase-projekts lista över godkända omdirigeringsdomäner (Authorized domains) än.
+                    <strong>Google-domänen är inte godkänd i Firebase!</strong> Detta händer eftersom domänen som denna webbapp körs på (<code className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded font-semibold text-white">{typeof window !== 'undefined' ? window.location.hostname : 'goal-management-alpha.vercel.app'}</code>) inte har lagts till i listan över godkända omdirigeringsdomäner i ditt Firebase-projekt.
                   </p>
-                  <p className="font-semibold text-white">Så här löser du det på 1 minut:</p>
+                  
+                  <div className="bg-emerald-950/40 border border-emerald-500/25 rounded-xl p-3 text-emerald-300 space-y-1.5 text-[11px]">
+                    <p className="font-semibold text-emerald-200">🚀 Snabb bypass tillgänglig:</p>
+                    <p>
+                      Klicka på den gröna blinkande knappen <strong>"Börja genast! Starta i Demoläge / Gäst"</strong> ovan för att komma in direkt i appen med fullständigt administratörskonto utan krångliga inställningar.
+                    </p>
+                  </div>
+
+                  <p className="font-semibold text-white pt-1 border-t border-slate-750">Föredrar du att aktivera Google Logga In nu? Gör så här:</p>
                   <ol className="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans text-[10.5px]">
-                    <li>Gå till <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-indigo-400 font-bold underline hover:text-indigo-300">Firebase Console</a></li>
-                    <li>Välj fliken <strong>Authentication</strong> &rarr; klicka på fliken <strong>Settings</strong> längst upp</li>
+                    <li>Gå till <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-indigo-400 font-bold underline hover:text-indigo-300 inline-flex items-center gap-0.5">Firebase Console <ExternalLink className="w-3 h-3 inline" /></a></li>
+                    <li>Välj fliken <strong>Authentication</strong> &rarr; klicka på fliken <strong>Settings</strong></li>
                     <li>Klicka på sektionen <strong>Authorized domains</strong> (Godkända domäner)</li>
-                    <li>Klicka på <strong>Add domain</strong> (Lägg till domän) och lägg till den här domänen:</li>
+                    <li>Klicka på <strong>Add domain</strong> (Lägg till domän) och lägg till:</li>
                   </ol>
                   
                   <div className="bg-slate-950 border border-slate-750 rounded-xl p-3 font-mono text-[10px] space-y-2 shadow-inner">

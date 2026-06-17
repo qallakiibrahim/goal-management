@@ -8,12 +8,12 @@ import { getFirestore, initializeFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAGVxAfzKe3GVpRLgjkuCI1FG-FjtHx_lY",
-  authDomain: "vivid-kayak-nrr5c.firebaseapp.com",
-  projectId: "vivid-kayak-nrr5c",
-  storageBucket: "vivid-kayak-nrr5c.firebasestorage.app",
-  messagingSenderId: "1017903634535",
-  appId: "1:1017903634535:web:844f78d107a3eebc815cc2"
+  apiKey: "AIzaSyC28-5arKq19k6uK_EwGZcVRtQgER4JCVw",
+  authDomain: "goal-management-33104.firebaseapp.com",
+  projectId: "goal-management-33104",
+  storageBucket: "goal-management-33104.firebasestorage.app",
+  messagingSenderId: "212948587384",
+  appId: "1:212948587384:web:472c3ee03b6d29e7092e8d"
 };
 
 // Initialize immediately at module load to ensure correct component registration order
@@ -21,9 +21,9 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 let db: any;
 try {
-  db = initializeFirestore(app, {}, "ai-studio-d429fa02-f5da-4544-80db-f079a04e5104");
+  db = initializeFirestore(app, {});
 } catch (e) {
-  db = getFirestore(app, "ai-studio-d429fa02-f5da-4544-80db-f079a04e5104");
+  db = getFirestore(app);
 }
 
 const auth = getAuth(app);
