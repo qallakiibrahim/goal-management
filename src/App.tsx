@@ -922,6 +922,7 @@ export default function App() {
               onOpenEditModal={openEditKataModal}
               onDeleteSession={handleDeleteSession}
               onUpdateSessionProgress={handleUpdateSessionProgress}
+              onQuickAddKata={(session) => saveKata([...kataSessions, session])}
             />
           )}
 

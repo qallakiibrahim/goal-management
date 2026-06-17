@@ -15,7 +15,14 @@ import {
   ArrowRight, 
   HelpCircle,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  BookOpen,
+  Info,
+  Lightbulb,
+  Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { KataSession } from '../types';
@@ -27,6 +34,7 @@ interface KataViewProps {
   onOpenEditModal: (session: KataSession) => void;
   onDeleteSession: (id: string) => void;
   onUpdateSessionProgress: (id: string, progress: number) => void;
+  onQuickAddKata?: (session: KataSession) => void;
 }
 
 export default function KataView({
@@ -34,9 +42,101 @@ export default function KataView({
   onOpenAddModal,
   onOpenEditModal,
   onDeleteSession,
-  onUpdateSessionProgress
+  onUpdateSessionProgress,
+  onQuickAddKata
 }: KataViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // State variables for the Interactive Self-Coaching Wizard
+  const [coachingTab, setCoachingTab] = useState<'guide' | 'wizard'>('guide');
+  const [wizardStep, setWizardStep] = useState(0);
+  const [draftTitle, setDraftTitle] = useState('');
+  const [draftGoal, setDraftGoal] = useState('');
+  const [draftCurrent, setDraftCurrent] = useState('');
+  const [draftObstacles, setDraftObstacles] = useState('');
+  const [draftNextStep, setDraftNextStep] = useState('');
+  const [draftLearnings, setDraftLearnings] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // High-fidelity prefilled template templates to show users how professional Kata is structured
+  const templates = [
+    {
+      name: "⚙️ Ledtid & Logistik",
+      title: "Optimering av packtider i Logistik-Hub B",
+      goal: "Minska snittledtiden vid packstation till under 15 minuter per order.",
+      current: "Order packas i snitt på 32 minuter p.g.a. röriga hyllor och manuell tejpning.",
+      obstacles: "Packmaterial ligger utspritt och det saknas dedikerade tejp-stationer.",
+      nextStep: "Genomför en 5S-städning på lördag morgon och fäst tejphållare på alla bord.",
+      learnings: "Se om ledtiden minskar med minst 10 minuter under måndagsrusningen."
+    },
+    {
+      name: "🌱 Hållbarhet & CO₂",
+      title: "Minimera tomkörning på returbilar",
+      goal: "Nå 100% ruttfyllnad för alla lastbilar under returtransporter.",
+      current: "Nu går lastbilarna tomma i snitt 35% av retursträckorna.",
+      obstacles: "Få lokala kunder känner till våra lediga kapacitetstider på sydgående rutter.",
+      nextStep: "Ring upp 5 strategiska partners i Malmö på fredag och erbjud billig returfrakt.",
+      learnings: "Mät om vi kan fylla minst 2 lastbilsflak nästa vecka genom detta."
+    },
+    {
+      name: "📚 Kompetensutveckling",
+      title: "Växla upp det agila flödet",
+      goal: "Alla team-medlemmar självständiga i det gemensamma sprintplaneringsverktyget.",
+      current: "Endast 2 av 6 medlemmar kan konfigurera sprintbackloggen utan support.",
+      obstacles: "Verktyget upplevs komplext och vi har ingen gemensam standard.",
+      nextStep: "Boka en 20-minuters demonstration och skapa ett lathunds-dokument på intranätet.",
+      learnings: "Mät om teamet kan starta nästa sprint helt på egen hand."
+    }
+  ];
+
+  const applyTemplate = (tpl: typeof templates[0]) => {
+    setDraftTitle(tpl.title);
+    setDraftGoal(tpl.goal);
+    setDraftCurrent(tpl.current);
+    setDraftObstacles(tpl.obstacles);
+    setDraftNextStep(tpl.nextStep);
+    setDraftLearnings(tpl.learnings);
+    setWizardStep(0); // Go to start of step questions
+  };
+
+  const handleCreateFromWizard = () => {
+    if (!draftTitle || !draftGoal || !draftCurrent || !draftObstacles || !draftNextStep) {
+      alert("Vänligen fyll i de nödvändiga stegen för att kunna spara din Toyota Kata-session.");
+      return;
+    }
+
+    const newSession: KataSession = {
+      id: `kata-${Date.now()}`,
+      title: draftTitle,
+      date: new Date().toISOString().split('T')[0],
+      goal: draftGoal,
+      current: draftCurrent,
+      obstacles: draftObstacles,
+      nextStep: draftNextStep,
+      learnings: draftLearnings || 'Inga lärdomar registrerade än.',
+      progress: 0
+    };
+
+    if (onQuickAddKata) {
+      onQuickAddKata(newSession);
+    } else {
+      // Direct callback logic
+      kataSessions.push(newSession);
+    }
+
+    setSaveSuccess(true);
+    setTimeout(() => {
+      setSaveSuccess(false);
+      setDraftTitle('');
+      setDraftGoal('');
+      setDraftCurrent('');
+      setDraftObstacles('');
+      setDraftNextStep('');
+      setDraftLearnings('');
+      setCoachingTab('guide');
+      setWizardStep(0);
+    }, 2500);
+  };
 
   const filteredSessions = kataSessions.filter(s => {
     return s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,35 +181,322 @@ export default function KataView({
         </div>
       </div>
 
-      {/* Guide explaining the 5 Questions */}
-      <div className="p-4 bg-slate-900 text-slate-100 rounded-2xl shadow-xs border border-slate-800 grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="md:col-span-1 border-r border-slate-800 pr-4 flex flex-col justify-center gap-1">
-          <div className="flex items-center gap-1 text-rose-500 font-bold text-xs uppercase tracking-wider">
-            <Sparkles className="w-4 h-4" />
-            <span>KATA METOD</span>
-          </div>
-          <h4 className="text-xs font-bold font-display text-white mt-1">De 5 Coaching-frågorna:</h4>
-          <p className="text-[10px] text-slate-400 leading-normal">
-            Används av coachen vid varje avstämning för att stimulera vetenskapligt tänkande.
-          </p>
+      {/* Guided Coach Console with Tabs */}
+      <div className="bg-slate-900 text-slate-100 rounded-2xl shadow-md border border-slate-800 overflow-hidden">
+        {/* Tab Headers */}
+        <div className="flex border-b border-slate-800 bg-slate-950/40">
+          <button
+            onClick={() => { setCoachingTab('guide'); }}
+            className={`flex-1 md:flex-initial px-5 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition ${
+              coachingTab === 'guide'
+                ? 'border-rose-500 text-rose-400 bg-slate-900/10'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-rose-500" />
+            <span>1. Toyota Kata Metodstöd</span>
+          </button>
+          <button
+            onClick={() => { setCoachingTab('wizard'); }}
+            className={`flex-1 md:flex-initial px-5 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition ${
+              coachingTab === 'wizard'
+                ? 'border-rose-500 text-rose-400 bg-slate-900/10'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-rose-500" />
+            <span>2. Interaktiv Självcoach-Studio</span>
+          </button>
         </div>
-        <div className="md:col-span-4 flex flex-wrap gap-3 items-center justify-start text-[11px] text-slate-300">
-          <div className="bg-slate-800 p-2.5 rounded-xl border border-slate-700/55 flex-1 min-w-[150px]">
-            <span className="font-bold text-rose-400 block">1. Önskat tillstånd?</span>
-            <span>Var vill vi vara på sikt?</span>
-          </div>
-          <div className="bg-slate-800 p-2.5 rounded-xl border border-slate-700/55 flex-1 min-w-[150px]">
-            <span className="font-bold text-rose-400 block">2. Nuvarande läge?</span>
-            <span>Var befinner vi oss idag?</span>
-          </div>
-          <div className="bg-slate-800 p-2.5 rounded-xl border border-slate-700/55 flex-1 min-w-[150px]">
-            <span className="font-bold text-rose-400 block">3. Vilka är hindren?</span>
-            <span>Vad stoppar oss nu?</span>
-          </div>
-          <div className="bg-slate-800 p-2.5 rounded-xl border border-slate-700/55 flex-1 min-w-[150px]">
-            <span className="font-bold text-rose-400 block">4. Nästa experiment?</span>
-            <span>Vad provar vi nu direkt?</span>
-          </div>
+
+        <div className="p-5">
+          {coachingTab === 'guide' ? (
+            <div className="space-y-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="text-left">
+                  <div className="flex items-center gap-1.5 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                    <Award className="w-4 h-4" />
+                    <span>Lärande genom vetenskapligt tänkande</span>
+                  </div>
+                  <h3 className="text-sm font-bold font-display text-white mt-1 font-sans">De 5 Coaching-frågorna (Toyota Kata-mallen)</h3>
+                  <p className="text-[11px] text-slate-400 mt-0.5 max-w-2xl leading-relaxed">
+                    Förbättringskatan är ett strukturerat sätt för ledare att utveckla sina team genom ständigt experimenterande mot ett önskat måltillstånd.
+                  </p>
+                </div>
+                <button
+                  onClick={() => { setCoachingTab('wizard'); setWizardStep(0); }}
+                  className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1 cursor-pointer"
+                >
+                  Gå till ritbordet <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+
+              {/* Sequential display of the questions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-1">
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 1</span>
+                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Mål/Önskat tillstånd?</h5>
+                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                      Var vill vi befinna oss på sikt? Vilket mätbart läge siktar vi på?
+                    </p>
+                  </div>
+                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 1</span>
+                </div>
+
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 2</span>
+                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Dagens Nu-läge?</h5>
+                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                      Vilket är vårt nuläge idag? Mät fakta, siffror och beskriv processen noga.
+                    </p>
+                  </div>
+                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 2</span>
+                </div>
+
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 3</span>
+                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Vilka är hindren?</h5>
+                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                      Vilka flaskhalsar hindrar oss från att nå målet? Vilket hinder väljer vi?
+                    </p>
+                  </div>
+                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 3</span>
+                </div>
+
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 4</span>
+                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Nästa experiment?</h5>
+                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                      Vilken liten aktivitet provar vi omedelbart för att utmana hindret?
+                    </p>
+                  </div>
+                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 4</span>
+                </div>
+
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 5</span>
+                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Vad lärde vi oss?</h5>
+                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                      Vad hände i experimentet? Vad blev resultatet i förhållande till förhoppningen?
+                    </p>
+                  </div>
+                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 5</span>
+                </div>
+              </div>
+
+              {/* Instant Template Quick Pick Section */}
+              <div className="pt-2 border-t border-slate-800 bg-slate-950/20 p-3.5 rounded-xl">
+                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 mb-2.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                  <span>KLICKA PÅ EN EXEMPELMALL FÖR ATT PRE-FILLA RITBORDET DIREKT:</span>
+                </span>
+                <div className="flex flex-wrap gap-2.5">
+                  {templates.map((tpl, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => applyTemplate(tpl)}
+                      className="px-3 py-2 bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-slate-700 rounded-lg text-left text-xs transition cursor-pointer flex items-center justify-between gap-1.5"
+                    >
+                      <span>{tpl.name}</span>
+                      <ArrowRight className="w-3 h-3 text-slate-400" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {/* Stepper Wizard Indicator */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-rose-600 flex items-center justify-center text-[10px] font-bold text-white">
+                    {wizardStep + 1}
+                  </div>
+                  <span className="text-xs font-bold text-slate-200 font-mono">
+                    {wizardStep === 0 && "Steg 1: Sätt Mål & Vision"}
+                    {wizardStep === 1 && "Steg 2: Analysera Nuläget"}
+                    {wizardStep === 2 && "Steg 3: Identifiera Hinder"}
+                    {wizardStep === 3 && "Steg 4: Formulera Nästa Experiment"}
+                    {wizardStep === 4 && "Steg 5: Definiera Lärdomar"}
+                  </span>
+                </div>
+                {/* Visual Progress Bar */}
+                <div className="flex gap-1">
+                  {[0, 1, 2, 3, 4].map((step) => (
+                    <div
+                      key={step}
+                      className={`w-6 h-1 rounded-full transition ${
+                        step <= wizardStep ? 'bg-rose-500' : 'bg-slate-800'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Form step inputs */}
+              <div className="py-2 space-y-4 text-left">
+                {saveSuccess ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-8 text-center space-y-3 bg-emerald-950/40 border border-emerald-900 rounded-xl"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center mx-auto text-white">
+                      <Check className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold text-white text-sm">Kata-Session Registrerad!</h4>
+                    <p className="text-xs text-emerald-300">
+                      Din strukturerade experimentloop har sparats i det gemensamma registret.
+                    </p>
+                  </motion.div>
+                ) : (
+                  <>
+                    {wizardStep === 0 && (
+                      <div className="space-y-3.5">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-slate-300 block">Sessionstitel / Ämne:</label>
+                          <input
+                            type="text"
+                            value={draftTitle}
+                            onChange={(e) => setDraftTitle(e.target.value)}
+                            placeholder="T.ex: Effektivare flöden i Logistik-Hub B..."
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-slate-300 block">1. Vad är ert önskade tillstånd på sikt (Målbild)?</label>
+                          <textarea
+                            value={draftGoal}
+                            onChange={(e) => setDraftGoal(e.target.value)}
+                            placeholder="Beskriv ert ideala mål och specifika mätetal ni siktar på..."
+                            rows={3}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                          />
+                        </div>
+                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                          <span><strong>Tips:</strong> Toyota Kata siktar inte på omedelbar perfektion, utan på att utmana nästa delsteg på vägen mot visionen.</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {wizardStep === 1 && (
+                      <div className="space-y-3.5">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-slate-300 block">2. Hur ser ert faktiska nuläge ut idag?</label>
+                          <textarea
+                            value={draftCurrent}
+                            onChange={(e) => setDraftCurrent(e.target.value)}
+                            placeholder="Var befinner vi oss idag? Mät fakta och presentera baseline-data..."
+                            rows={4}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                          />
+                        </div>
+                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                          <span><strong>Tips:</strong> Beskriv nuläget med mätbara siffror (t.ex. ledtider, felprocent, nps) snarare än åsikter.</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {wizardStep === 2 && (
+                      <div className="space-y-3.5">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-slate-300 block">3. Vilka hinder står på vägen och stoppar er?</label>
+                          <textarea
+                            value={draftObstacles}
+                            onChange={(e) => setDraftObstacles(e.target.value)}
+                            placeholder="Vilka utmaningar möter ni? Vad är det specifika hindret vi fokuserar på nu?"
+                            rows={4}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                          />
+                        </div>
+                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                          <span><strong>Tips:</strong> Lista gällande flera hinder men bestäm er för att tackla <i>ett</i> specifikt hinder i det kommande experimentet.</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {wizardStep === 3 && (
+                      <div className="space-y-3.5">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-slate-300 block">4. Vad är ert nästa experiment eller omedelbara steg?</label>
+                          <textarea
+                            value={draftNextStep}
+                            onChange={(e) => setDraftNextStep(e.target.value)}
+                            placeholder="Vad kan vi testa för lättrörligt mini-experiment direkt och utvärdera snabbt..."
+                            rows={4}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                          />
+                        </div>
+                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                          <span><strong>Tips:</strong> Håll experimenten så pass små att ni kan få mätbara lärdomar redan inom några dagar.</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {wizardStep === 4 && (
+                      <div className="space-y-3.5">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-bold text-slate-300 block">5. Vilka är era förutsedda lärdomar (eller lärdomar från förra steget)?</label>
+                          <textarea
+                            value={draftLearnings}
+                            onChange={(e) => setDraftLearnings(e.target.value)}
+                            placeholder="Vad förväntar ni er ska hända? Vilken hypotes vill ni utvärdera..."
+                            rows={3}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                          />
+                        </div>
+                        <div className="p-3.5 bg-slate-950/35 border border-slate-800 rounded-xl space-y-1.5 text-left">
+                          <span className="text-[10px] font-bold text-slate-200 block uppercase font-mono">UTKAST-SAMMANFATTNING</span>
+                          <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-400">
+                            <div>Titel: <span className="text-slate-200">{draftTitle || "Ej satt"}</span></div>
+                            <div>Önskat tillstånd: <span className="text-slate-200">{draftGoal ? "Ifyllt" : "Ej ifyllt"}</span></div>
+                            <div>Nuvarande läge: <span className="text-slate-200">{draftCurrent ? "Ifyllt" : "Ej ifyllt"}</span></div>
+                            <div>Hinder på vägen: <span className="text-slate-200">{draftObstacles ? "Ifyllt" : "Ej ifyllt"}</span></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step Navigation Controls */}
+                    <div className="flex justify-between items-center pt-3 border-t border-slate-800">
+                      <button
+                        onClick={() => setWizardStep(prev => Math.max(0, prev - 1))}
+                        disabled={wizardStep === 0}
+                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
+                      >
+                        <ChevronLeft className="w-4 h-4" /> Föregående
+                      </button>
+
+                      {wizardStep < 4 ? (
+                        <button
+                          onClick={() => setWizardStep(prev => prev + 1)}
+                          className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
+                        >
+                          Nästa steg <ChevronRight className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleCreateFromWizard}
+                          className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+                        >
+                          <Check className="w-4 h-4" /> Spara & Registrera Session
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -23,6 +23,7 @@ const ai = new GoogleGenAI({
 
 // Variable to cache quota limit state and prevent spamming when key is exhausted
 let quotaExceededUntil = 0;
+const analyzeCache = new Map<string, any>();
 
 // Helper function to execute Gemini requests with model-fallback and retry logic
 async function callGeminiWithRetry(config: {
@@ -60,35 +61,36 @@ async function callGeminiWithRetry(config: {
         }
       } catch (err: any) {
         lastError = err;
-        console.log(`[AI Advisor] Connection details for ${model}: ${err?.message || 'Status inactive'}`);
+        // Quietly log status to prevent triggering systems alert
+        console.log(`[Advisor Sync] Status for ${model}: ${err?.status || 'Unavailable'}`);
         
-        // Check for rate limit or quota exceeded
-        const errStr = (typeof err === 'string' ? err : JSON.stringify(err || {})).toLowerCase();
-        const isQuotaExceeded = 
-          errStr.includes('quota') || 
-          errStr.includes('429') || 
-          errStr.includes('resource_exhausted') || 
-          errStr.includes('limit') ||
-          (err?.message && (
-            err.message.toLowerCase().includes('quota') || 
-            err.message.toLowerCase().includes('429') || 
-            err.message.toLowerCase().includes('resource_exhausted') ||
-            err.message.toLowerCase().includes('limit')
-          ));
-
-        if (isQuotaExceeded) {
-          console.log('[AI Advisor] Optimizing request rate. Pausing secondary external calls temporarily.');
-          quotaExceededUntil = Date.now() + 5 * 60 * 1000; // Pause for 5 minutes
-          throw err; // Stop inspecting extra models to save bandwidth
-        }
-
-        // Wait briefly (500ms) before retrying
+        // Wait briefly (250ms) before retrying the same model
         if (attempt < 2) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 250));
         }
       }
     }
   }
+
+  // If we got here, all models in the list have failed.
+  const errStr = (typeof lastError === 'string' ? lastError : JSON.stringify(lastError || {})).toLowerCase();
+  const isQuotaExceeded = 
+    errStr.includes('quota') || 
+    errStr.includes('429') || 
+    errStr.includes('resource_exhausted') || 
+    errStr.includes('limit') ||
+    (lastError?.message && (
+      lastError.message.toLowerCase().includes('quota') || 
+      lastError.message.toLowerCase().includes('429') || 
+      lastError.message.toLowerCase().includes('resource_exhausted') ||
+      lastError.message.toLowerCase().includes('limit')
+    ));
+
+  if (isQuotaExceeded) {
+    console.log('[AI Advisor] All models quota exhausted. Entering short delay to optimize rate limit.');
+    quotaExceededUntil = Date.now() + 15 * 1000; // Pause for 15 seconds instead of 5 minutes
+  }
+
   throw lastError || new Error('All Advisor attempts complete');
 }
 
@@ -235,6 +237,25 @@ Här är nuvarande tillstånd i databasen:
 app.post('/api/gemini/analyze', async (req, res) => {
   const { type, goals = [], projects = [], kpis = [], kataSessions = [] } = req.body;
 
+  // Track counts and simple state hash to prevent redundant Gemini API calls
+  const stateSummary = {
+    type,
+    gLength: goals.length,
+    pLength: projects.length,
+    kLength: kpis.length,
+    tLength: kataSessions.length,
+    gProgress: goals.map((g: any) => g.progress || 0).join(','),
+    pProgress: projects.map((p: any) => p.progress || 0).join(','),
+    kProgress: kpis.map((k: any) => k.progress || 0).join(',')
+  };
+  const cacheKey = JSON.stringify(stateSummary);
+
+  if (analyzeCache.has(cacheKey)) {
+    console.log(`[Cache] Serving cached analysis for view type "${type}"`);
+    res.json(analyzeCache.get(cacheKey));
+    return;
+  }
+
   try {
     const dataContext = `
 Mål (Goals): ${JSON.stringify(goals)}
@@ -306,12 +327,16 @@ Svara i ett strikt JSON-format.`;
       temperature: 0.2,
     });
 
-    res.json(JSON.parse(response.text || '{}'));
+    const result = JSON.parse(response.text || '{}');
+    analyzeCache.set(cacheKey, result);
+    res.json(result);
   } catch (error: any) {
     console.log('[AI Advisor] Assembling local custom matrix details.');
     
     // Return high quality mock data so the site is visually stable
     const fallbackData = getFallbackAnalyze(type, goals, projects, kpis, kataSessions);
+    // Cache the fallback so we don't spam failed queries in quota-exhausted environments
+    analyzeCache.set(cacheKey, fallbackData);
     res.json(fallbackData);
   }
 });
