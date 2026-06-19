@@ -479,51 +479,51 @@ export default function DashboardView({
         </div>
 
         {/* Column 4: Kata Coaching Loop Panel */}
-        <div className="bg-slate-900 text-slate-100 p-5 rounded-2xl flex flex-col justify-between shadow-xs border border-slate-800">
+        <div className="bg-white p-5 rounded-2xl flex flex-col justify-between shadow-xs border border-slate-200/80">
           <div>
-            <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-1.5">
-                <RefreshCw className="w-4 h-4 text-rose-500 animate-spin" />
-                <h3 className="font-display font-semibold text-sm text-slate-100">
+                <RefreshCw className="w-4 h-4 text-rose-500 animate-spin-slow" />
+                <h3 className="font-display font-semibold text-sm text-slate-800">
                   Kata Coaching Loop
                 </h3>
               </div>
-              <span className="text-[10px] bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded font-bold font-mono">
+              <span className="text-[10px] bg-rose-50 text-rose-600 border border-rose-100/60 px-2 py-0.5 rounded font-bold font-mono">
                 Toyota model
               </span>
             </div>
 
-            <p className="text-slate-400 text-[11px] leading-relaxed mb-4">
+            <p className="text-slate-500 text-[11px] leading-relaxed mb-4">
               Vår inbyggda förändringsloop som löser utmaningar experimentellt genom regelbundna avstämningar.
             </p>
 
             {/* List of Kata coaching questions */}
             <div className="space-y-3">
-              <div className="text-[11px] p-2 bg-slate-800/80 border border-slate-800 rounded-lg">
-                <span className="text-rose-400 font-bold block mb-0.5">1. MÅLTILLSTÅND 🎯</span>
-                <p className="text-slate-300 text-[10px] italic">"Vart vill vi ta oss på sikt?"</p>
+              <div className="text-[11px] p-2.5 bg-rose-50/50 border border-rose-100/60 rounded-xl">
+                <span className="text-rose-600 font-bold block mb-0.5">1. MÅLTILLSTÅND 🎯</span>
+                <p className="text-slate-500 text-[10px] italic">"Vart vill vi ta oss på sikt?"</p>
                 {kataSessions.length > 0 && (
-                  <p className="text-white text-[10px] font-semibold mt-1 line-clamp-1">
+                  <p className="text-slate-800 text-[10px] font-semibold mt-1 line-clamp-1">
                     {kataSessions[0].goal}
                   </p>
                 )}
               </div>
 
-              <div className="text-[11px] p-2 bg-slate-800/80 border border-slate-800 rounded-lg">
-                <span className="text-rose-400 font-bold block mb-0.5">2. NU-TILLSTÅND 🔍</span>
-                <p className="text-slate-300 text-[10px] italic">"Var befinner vi oss just nu?"</p>
+              <div className="text-[11px] p-2.5 bg-rose-50/50 border border-rose-100/60 rounded-xl">
+                <span className="text-rose-600 font-bold block mb-0.5">2. NU-TILLSTÅND 🔍</span>
+                <p className="text-slate-500 text-[10px] italic">"Var befinner vi oss just nu?"</p>
                 {kataSessions.length > 0 && (
-                  <p className="text-white text-[10px] font-semibold mt-1 line-clamp-1">
+                  <p className="text-slate-800 text-[10px] font-semibold mt-1 line-clamp-1">
                     {kataSessions[0].current}
                   </p>
                 )}
               </div>
 
-              <div className="text-[11px] p-2 bg-slate-800/80 border border-slate-800 rounded-lg">
-                <span className="text-rose-400 font-bold block mb-0.5">3. HINDER & TESTER 🧪</span>
-                <p className="text-slate-300 text-[10px] italic">"Vilka är hindren & vad testar vi?"</p>
+              <div className="text-[11px] p-2.5 bg-rose-50/50 border border-rose-100/60 rounded-xl">
+                <span className="text-rose-600 font-bold block mb-0.5">3. HINDER & TESTER 🧪</span>
+                <p className="text-slate-500 text-[10px] italic">"Vilka är hindren & vad testar vi?"</p>
                 {kataSessions.length > 0 && (
-                  <p className="text-white text-[10px] font-semibold mt-1 line-clamp-1">
+                  <p className="text-slate-800 text-[10px] font-semibold mt-1 line-clamp-1">
                     Experiment: {kataSessions[0].nextStep}
                   </p>
                 )}
@@ -531,16 +531,16 @@ export default function DashboardView({
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-800 space-y-2">
+          <div className="mt-6 pt-4 border-t border-slate-100 space-y-2">
             <button
               onClick={onStartKata}
-              className="w-full text-center text-xs py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5"
+              className="w-full text-center text-xs py-2 bg-rose-600 hover:bg-rose-750 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:shadow-md"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Starta Aktiv Kata
             </button>
             <button
               onClick={() => onNavigateToView('kata')}
-              className="w-full text-center text-xs py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium transition"
+              className="w-full text-center text-xs py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 rounded-xl font-medium transition cursor-pointer"
             >
               Se sessionhistorik ({kataSessionsCount})
             </button>

@@ -182,15 +182,15 @@ export default function KataView({
       </div>
 
       {/* Guided Coach Console with Tabs */}
-      <div className="bg-slate-900 text-slate-100 rounded-2xl shadow-md border border-slate-800 overflow-hidden">
+      <div className="bg-white text-slate-800 rounded-2xl shadow-xs border border-slate-200/80 overflow-hidden">
         {/* Tab Headers */}
-        <div className="flex border-b border-slate-800 bg-slate-950/40">
+        <div className="flex border-b border-slate-100 bg-slate-50">
           <button
             onClick={() => { setCoachingTab('guide'); }}
-            className={`flex-1 md:flex-initial px-5 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition ${
+            className={`flex-1 md:flex-initial px-5 py-3.5 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition cursor-pointer select-none ${
               coachingTab === 'guide'
-                ? 'border-rose-500 text-rose-400 bg-slate-900/10'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-rose-500 text-rose-600 bg-white'
+                : 'border-transparent text-slate-500 hover:text-slate-850 hover:bg-slate-100/30'
             }`}
           >
             <BookOpen className="w-4 h-4 text-rose-500" />
@@ -198,10 +198,10 @@ export default function KataView({
           </button>
           <button
             onClick={() => { setCoachingTab('wizard'); }}
-            className={`flex-1 md:flex-initial px-5 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition ${
+            className={`flex-1 md:flex-initial px-5 py-3.5 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition cursor-pointer select-none ${
               coachingTab === 'wizard'
-                ? 'border-rose-500 text-rose-400 bg-slate-900/10'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-rose-500 text-rose-600 bg-white'
+                : 'border-transparent text-slate-500 hover:text-slate-850 hover:bg-slate-100/30'
             }`}
           >
             <Sparkles className="w-4 h-4 text-rose-500" />
@@ -214,85 +214,85 @@ export default function KataView({
             <div className="space-y-4">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="text-left">
-                  <div className="flex items-center gap-1.5 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                  <div className="flex items-center gap-1.5 text-rose-600 font-bold text-xs uppercase tracking-wider">
                     <Award className="w-4 h-4" />
                     <span>Lärande genom vetenskapligt tänkande</span>
                   </div>
-                  <h3 className="text-sm font-bold font-display text-white mt-1 font-sans">De 5 Coaching-frågorna (Toyota Kata-mallen)</h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5 max-w-2xl leading-relaxed">
+                  <h3 className="text-sm font-bold font-display text-slate-800 mt-1">De 5 Coaching-frågorna (Toyota Kata-mallen)</h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5 max-w-2xl leading-relaxed">
                     Förbättringskatan är ett strukturerat sätt för ledare att utveckla sina team genom ständigt experimenterande mot ett önskat måltillstånd.
                   </p>
                 </div>
                 <button
                   onClick={() => { setCoachingTab('wizard'); setWizardStep(0); }}
-                  className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1 cursor-pointer"
+                  className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1 cursor-pointer whitespace-nowrap"
                 >
-                  Gå till ritbordet <ArrowRight className="w-3 h-3" />
+                  Gå till ritbordet <ArrowRight className="w-3" />
                 </button>
               </div>
 
               {/* Sequential display of the questions */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-1">
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div className="bg-slate-50/50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 1</span>
-                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Mål/Önskat tillstånd?</h5>
-                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                    <span className="text-[10px] font-bold text-rose-600 block mb-1">STAPEL 1</span>
+                    <h5 className="font-bold text-slate-800 text-xs text-left mb-1">Mål/Önskat tillstånd?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed text-left">
                       Var vill vi befinna oss på sikt? Vilket mätbart läge siktar vi på?
                     </p>
                   </div>
-                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 1</span>
+                  <span className="text-[9px] text-slate-400 font-mono italic mt-4 block">Steg 1</span>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div className="bg-slate-50/50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 2</span>
-                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Dagens Nu-läge?</h5>
-                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                    <span className="text-[10px] font-bold text-rose-600 block mb-1">STAPEL 2</span>
+                    <h5 className="font-bold text-slate-800 text-xs text-left mb-1">Dagens Nu-läge?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed text-left">
                       Vilket är vårt nuläge idag? Mät fakta, siffror och beskriv processen noga.
                     </p>
                   </div>
-                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 2</span>
+                  <span className="text-[9px] text-slate-400 font-mono italic mt-4 block">Steg 2</span>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div className="bg-slate-50/50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 3</span>
-                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Vilka är hindren?</h5>
-                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                    <span className="text-[10px] font-bold text-rose-600 block mb-1">STAPEL 3</span>
+                    <h5 className="font-bold text-slate-800 text-xs text-left mb-1">Vilka är hindren?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed text-left">
                       Vilka flaskhalsar hindrar oss från att nå målet? Vilket hinder väljer vi?
                     </p>
                   </div>
-                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 3</span>
+                  <span className="text-[9px] text-slate-400 font-mono italic mt-4 block">Steg 3</span>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div className="bg-slate-50/50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 4</span>
-                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Nästa experiment?</h5>
-                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                    <span className="text-[10px] font-bold text-rose-600 block mb-1">STAPEL 4</span>
+                    <h5 className="font-bold text-slate-800 text-xs text-left mb-1">Nästa experiment?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed text-left">
                       Vilken liten aktivitet provar vi omedelbart för att utmana hindret?
                     </p>
                   </div>
-                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 4</span>
+                  <span className="text-[9px] text-slate-400 font-mono italic mt-4 block">Steg 4</span>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div className="bg-slate-50/50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-rose-400 block mb-1">STAPEL 5</span>
-                    <h5 className="font-bold text-slate-200 text-xs text-left mb-1">Vad lärde vi oss?</h5>
-                    <p className="text-[10px] text-slate-400 leading-relaxed text-left">
+                    <span className="text-[10px] font-bold text-rose-600 block mb-1">STAPEL 5</span>
+                    <h5 className="font-bold text-slate-800 text-xs text-left mb-1">Vad lärde vi oss?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed text-left">
                       Vad hände i experimentet? Vad blev resultatet i förhållande till förhoppningen?
                     </p>
                   </div>
-                  <span className="text-[9px] text-slate-500 font-mono italic mt-4 block">Steg 5</span>
+                  <span className="text-[9px] text-slate-400 font-mono italic mt-4 block">Steg 5</span>
                 </div>
               </div>
 
               {/* Instant Template Quick Pick Section */}
-              <div className="pt-2 border-t border-slate-800 bg-slate-950/20 p-3.5 rounded-xl">
-                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 mb-2.5">
-                  <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+              <div className="pt-3 border-t border-slate-100 bg-slate-50 p-3.5 rounded-xl">
+                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 mb-2.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                   <span>KLICKA PÅ EN EXEMPELMALL FÖR ATT PRE-FILLA RITBORDET DIREKT:</span>
                 </span>
                 <div className="flex flex-wrap gap-2.5">
@@ -300,7 +300,7 @@ export default function KataView({
                     <button
                       key={idx}
                       onClick={() => applyTemplate(tpl)}
-                      className="px-3 py-2 bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-slate-700 rounded-lg text-left text-xs transition cursor-pointer flex items-center justify-between gap-1.5"
+                      className="px-3 py-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-left text-xs text-slate-700 font-medium transition cursor-pointer flex items-center justify-between gap-1.5 shadow-xs"
                     >
                       <span>{tpl.name}</span>
                       <ArrowRight className="w-3 h-3 text-slate-400" />
@@ -312,12 +312,12 @@ export default function KataView({
           ) : (
             <div className="space-y-4">
               {/* Stepper Wizard Indicator */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-150">
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-full bg-rose-600 flex items-center justify-center text-[10px] font-bold text-white">
                     {wizardStep + 1}
                   </div>
-                  <span className="text-xs font-bold text-slate-200 font-mono">
+                  <span className="text-xs font-bold text-slate-800 font-mono">
                     {wizardStep === 0 && "Steg 1: Sätt Mål & Vision"}
                     {wizardStep === 1 && "Steg 2: Analysera Nuläget"}
                     {wizardStep === 2 && "Steg 3: Identifiera Hinder"}
@@ -331,7 +331,7 @@ export default function KataView({
                     <div
                       key={step}
                       className={`w-6 h-1 rounded-full transition ${
-                        step <= wizardStep ? 'bg-rose-500' : 'bg-slate-800'
+                        step <= wizardStep ? 'bg-rose-500' : 'bg-slate-200'
                       }`}
                     />
                   ))}
@@ -344,13 +344,13 @@ export default function KataView({
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="p-8 text-center space-y-3 bg-emerald-950/40 border border-emerald-900 rounded-xl"
+                    className="p-8 text-center space-y-3 bg-emerald-50 border border-emerald-200 rounded-xl"
                   >
                     <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center mx-auto text-white">
                       <Check className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-white text-sm">Kata-Session Registrerad!</h4>
-                    <p className="text-xs text-emerald-300">
+                    <h4 className="font-bold text-emerald-950 text-sm">Kata-Session Registrerad!</h4>
+                    <p className="text-xs text-emerald-700">
                       Din strukturerade experimentloop har sparats i det gemensamma registret.
                     </p>
                   </motion.div>
@@ -359,27 +359,27 @@ export default function KataView({
                     {wizardStep === 0 && (
                       <div className="space-y-3.5">
                         <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-slate-300 block">Sessionstitel / Ämne:</label>
+                          <label className="text-xs font-bold text-slate-700 block">Sessionstitel / Ämne:</label>
                           <input
                             type="text"
                             value={draftTitle}
                             onChange={(e) => setDraftTitle(e.target.value)}
                             placeholder="T.ex: Effektivare flöden i Logistik-Hub B..."
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-rose-500 focus:bg-white transition font-sans"
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-slate-300 block">1. Vad är ert önskade tillstånd på sikt (Målbild)?</label>
+                          <label className="text-xs font-bold text-slate-700 block">1. Vad är ert önskade tillstånd på sikt (Målbild)?</label>
                           <textarea
                             value={draftGoal}
                             onChange={(e) => setDraftGoal(e.target.value)}
                             placeholder="Beskriv ert ideala mål och specifika mätetal ni siktar på..."
                             rows={3}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-rose-500 focus:bg-white transition font-sans"
                           />
                         </div>
-                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
-                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] text-slate-500 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-450 shrink-0 mt-0.5" />
                           <span><strong>Tips:</strong> Toyota Kata siktar inte på omedelbar perfektion, utan på att utmana nästa delsteg på vägen mot visionen.</span>
                         </div>
                       </div>
@@ -388,17 +388,17 @@ export default function KataView({
                     {wizardStep === 1 && (
                       <div className="space-y-3.5">
                         <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-slate-300 block">2. Hur ser ert faktiska nuläge ut idag?</label>
+                          <label className="text-xs font-bold text-slate-700 block">2. Hur ser ert faktiska nuläge ut idag?</label>
                           <textarea
                             value={draftCurrent}
                             onChange={(e) => setDraftCurrent(e.target.value)}
                             placeholder="Var befinner vi oss idag? Mät fakta och presentera baseline-data..."
                             rows={4}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-rose-500 focus:bg-white transition font-sans"
                           />
                         </div>
-                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
-                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] text-slate-500 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-455 shrink-0 mt-0.5" />
                           <span><strong>Tips:</strong> Beskriv nuläget med mätbara siffror (t.ex. ledtider, felprocent, nps) snarare än åsikter.</span>
                         </div>
                       </div>
@@ -407,17 +407,17 @@ export default function KataView({
                     {wizardStep === 2 && (
                       <div className="space-y-3.5">
                         <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-slate-300 block">3. Vilka hinder står på vägen och stoppar er?</label>
+                          <label className="text-xs font-bold text-slate-700 block">3. Vilka hinder står på vägen och stoppar er?</label>
                           <textarea
                             value={draftObstacles}
                             onChange={(e) => setDraftObstacles(e.target.value)}
                             placeholder="Vilka utmaningar möter ni? Vad är det specifika hindret vi fokuserar på nu?"
                             rows={4}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-rose-500 focus:bg-white transition font-sans"
                           />
                         </div>
-                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
-                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] text-slate-500 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-455 shrink-0 mt-0.5" />
                           <span><strong>Tips:</strong> Lista gällande flera hinder men bestäm er för att tackla <i>ett</i> specifikt hinder i det kommande experimentet.</span>
                         </div>
                       </div>
@@ -426,17 +426,17 @@ export default function KataView({
                     {wizardStep === 3 && (
                       <div className="space-y-3.5">
                         <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-slate-300 block">4. Vad är ert nästa experiment eller omedelbara steg?</label>
+                          <label className="text-xs font-bold text-slate-700 block">4. Vad är ert nästa experiment eller omedelbara steg?</label>
                           <textarea
                             value={draftNextStep}
                             onChange={(e) => setDraftNextStep(e.target.value)}
                             placeholder="Vad kan vi testa för lättrörligt mini-experiment direkt och utvärdera snabbt..."
                             rows={4}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-rose-500 focus:bg-white transition font-sans"
                           />
                         </div>
-                        <div className="p-3 bg-slate-950/40 border border-slate-800 rounded-xl text-[10px] text-slate-400 leading-normal flex gap-2">
-                          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] text-slate-500 leading-normal flex gap-2">
+                          <Info className="w-4 h-4 text-slate-455 shrink-0 mt-0.5" />
                           <span><strong>Tips:</strong> Håll experimenten så pass små att ni kan få mätbara lärdomar redan inom några dagar.</span>
                         </div>
                       </div>
@@ -445,33 +445,33 @@ export default function KataView({
                     {wizardStep === 4 && (
                       <div className="space-y-3.5">
                         <div className="space-y-1.5">
-                          <label className="text-xs font-bold text-slate-300 block">5. Vilka är era förutsedda lärdomar (eller lärdomar från förra steget)?</label>
+                          <label className="text-xs font-bold text-slate-700 block">5. Vilka är era förutsedda lärdomar (eller lärdomar från förra steget)?</label>
                           <textarea
                             value={draftLearnings}
                             onChange={(e) => setDraftLearnings(e.target.value)}
                             placeholder="Vad förväntar ni er ska hända? Vilken hypotes vill ni utvärdera..."
                             rows={3}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-rose-500 transition font-sans"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-rose-500 focus:bg-white transition font-sans"
                           />
                         </div>
-                        <div className="p-3.5 bg-slate-950/35 border border-slate-800 rounded-xl space-y-1.5 text-left">
-                          <span className="text-[10px] font-bold text-slate-200 block uppercase font-mono">UTKAST-SAMMANFATTNING</span>
-                          <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-400">
-                            <div>Titel: <span className="text-slate-200">{draftTitle || "Ej satt"}</span></div>
-                            <div>Önskat tillstånd: <span className="text-slate-200">{draftGoal ? "Ifyllt" : "Ej ifyllt"}</span></div>
-                            <div>Nuvarande läge: <span className="text-slate-200">{draftCurrent ? "Ifyllt" : "Ej ifyllt"}</span></div>
-                            <div>Hinder på vägen: <span className="text-slate-200">{draftObstacles ? "Ifyllt" : "Ej ifyllt"}</span></div>
+                        <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-left">
+                          <span className="text-[10px] font-bold text-slate-700 block uppercase font-mono">UTKAST-SAMMANFATTNING</span>
+                          <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-500">
+                            <div>Titel: <span className="text-slate-800 font-semibold">{draftTitle || "Ej satt"}</span></div>
+                            <div>Önskat tillstånd: <span className="text-slate-800 font-semibold">{draftGoal ? "Ifyllt" : "Ej ifyllt"}</span></div>
+                            <div>Nuvarande läge: <span className="text-slate-800 font-semibold">{draftCurrent ? "Ifyllt" : "Ej ifyllt"}</span></div>
+                            <div>Hinder på vägen: <span className="text-slate-800 font-semibold">{draftObstacles ? "Ifyllt" : "Ej ifyllt"}</span></div>
                           </div>
                         </div>
                       </div>
                     )}
 
                     {/* Step Navigation Controls */}
-                    <div className="flex justify-between items-center pt-3 border-t border-slate-800">
+                    <div className="flex justify-between items-center pt-3 border-t border-slate-150">
                       <button
                         onClick={() => setWizardStep(prev => Math.max(0, prev - 1))}
                         disabled={wizardStep === 0}
-                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
+                        className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
                       >
                         <ChevronLeft className="w-4 h-4" /> Föregående
                       </button>

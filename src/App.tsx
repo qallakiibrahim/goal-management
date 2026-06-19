@@ -16,7 +16,9 @@ import {
   Sparkles,
   Info,
   AlertTriangle,
-  LogOut
+  LogOut,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -86,6 +88,22 @@ export default function App() {
   // Navigation
   const [currentView, setCurrentView] = useState<string>('dashboard');
 
+  // Dark mode active theme state with LocalStorage backup
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  // Watch State changes & dynamically toggle body classes
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
   // Application database states
   const [goals, setGoals] = useState<Goal[]>([]);
   const [objectives, setObjectives] = useState<Objective[]>([]);
@@ -114,7 +132,6 @@ export default function App() {
   const [formKata, setFormKata] = useState({ title: '', date: '', goal: '', current: '', obstacles: '', nextStep: '', learnings: '', progress: 0 });
 
   // System alert displays
-  const [showDemoAlert, setShowDemoAlert] = useState(true);
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
   // Authentication & Membership States
@@ -756,10 +773,10 @@ export default function App() {
   // If loading auth state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center text-slate-200 font-sans">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-800 font-sans">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs font-mono tracking-wider text-slate-400">Verifierar behörighetsstatus...</p>
+          <div className="w-10 h-10 border-4 border-rose-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-mono tracking-wider text-slate-500">Verifierar behörighetsstatus...</p>
         </div>
       </div>
     );
@@ -780,25 +797,25 @@ export default function App() {
   // If logged in but NOT on the invitations/members register
   if (!authOfflineBypass && authUser && !isMember) {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-6 font-sans">
-        <div className="bg-slate-800 border border-slate-700 p-8 rounded-3xl max-w-md w-full shadow-2xl text-center space-y-6">
-          <div className="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto text-red-500">
+      <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-6 font-sans">
+        <div className="bg-white border border-slate-200 p-8 rounded-3xl max-w-md w-full shadow-lg text-center space-y-6">
+          <div className="w-14 h-14 bg-rose-50 border border-rose-100 rounded-full flex items-center justify-center mx-auto text-rose-600 animate-pulse">
             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0-6V9m0-2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div className="space-y-2 text-center">
-            <h3 className="text-lg font-display font-bold text-white">Åtkomst nekad</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Ditt Google-konto <strong className="text-slate-200">{authUser.email}</strong> är verifierat, men du saknar en aktiv inbjudan till denna plattform.
+            <h3 className="text-lg font-display font-bold text-slate-800">Åtkomst nekad</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Ditt Google-konto <strong className="text-slate-700">{authUser.email}</strong> är verifierat, men du saknar en aktiv inbjudan till denna plattform.
             </p>
-            <p className="text-[11px] text-indigo-400 bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-900/30 font-mono text-center">
+            <p className="text-[11px] text-rose-700 bg-rose-50 p-2.5 rounded-xl border border-rose-100/50 font-mono text-center">
               Tips: Kontakta systemets huvudadministratör och be dem lägga till din e-post.
             </p>
           </div>
           <button
             onClick={handleSignOut}
-            className="w-full py-2.5 px-4 bg-slate-700 hover:bg-slate-650 text-white rounded-xl text-xs font-semibold transition cursor-pointer"
+            className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-705 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
           >
             Logga ut / Byt konto
           </button>
@@ -834,6 +851,21 @@ export default function App() {
           
           <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 font-mono">
             <span>{new Date().toLocaleDateString('sv-SE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            
+            {/* Dark Mode Switch / Toggle Button */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-center select-none"
+              title={darkMode ? "Byt till ljust tema" : "Byt till mörkt tema"}
+              aria-label="Byt färgtema"
+            >
+              {darkMode ? (
+                <Sun className="w-4 h-4 text-amber-400 hover:scale-110 transition-transform" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-900 hover:scale-110 transition-transform" />
+              )}
+            </button>
+
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-indigo-900 text-white font-bold flex items-center justify-center font-display shadow-xs shrink-0 select-none">
                 {activeProfile.name.slice(0, 2).toUpperCase()}
@@ -877,21 +909,7 @@ export default function App() {
             </div>
           )}
 
-          {/* Demo Alert banner */}
-          {showDemoAlert && (
-            <div className="p-3 bg-indigo-900 text-indigo-50 border border-indigo-950/20 rounded-2xl flex items-center justify-between shadow-xs text-xs font-semibold select-none leading-relaxed text-left">
-              <span className="flex items-center gap-2">
-                <Sparkles className="w-4.5 h-4.5 text-amber-300 shrink-0" />
-                Interaktiv Prototyp v2.0 - All data du matar in eller justerar sparas lokalt i din webbläsares LocalStorage.
-              </span>
-              <button 
-                onClick={() => setShowDemoAlert(false)}
-                className="hover:bg-white/10 p-1 rounded-lg text-indigo-250 hover:text-white transition"
-              >
-                <X className="w-4.5 h-4.5" />
-              </button>
-            </div>
-          )}
+
 
           {/* Router views switch */}
           {currentView === 'dashboard' && (

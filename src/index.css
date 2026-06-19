@@ -27,6 +27,149 @@ body {
   color: #1e293b;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Premium Dark Mode Theme Overrides */
+html.dark body {
+  background-color: #0b0f19 !important; /* deep slate-950 black-blue space bg */
+  color: #f1f5f9 !important;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Override utility classes globally for Dark Mode */
+.dark {
+  /* Backing colors */
+  .bg-slate-50 {
+    background-color: #0b0f19 !important; /* deep slate space bg */
+  }
+  
+  .bg-white {
+    background-color: #111827 !important; /* rich charcoal-slate-900 card surface */
+  }
+  
+  .bg-slate-50\/50, .bg-slate-100\/50, .bg-slate-50\/40, .bg-slate-50\/30 {
+    background-color: #1f2937 !important; /* slate-800 containers */
+  }
+
+  .bg-slate-100 {
+    background-color: #1f2937 !important;
+  }
+  
+  /* Borders */
+  .border-slate-200,
+  .border-slate-200\/80,
+  .border-slate-150,
+  .border-slate-100,
+  .border-slate-100\/80,
+  .border-slate-100\/60,
+  .border-slate-100\/55,
+  .border-slate-200\/50,
+  .border-slate-200\/60 {
+    border-color: #1f2937 !important; /* charcoal-slate-800 borders */
+  }
+  
+  .border-l-2 {
+    border-color: #374151 !important; /* slate-700 separators */
+  }
+
+  .border-slate-100 {
+    border-color: #1f2937 !important;
+  }
+  
+  /* Standard texts colors */
+  .text-slate-950,
+  .text-slate-900,
+  .text-slate-800,
+  .text-indigo-900,
+  .text-emerald-950,
+  .text-rose-950 {
+    color: #f8fafc !important; /* crisp white headers */
+  }
+  
+  .text-slate-700,
+  .text-slate-705,
+  .text-slate-600 {
+    color: #e5e7eb !important; /* readable off-white metadata */
+  }
+  
+  .text-slate-500,
+  .text-slate-400,
+  .text-slate-455,
+  .text-slate-450 {
+    color: #9cb3c9 !important; /* clean lavender-gray description texts */
+  }
+  
+  /* Accent texts & icons in dark mode */
+  .text-indigo-600 {
+    color: #818cf8 !important; /* indigo highlighter */
+  }
+  
+  /* Balance Scorecard indicator styles */
+  .bg-indigo-50, .bg-indigo-50\/80 {
+    background-color: #1e1b4b !important; /* indigo dark-deep tint */
+    color: #c7d2fe !important;
+  }
+  
+  /* Rose/Kata loops indicator styles */
+  .bg-rose-50, .bg-rose-50\/50 {
+    background-color: #4c0519 !important; /* rose dark tint */
+    border-color: #9f1239 !important;
+  }
+  .text-rose-600 {
+    color: #fb7185 !important; /* soft pink-rose indicator */
+  }
+  
+  /* Green/Success indicator style */
+  .bg-emerald-50, .bg-emerald-50\/50 {
+    background-color: #022c22 !important; /* forest emerald bg */
+    border-color: #065f46 !important;
+  }
+  .text-emerald-700, .text-emerald-600 {
+    color: #34d399 !important; /* soft green highlighter */
+  }
+
+  /* Amber/Warning indicators */
+  .bg-amber-50 {
+    background-color: #451a03 !important; /* warning dark bg */
+    border-color: #78350f !important;
+  }
+  .text-amber-900 {
+    color: #fde047 !important;
+  }
+
+  /* Sticky Top Header */
+  header.sticky {
+    background-color: #111827 !important; /* seamless card-matching header */
+    border-color: #1f2937 !important;
+  }
+
+  /* Forms controls & input structures */
+  input[type="text"], 
+  input[type="email"], 
+  input[type="date"], 
+  input[type="number"], 
+  select, 
+  textarea {
+    background-color: #1f2937 !important; /* slate input styling */
+    border-color: #374151 !important;
+    color: #f8fafc !important;
+  }
+  
+  input::placeholder, textarea::placeholder {
+    color: #6b7280 !important;
+  }
+
+  /* Custom Hover overlays in list items */
+  .hover\:bg-slate-50:hover {
+    background-color: #1f2937 !important;
+  }
+  .hover\:bg-slate-100:hover {
+    background-color: #1f2937 !important;
+  }
 }
 
 /* Elegant custom scrollbar */
@@ -44,6 +187,14 @@ body {
   border-radius: 4px;
 }
 
+html.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
 }

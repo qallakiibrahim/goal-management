@@ -173,21 +173,21 @@ export default function AiAnalysisCard({
   const getCardStyle = () => {
     switch (type) {
       case 'dashboard':
-        return 'bg-gradient-to-br from-indigo-50/40 via-white to-slate-50/20 border-indigo-100/80';
+        return 'bg-gradient-to-br from-indigo-50/40 via-white to-slate-50/20 border-indigo-100/80 dark:from-slate-900/50 dark:via-slate-900 dark:to-slate-950/20 dark:border-slate-800/80';
       case 'bsc':
-        return 'bg-emerald-50/30 border-emerald-100';
+        return 'bg-emerald-50/30 border-emerald-100 dark:bg-emerald-950/10 dark:border-emerald-900/30';
       case 'goals':
-        return 'bg-indigo-50/30 border-indigo-100';
+        return 'bg-indigo-50/30 border-indigo-100 dark:bg-indigo-950/10 dark:border-indigo-900/30';
       case 'projects':
-        return 'bg-purple-50/30 border-purple-100';
+        return 'bg-purple-50/30 border-purple-100 dark:bg-purple-950/10 dark:border-purple-900/30';
       case 'kpis':
-        return 'bg-emerald-50/30 border-emerald-100';
+        return 'bg-emerald-50/30 border-emerald-100 dark:bg-emerald-950/10 dark:border-emerald-900/30';
       case 'kata':
-        return 'bg-rose-50/30 border-rose-100';
+        return 'bg-rose-50/30 border-rose-100 dark:bg-rose-950/10 dark:border-rose-900/30';
       case 'hierarchy':
-        return 'bg-blue-50/30 border-blue-100';
+        return 'bg-blue-50/30 border-blue-100 dark:bg-blue-950/10 dark:border-blue-900/30';
       default:
-        return 'bg-slate-50 border-slate-200';
+        return 'bg-slate-50 border-slate-200 dark:bg-slate-900 dark:border-slate-800';
     }
   };
 
@@ -278,10 +278,10 @@ export default function AiAnalysisCard({
         {/* Outer Split Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12">
           {/* Left panel: Live Stats / Observations */}
-          <div className="lg:col-span-5 p-5 bg-slate-50/80 border-r border-slate-100 flex flex-col justify-between">
+          <div className="lg:col-span-5 p-5 bg-slate-50/80 dark:bg-slate-900/40 border-r border-slate-100 dark:border-slate-800/80 civil-divider flex flex-col justify-between">
             <div className="space-y-4">
-              <h3 className="font-display font-medium text-xs text-indigo-950 uppercase tracking-wider flex items-center gap-2 font-semibold">
-                <Brain className="w-4 h-4 text-indigo-700 shrink-0" /> Aktuella Observationer
+              <h3 className="font-display font-medium text-xs text-indigo-950 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-2 font-semibold">
+                <Brain className="w-4 h-4 text-indigo-700 dark:text-indigo-400 shrink-0" /> Aktuella Observationer
               </h3>
               
               <ul className="space-y-3">
@@ -292,24 +292,24 @@ export default function AiAnalysisCard({
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
                       key={idx} 
-                      className="flex gap-2.5 items-start text-xs text-slate-600 leading-normal"
+                      className="flex gap-2.5 items-start text-xs text-slate-600 dark:text-slate-300 leading-normal"
                     >
-                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <span>{insight}</span>
                     </motion.li>
                   ))
                 ) : (
                   <>
-                    <li className="flex gap-2.5 items-start text-xs text-slate-600 leading-normal">
-                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <li className="flex gap-2.5 items-start text-xs text-slate-600 dark:text-slate-300 leading-normal">
+                      <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <span><strong>Hälsoindex:</strong> Strategiskt måluppfyllnadsindex ligger på <strong>{avgKpiProgress}%</strong> över {kpis.length} mätetal.</span>
                     </li>
-                    <li className="flex gap-2.5 items-start text-xs text-slate-600 leading-normal">
-                      <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <li className="flex gap-2.5 items-start text-xs text-slate-600 dark:text-slate-300 leading-normal">
+                      <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
                       <span><strong>Metrisk brist:</strong> Lärande och välmående (Balanced Scorecard 4:e kolumnen) saknar aktiva mätvärden.</span>
                     </li>
-                    <li className="flex gap-2.5 items-start text-xs text-slate-600 leading-normal">
-                      <CheckCircle className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                    <li className="flex gap-2.5 items-start text-xs text-slate-600 dark:text-slate-300 leading-normal">
+                      <CheckCircle className="w-4 h-4 text-indigo-650 dark:text-indigo-400 shrink-0 mt-0.5" />
                       <span><strong>Experimentell frekvens:</strong> {kataSessions.length} inskickade Toyota Kata vetenskapssteg.</span>
                     </li>
                   </>
@@ -318,16 +318,16 @@ export default function AiAnalysisCard({
             </div>
 
             {/* Micro visual scorecard tracking indicator */}
-            <div className="mt-8 pt-4 border-t border-slate-200/50 space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="mt-8 pt-4 border-t border-slate-200/50 dark:border-slate-800 space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                 <span>Styrningsbalans</span>
-                <span className="text-indigo-950 font-mono font-bold">
+                <span className="text-indigo-950 dark:text-indigo-300 font-mono font-bold">
                   {Math.round(((goals.length > 0 ? 1 : 0) + (projects.length > 0 ? 1 : 0) + (kpis.length > 0 ? 1 : 0) + (kataSessions.length > 0 ? 1 : 0)) / 4 * 100)}%
                 </span>
               </div>
-              <div className="h-1.5 bg-slate-200/60 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-slate-200/60 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div 
-                  className="bg-indigo-650 h-full rounded-full transition-all duration-300"
+                  className="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full transition-all duration-300"
                   style={{ width: `${((goals.length > 0 ? 1 : 0) + (projects.length > 0 ? 1 : 0) + (kpis.length > 0 ? 1 : 0) + (kataSessions.length > 0 ? 1 : 0)) / 4 * 100}%` }}
                 ></div>
               </div>
@@ -345,18 +345,18 @@ export default function AiAnalysisCard({
                   exit={{ opacity: 0 }}
                   className="space-y-4 flex flex-col items-center justify-center text-center py-6 h-full"
                 >
-                  <div className="p-4 bg-emerald-100 rounded-full text-emerald-700 shadow-md">
+                  <div className="p-4 bg-emerald-100 dark:bg-emerald-950/40 rounded-full text-emerald-700 dark:text-emerald-400 shadow-md">
                     <Trophy className="w-8 h-8" />
                   </div>
                   <div>
-                    <h4 className="font-display font-bold text-slate-800 text-sm">Flödet slutfört! Utmärkt strategi-arbete</h4>
-                    <p className="text-xs text-slate-500 mt-1 max-w-sm leading-relaxed mx-auto">
+                    <h4 className="font-display font-bold text-slate-800 dark:text-slate-100 text-sm">Flödet slutfört! Utmärkt strategi-arbete</h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm leading-relaxed mx-auto">
                       Du har genomfört systemoptimeringar för din organisation. Dina framsteg är sparade och mätetalen visas nu live i helhetsmatrisen!
                     </p>
                   </div>
                   <button
                     onClick={() => setCompletedSteps({})}
-                    className="mt-2 text-xs px-3.5 py-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl font-bold cursor-pointer transition"
+                    className="mt-2 text-xs px-3.5 py-1.5 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl font-bold cursor-pointer transition"
                   >
                     Nollställ och kör igen
                   </button>
@@ -372,11 +372,11 @@ export default function AiAnalysisCard({
                 >
                   {/* Step bubble header */}
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-lg uppercase tracking-wider">
+                    <span className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-lg uppercase tracking-wider">
                       Steg {activeStep + 1} av {list.length}
                     </span>
                     {completedSteps[activeStep] && (
-                      <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
+                      <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
                         <Check className="w-3.5 h-3.5" /> Genomförd
                       </span>
                     )}
@@ -384,27 +384,27 @@ export default function AiAnalysisCard({
 
                   {/* Objective details */}
                   <div className="space-y-2">
-                    <h4 className="font-display font-extrabold text-sm text-slate-800 tracking-tight flex items-center gap-1.5">
+                    <h4 className="font-display font-extrabold text-sm text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
                       <Lightbulb className="w-4.5 h-4.5 text-amber-500 shrink-0" /> {currentRec.title}
                     </h4>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                       {currentRec.description}
                     </p>
                   </div>
 
                   {/* Interactive Action Builder Card */}
                   <div className="pt-2">
-                    <div className="p-3 bg-indigo-500/5 rounded-2xl border border-indigo-100/50 p-4 space-y-3">
+                    <div className="p-3 bg-indigo-500/5 dark:bg-indigo-950/10 rounded-2xl border border-indigo-100/50 dark:border-indigo-950/20 p-4 space-y-3">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <span className="text-[9px] font-extrabold text-indigo-900 block tracking-wider uppercase">Automatisk Inmatningsmall</span>
-                          <span className="text-[11px] text-slate-600 leading-relaxed font-sans">
+                          <span className="text-[9px] font-extrabold text-indigo-900 dark:text-indigo-350 block tracking-wider uppercase">Automatisk Inmatningsmall</span>
+                          <span className="text-[11px] text-slate-600 dark:text-slate-350 leading-relaxed font-sans">
                             {activeStep === 0 && "Inmatning: Nytt lärande-nyckeltal (8.0 h mål, 4.8 h nuvarande) skrivs till databasen."}
                             {activeStep === 1 && "Inmatning: Toyota Kata experimentsession för tidsavsättning i projektet."}
                             {activeStep === 2 && "Inmatning: Kopplat taktiskt fokusprojekt ('Medarbetarlyft och Innovationssprintar')."}
                           </span>
                         </div>
-                        <span className="text-xs text-indigo-400 font-mono mt-1 font-semibold">1-klick</span>
+                        <span className="text-xs text-indigo-400 dark:text-indigo-400 font-mono mt-1 font-semibold">1-klick</span>
                       </div>
 
                       <button
@@ -413,7 +413,7 @@ export default function AiAnalysisCard({
                         className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold transition duration-200 flex items-center justify-center gap-2 cursor-pointer ${
                           completedSteps[activeStep]
                             ? 'bg-emerald-500 text-white shadow-inner pointer-events-none'
-                            : 'bg-indigo-900 text-white hover:bg-slate-900 shadow-md active:scale-[0.98]'
+                            : 'bg-indigo-900 text-white hover:bg-slate-900 dark:hover:bg-slate-800 shadow-md active:scale-[0.98]'
                         }`}
                       >
                         {completedSteps[activeStep] ? (
@@ -435,7 +435,7 @@ export default function AiAnalysisCard({
                           initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -5 }}
-                          className="mt-2.5 text-[10px] text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2 flex items-center justify-center gap-1.5 font-semibold text-center"
+                          className="mt-2.5 text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/5 border border-emerald-500/20 dark:border-emerald-500/10 rounded-lg p-2 flex items-center justify-center gap-1.5 font-semibold text-center"
                         >
                           🎉 <strong>Sparat lokalt!</strong> Ändringen har synkroniserats till din organisationsdatabas.
                         </motion.div>
@@ -447,7 +447,7 @@ export default function AiAnalysisCard({
             </AnimatePresence>
 
             {/* Step navigation controls */}
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-4">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between mt-4">
               <div className="flex gap-1">
                 {list.map((_, idx) => (
                   <button
@@ -455,10 +455,10 @@ export default function AiAnalysisCard({
                     onClick={() => setActiveStep(idx)}
                     className={`w-6 h-1 rounded-full transition-all ${
                       activeStep === idx 
-                        ? 'bg-indigo-900 w-8' 
+                        ? 'bg-indigo-900 dark:bg-indigo-500 w-8' 
                         : completedSteps[idx] 
                           ? 'bg-emerald-400' 
-                          : 'bg-slate-200 hover:bg-slate-300'
+                          : 'bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700'
                     }`}
                   ></button>
                 ))}
@@ -468,14 +468,14 @@ export default function AiAnalysisCard({
                 <button
                   disabled={activeStep === 0}
                   onClick={() => setActiveStep(prev => prev - 1)}
-                  className="p-1 px-2.5 border border-slate-200/80 rounded-lg text-slate-500 hover:bg-slate-50 transition text-xs flex items-center gap-1 disabled:opacity-30 disabled:pointer-events-none"
+                  className="p-1 px-2.5 border border-slate-200/80 dark:border-slate-800 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs flex items-center gap-1 disabled:opacity-30 disabled:pointer-events-none"
                 >
                   <ChevronLeft className="w-4 h-4" /> Bakåt
                 </button>
                 <button
                   disabled={activeStep === list.length - 1}
                   onClick={() => setActiveStep(prev => prev + 1)}
-                  className="p-1 px-2.5 border border-slate-200/80 rounded-lg text-slate-500 hover:bg-slate-50 transition text-xs flex items-center gap-1 disabled:opacity-30 disabled:pointer-events-none"
+                  className="p-1 px-2.5 border border-slate-200/80 dark:border-slate-800 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-xs flex items-center gap-1 disabled:opacity-30 disabled:pointer-events-none"
                 >
                   Nästa <ChevronRight className="w-4 h-4" />
                 </button>
@@ -495,10 +495,10 @@ export default function AiAnalysisCard({
 
     return (
       <div className="p-4 flex gap-3 items-start">
-        <Sparkles className="w-5 h-5 text-indigo-650 shrink-0 mt-0.5" />
+        <Sparkles className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <h4 className="text-xs font-bold text-slate-800">Strategisk rådgivning ({type})</h4>
-          <p className="text-xs text-slate-600 leading-relaxed">
+          <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">Strategisk rådgivning ({type})</h4>
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
             Se till att synkronisera dina registreringar fortlöpande. Sätt SMARTA nyckeltal för att automatiskt generera djupa AI-rekommendationer från molnet.
           </p>
         </div>
@@ -519,13 +519,13 @@ export default function AiAnalysisCard({
     return (
       <div className="p-5 flex flex-col md:flex-row gap-6">
         <div className="flex-1 space-y-3">
-          <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-            <Sparkles className="w-4.5 h-4.5 text-indigo-650" /> {analysis.title || 'Strategisk Analys'}
+          <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+            <Sparkles className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" /> {analysis.title || 'Strategisk Analys'}
           </h4>
-          <ul className="space-y-2 text-xs text-slate-600 font-sans">
+          <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-350 font-sans">
             {insights.map((insight: string, idx: number) => (
               <li key={idx} className="flex gap-2 items-start leading-relaxed text-left">
-                <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                 <span>{insight}</span>
               </li>
             ))}
@@ -533,9 +533,9 @@ export default function AiAnalysisCard({
         </div>
 
         {analysis.recommendation && (
-          <div className="md:w-1/3 p-4 bg-indigo-500/5 border border-indigo-100/50 rounded-xl space-y-2.5 flex flex-col justify-center text-left">
-            <span className="font-extrabold text-indigo-900 text-[10px] uppercase tracking-wider block">AI-Rekommendation:</span>
-            <p className="text-[11px] text-slate-600 leading-relaxed">
+          <div className="md:w-1/3 p-4 bg-indigo-505 dark:bg-indigo-950/10 border border-indigo-100/50 dark:border-indigo-950/20 rounded-xl space-y-2.5 flex flex-col justify-center text-left">
+            <span className="font-extrabold text-indigo-900 dark:text-indigo-300 text-[10px] uppercase tracking-wider block">AI-Rekommendation:</span>
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
               {analysis.recommendation}
             </p>
           </div>
@@ -548,7 +548,7 @@ export default function AiAnalysisCard({
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-2xl border bg-white shadow-sm overflow-hidden transition-all duration-300 ${getCardStyle()}`}
+      className={`rounded-2xl border bg-white dark:bg-slate-900/60 shadow-sm overflow-hidden transition-all duration-300 ${getCardStyle()}`}
     >
       <AnimatePresence mode="wait">
         {loading ? (
@@ -557,10 +557,10 @@ export default function AiAnalysisCard({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="p-12 flex flex-col items-center justify-center gap-3 text-slate-500 text-xs text-center"
+            className="p-12 flex flex-col items-center justify-center gap-3 text-slate-500 dark:text-slate-400 text-xs text-center"
           >
-            <Loader className="w-5 h-5 text-indigo-600 animate-spin" />
-            <span className="font-bold font-display uppercase tracking-wider text-[10px] text-slate-600">Uppdaterar strategiskt förbättringsflöde...</span>
+            <Loader className="w-5 h-5 text-indigo-600 dark:text-indigo-400 animate-spin" />
+            <span className="font-bold font-display uppercase tracking-wider text-[10px] text-slate-650 dark:text-slate-350">Uppdaterar strategiskt förbättringsflöde...</span>
           </motion.div>
         ) : (
           <motion.div
