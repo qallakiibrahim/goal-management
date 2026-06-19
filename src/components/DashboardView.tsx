@@ -258,20 +258,20 @@ export default function DashboardView({
         </div>
 
         {/* Columns 2-4: Interactive Alignment Hierarchy Path Tree */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="font-display font-semibold text-slate-800 text-sm">
+                <h3 className="font-display font-semibold text-slate-800 dark:text-slate-100 text-sm">
                   Interaktiv Målkedja (Strategy Alignment Tree)
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Välj en strategisk målvision mätt ovan för att filtrera och visualisera kedjan hela vägen ner till de dagliga uppgifterna.
                 </p>
               </div>
               <button 
                 onClick={() => onNavigateToView('hierarchy-editor')}
-                className="text-xs px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-lg text-indigo-700 font-semibold transition flex items-center gap-1"
+                className="text-xs px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-lg text-indigo-700 font-semibold transition flex items-center gap-1 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 dark:border-indigo-800/40 dark:text-indigo-300"
               >
                 <Plus className="w-3.5 h-3.5" /> Skapa Nivå
               </button>
@@ -279,8 +279,8 @@ export default function DashboardView({
 
             {/* Step 1: Goal Selection Card */}
             <div className="space-y-4">
-              <div className="text-xs font-semibold uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
-                <Target className="w-3.5 h-3.5 text-indigo-900" />
+              <div className="text-xs font-semibold uppercase text-slate-400 dark:text-slate-500 tracking-wider flex items-center gap-1.5">
+                <Target className="w-3.5 h-3.5 text-indigo-900 dark:text-indigo-400" />
                 <span>Steg 1: Goal (Målvision)</span>
               </div>
               
@@ -299,8 +299,8 @@ export default function DashboardView({
                     }}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                       selectedGoalId === g.id
-                        ? 'bg-indigo-900 text-white shadow-xs'
-                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100'
+                        ? 'bg-indigo-900 text-white shadow-xs dark:bg-indigo-600 dark:text-white'
+                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-100 dark:bg-slate-800/60 dark:border-slate-700/80 dark:text-slate-300 dark:hover:bg-slate-700'
                     }`}
                   >
                     {g.title}
@@ -309,32 +309,32 @@ export default function DashboardView({
               </div>
 
               {/* Dynamic Strategy Map Visual blocks */}
-              <div className="space-y-3.5 border-l-2 border-slate-100 pl-4 ml-2.5 mt-2">
+              <div className="space-y-3.5 border-l-2 border-slate-100 dark:border-slate-800/70 pl-4 ml-2.5 mt-2">
                 
                 {/* Visual block showing active goal */}
                 {goals.find(g => g.id === selectedGoalId) && (
-                  <div className="bg-indigo-900 text-white p-3 rounded-xl">
+                  <div className="bg-indigo-900 dark:bg-indigo-950/50 dark:border dark:border-indigo-800/40 text-white p-3 rounded-xl">
                     <div className="flex justify-between items-start text-xs">
-                      <span className="font-bold flex items-center gap-1">
+                      <span className="font-bold flex items-center gap-1 text-white dark:text-indigo-200">
                         <Target className="w-3 h-3 text-amber-400" />
                         {goals.find(g => g.id === selectedGoalId)?.title}
                       </span>
-                      <span className="bg-white/20 px-2 py-0.5 rounded font-bold font-mono">
+                      <span className="bg-white/20 dark:bg-indigo-900/60 px-2 py-0.5 rounded font-bold font-mono text-white dark:text-indigo-250">
                         {goals.find(g => g.id === selectedGoalId)?.progress}%
                       </span>
                     </div>
-                    <p className="text-[11px] text-indigo-100 mt-1">
+                    <p className="text-[11px] text-indigo-100 dark:text-indigo-300 mt-1">
                       {goals.find(g => g.id === selectedGoalId)?.description}
                     </p>
-                    <div className="text-[10px] text-amber-200 mt-1 font-mono">
+                    <div className="text-[10px] text-amber-200 dark:text-amber-400 mt-1 font-mono">
                       Mål-KPI: {goals.find(g => g.id === selectedGoalId)?.kpi}
                     </div>
                   </div>
                 )}
 
                 {/* Step 2: Goal -> Objective */}
-                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 pt-1">
-                  <Flag className="w-3 h-3 text-slate-500" />
+                <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1 pt-1">
+                  <Flag className="w-3 h-3 text-slate-500 dark:text-slate-400" />
                   <span>Steg 2: Objective (Målsättning)</span>
                 </div>
                 
@@ -346,57 +346,57 @@ export default function DashboardView({
                         onClick={() => setSelectedObjectiveId(obj.id)}
                         className={`p-3 rounded-xl border text-left cursor-pointer transition ${
                           activeObjective?.id === obj.id
-                            ? 'bg-indigo-50 border-indigo-200 text-slate-800'
-                            : 'bg-slate-50 hover:bg-slate-100/80 border-slate-100 text-slate-600'
+                            ? 'bg-indigo-50 border-indigo-200 text-slate-800 dark:bg-indigo-950/40 dark:border-indigo-850/80 dark:text-slate-100'
+                            : 'bg-slate-50 hover:bg-slate-100/80 border-slate-100 text-slate-600 dark:bg-slate-800/40 dark:hover:bg-slate-700/60 dark:border-slate-800 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex justify-between items-center text-xs font-semibold">
-                          <span className="flex items-center gap-1.5 font-bold">
-                            <Flag className="w-3 h-3 text-indigo-900" />
+                          <span className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
+                            <Flag className="w-3 h-3 text-indigo-900 dark:text-indigo-400" />
                             {obj.title}
                           </span>
-                          <span className="font-mono bg-slate-200/50 px-1.5 py-0.5 rounded-sm">
+                          <span className="font-mono bg-slate-200/50 dark:bg-slate-800 px-1.5 py-0.5 rounded-sm dark:text-slate-300Shared">
                             {obj.progress}%
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1">
+                        <p className="text-[11px] text-slate-500 dark:text-slate-450 mt-1">
                           {obj.description}
                         </p>
-                        <div className="text-[10px] text-indigo-700 mt-1.5 font-mono">
+                        <div className="text-[10px] text-indigo-700 dark:text-indigo-400 mt-1.5 font-mono">
                           Mätetal: {obj.kpi}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[11px] text-slate-400 italic">
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 italic">
                     Inga tillagda målsättningar för detta mål. Skapa en i Redigeraren!
                   </p>
                 )}
 
                 {/* Step 3: Objective -> Project */}
-                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 pt-2">
-                  <Briefcase className="w-3 h-3 text-slate-500" />
+                <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1 pt-2">
+                  <Briefcase className="w-3 h-3 text-slate-500 dark:text-slate-400" />
                   <span>Steg 3: Projects (Projekt)</span>
                 </div>
 
                 {activeProject ? (
-                  <div className="p-3 bg-violet-50/50 border border-violet-100 rounded-xl text-left">
-                    <div className="flex justify-between items-center text-xs font-semibold text-violet-900">
+                  <div className="p-3 bg-violet-50/50 border border-violet-100 dark:bg-purple-950/20 dark:border-purple-900/40 rounded-xl text-left">
+                    <div className="flex justify-between items-center text-xs font-semibold text-violet-900 dark:text-purple-300">
                       <span className="flex items-center gap-1 font-bold">
-                        <Briefcase className="w-3 h-3" />
+                        <Briefcase className="w-3 h-3 text-violet-700 dark:text-purple-400" />
                         {activeProject.title}
                       </span>
-                      <span className="bg-violet-100 font-mono text-violet-700 px-1.5 py-0.5 rounded-sm">
+                      <span className="bg-violet-100 dark:bg-purple-900/45 font-mono text-violet-700 dark:text-purple-300 px-1.5 py-0.5 rounded-sm">
                         {activeProject.progress}%
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                       {activeProject.description}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-[11px] text-slate-400 italic">
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 italic">
                     Inga projekt direkt kopplade till den valda målsättningen.
                   </p>
                 )}
@@ -406,23 +406,23 @@ export default function DashboardView({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-2">
                     {/* Initiative section */}
                     <div className="space-y-1.5">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                         Steg 4: Initiatives
                       </div>
                       {activeInitiative ? (
-                        <div className="p-2.5 bg-blue-50/60 border border-blue-100 rounded-xl text-left">
-                          <h4 className="text-[11px] font-bold text-blue-900 leading-tight">
+                        <div className="p-2.5 bg-blue-50/60 border border-blue-100 dark:bg-blue-950/20 dark:border-blue-900/40 rounded-xl text-left">
+                          <h4 className="text-[11px] font-bold text-blue-900 dark:text-blue-300 leading-tight">
                             {activeInitiative.title}
                           </h4>
-                          <p className="text-[10px] text-slate-500 mt-1 leading-normal">
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">
                             {activeInitiative.description}
                           </p>
-                          <div className="mt-1.5 text-[9px] text-blue-800 font-mono bg-blue-100 px-1.5 py-0.5 rounded inline-block">
+                          <div className="mt-1.5 text-[9px] text-blue-800 dark:text-blue-300 font-mono bg-blue-100 dark:bg-blue-900/40 px-1.5 py-0.5 rounded inline-block">
                             Mätval: {activeInitiative.kpi}
                           </div>
                         </div>
                       ) : (
-                        <div className="p-2 bg-slate-50 rounded-lg text-[10px] text-slate-400 italic">
+                        <div className="p-2 bg-slate-50 dark:bg-slate-800/40 dark:border dark:border-slate-800/30 rounded-lg text-[10px] text-slate-400 dark:text-slate-500 italic">
                           Inga specifika initiativ definierade.
                         </div>
                       )}
@@ -430,7 +430,7 @@ export default function DashboardView({
 
                     {/* Operational Tasks list */}
                     <div className="space-y-1.5">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                         Steg 5: Tasks (Kopplade Uppgifter)
                       </div>
                       {activeTasks.length > 0 ? (
@@ -438,15 +438,15 @@ export default function DashboardView({
                           {activeTasks.map(t => (
                             <div 
                               key={t.id}
-                              className="flex items-start gap-1.5 text-[10px] p-1.5 bg-slate-50 rounded-lg border border-slate-100"
+                              className="flex items-start gap-1.5 text-[10px] p-1.5 bg-slate-50 border border-slate-100 dark:bg-slate-800/40 dark:border-slate-850 rounded-lg"
                             >
-                              <CheckSquare className={`w-3.5 h-3.5 shrink-0 ${t.completed ? 'text-emerald-600' : 'text-slate-300'}`} />
+                              <CheckSquare className={`w-3.5 h-3.5 shrink-0 ${t.completed ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-300 dark:text-slate-650'}`} />
                               <div className="leading-tight">
-                                <p className={`font-medium ${t.completed ? 'line-through text-slate-400' : 'text-slate-700'}`}>
+                                <p className={`font-medium ${t.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'}`}>
                                   {t.title}
                                 </p>
                                 {t.kpi && t.completed && (
-                                  <span className="text-[8px] text-emerald-700 font-mono">
+                                  <span className="text-[8px] text-emerald-700 dark:text-emerald-400 font-mono">
                                     ✓ {t.kpi}
                                   </span>
                                 )}
@@ -455,7 +455,7 @@ export default function DashboardView({
                           ))}
                         </div>
                       ) : (
-                        <div className="p-2 bg-slate-50 rounded-lg text-[10px] text-slate-400 italic">
+                        <div className="p-2 bg-slate-50 dark:bg-slate-800/40 dark:border dark:border-slate-800/30 rounded-lg text-[10px] text-slate-400 dark:text-slate-500 italic">
                           Inga uppgifter i detta projekt.
                         </div>
                       )}
@@ -467,11 +467,11 @@ export default function DashboardView({
             </div>
           </div>
 
-          <div className="border-t border-slate-100/80 pt-4 mt-6 text-xs text-slate-500 flex justify-between items-center">
+          <div className="border-t border-slate-100/80 dark:border-slate-800 pt-4 mt-6 text-xs text-slate-500 flex justify-between items-center">
             <span>Filter aktivt: Visar kedjan baserat på <strong>{goals.find(g => g.id === selectedGoalId)?.title}</strong></span>
             <button 
               onClick={() => onNavigateToView('projects')}
-              className="text-indigo-900 font-semibold hover:underline flex items-center gap-0.5"
+              className="text-indigo-900 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-0.5"
             >
               Till Projektlista <ArrowRight className="w-3.5 h-3.5" />
             </button>
@@ -479,51 +479,51 @@ export default function DashboardView({
         </div>
 
         {/* Column 4: Kata Coaching Loop Panel */}
-        <div className="bg-white p-5 rounded-2xl flex flex-col justify-between shadow-xs border border-slate-200/80">
+        <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl flex flex-col justify-between shadow-xs border border-slate-200/80 dark:border-slate-800">
           <div>
-            <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-1.5">
                 <RefreshCw className="w-4 h-4 text-rose-500 animate-spin-slow" />
-                <h3 className="font-display font-semibold text-sm text-slate-800">
+                <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100">
                   Kata Coaching Loop
                 </h3>
               </div>
-              <span className="text-[10px] bg-rose-50 text-rose-600 border border-rose-100/60 px-2 py-0.5 rounded font-bold font-mono">
+              <span className="text-[10px] bg-rose-50 dark:bg-rose-950/45 text-rose-600 dark:text-rose-450 border border-rose-100/60 dark:border-rose-900/40 px-2 py-0.5 rounded font-bold font-mono">
                 Toyota model
               </span>
             </div>
 
-            <p className="text-slate-500 text-[11px] leading-relaxed mb-4">
+            <p className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed mb-4">
               Vår inbyggda förändringsloop som löser utmaningar experimentellt genom regelbundna avstämningar.
             </p>
 
             {/* List of Kata coaching questions */}
             <div className="space-y-3">
-              <div className="text-[11px] p-2.5 bg-rose-50/50 border border-rose-100/60 rounded-xl">
-                <span className="text-rose-600 font-bold block mb-0.5">1. MÅLTILLSTÅND 🎯</span>
-                <p className="text-slate-500 text-[10px] italic">"Vart vill vi ta oss på sikt?"</p>
+              <div className="text-[11px] p-2.5 bg-rose-50/50 dark:bg-rose-950/15 border border-rose-100/60 dark:border-rose-900/30 rounded-xl">
+                <span className="text-rose-600 dark:text-rose-450 font-bold block mb-0.5">1. MÅLTILLSTÅND 🎯</span>
+                <p className="text-slate-500 dark:text-slate-405 text-[10px] italic">"Vart vill vi ta oss på sikt?"</p>
                 {kataSessions.length > 0 && (
-                  <p className="text-slate-800 text-[10px] font-semibold mt-1 line-clamp-1">
+                  <p className="text-slate-800 dark:text-slate-200 text-[10px] font-semibold mt-1 line-clamp-1">
                     {kataSessions[0].goal}
                   </p>
                 )}
               </div>
 
-              <div className="text-[11px] p-2.5 bg-rose-50/50 border border-rose-100/60 rounded-xl">
-                <span className="text-rose-600 font-bold block mb-0.5">2. NU-TILLSTÅND 🔍</span>
-                <p className="text-slate-500 text-[10px] italic">"Var befinner vi oss just nu?"</p>
+              <div className="text-[11px] p-2.5 bg-rose-50/50 dark:bg-rose-950/15 border border-rose-100/60 dark:border-rose-900/30 rounded-xl">
+                <span className="text-rose-600 dark:text-rose-450 font-bold block mb-0.5">2. NU-TILLSTÅND 🔍</span>
+                <p className="text-slate-500 dark:text-slate-405 text-[10px] italic">"Var befinner vi oss just nu?"</p>
                 {kataSessions.length > 0 && (
-                  <p className="text-slate-800 text-[10px] font-semibold mt-1 line-clamp-1">
+                  <p className="text-slate-800 dark:text-slate-200 text-[10px] font-semibold mt-1 line-clamp-1">
                     {kataSessions[0].current}
                   </p>
                 )}
               </div>
 
-              <div className="text-[11px] p-2.5 bg-rose-50/50 border border-rose-100/60 rounded-xl">
-                <span className="text-rose-600 font-bold block mb-0.5">3. HINDER & TESTER 🧪</span>
-                <p className="text-slate-500 text-[10px] italic">"Vilka är hindren & vad testar vi?"</p>
+              <div className="text-[11px] p-2.5 bg-rose-50/50 dark:bg-rose-950/15 border border-rose-100/60 dark:border-rose-900/30 rounded-xl">
+                <span className="text-rose-600 dark:text-rose-450 font-bold block mb-0.5">3. HINDER & TESTER 🧪</span>
+                <p className="text-slate-500 dark:text-slate-405 text-[10px] italic">"Vilka är hindren & vad testar vi?"</p>
                 {kataSessions.length > 0 && (
-                  <p className="text-slate-800 text-[10px] font-semibold mt-1 line-clamp-1">
+                  <p className="text-slate-800 dark:text-slate-200 text-[10px] font-semibold mt-1 line-clamp-1">
                     Experiment: {kataSessions[0].nextStep}
                   </p>
                 )}
@@ -531,16 +531,16 @@ export default function DashboardView({
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-100 space-y-2">
+          <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
             <button
               onClick={onStartKata}
-              className="w-full text-center text-xs py-2 bg-rose-600 hover:bg-rose-750 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:shadow-md"
+              className="w-full text-center text-xs py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:shadow-md"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Starta Aktiv Kata
             </button>
             <button
               onClick={() => onNavigateToView('kata')}
-              className="w-full text-center text-xs py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 rounded-xl font-medium transition cursor-pointer"
+              className="w-full text-center text-xs py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 rounded-xl font-medium transition cursor-pointer dark:bg-slate-800/60 dark:hover:bg-slate-705 dark:border-slate-700 dark:text-slate-300"
             >
               Se sessionhistorik ({kataSessionsCount})
             </button>
