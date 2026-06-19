@@ -126,7 +126,7 @@ export default function App() {
   });
   const [members, setMembers] = useState<Member[]>([]);
 
-  // 1. Initial State bootstrapping with Firebase Realtime Sync + Local Backup
+  // 1. Initial State bootstrapping with Local Backup (runs once on mount)
   useEffect(() => {
     // Force immediate local storage load for zero empty-screen flash
     const localGoals = localStorage.getItem('goals');
@@ -148,8 +148,32 @@ export default function App() {
     if (localKata) setKataSessions(JSON.parse(localKata));
     if (localProfile) setUserProfile(JSON.parse(localProfile));
     if (localMembers) setMembers(JSON.parse(localMembers));
+  }, []);
 
-    // Initialize cloud syncing
+  // 2. Auth State Monitoring (runs once on mount)
+  useEffect(() => {
+    const authInstance = getFirebaseAuth();
+    const unsubAuth = onAuthStateChanged(authInstance, (user) => {
+      setAuthUser(user as FirebaseUser);
+      setAuthLoading(false);
+    }, (err) => {
+      console.error('onAuthStateChanged error:', err);
+      setAuthLoading(false);
+    });
+
+    return () => {
+      unsubAuth();
+    };
+  }, []);
+
+  // 3. Real-time Firebase Syncing & Bootstrapping (triggered only when authenticated and online)
+  useEffect(() => {
+    // If we're bypassing auth offline, or if we don't have a logged-in user yet,
+    // do NOT establish realtime stream listeners to Firestore to avoid permission-denied warnings.
+    if (authOfflineBypass || !authUser) {
+      return;
+    }
+
     const db = getFirebaseDb();
     let unsubGoals: () => void = () => {};
     let unsubObjectives: () => void = () => {};
@@ -168,7 +192,7 @@ export default function App() {
       }
     };
 
-    // 1. Run bootstrap in background, non-blocking
+    // Run remote bootstrap in background, non-blocking
     bootstrapFirestore()
       .then(() => {
         console.log('[Firestore] Bootstrapping completed successfully.');
@@ -177,7 +201,7 @@ export default function App() {
         console.warn('[Firestore] Bootstrap process failed or restricted (listeners will still register):', err);
       });
 
-    // 2. Set up realtime listeners immediately and independently
+    // Set up realtime snapshot listeners with custom handlers
     unsubGoals = onSnapshot(collection(db, 'goals'), (snapshot) => {
       const items: Goal[] = [];
       snapshot.forEach((doc) => { items.push({ ...doc.data() } as Goal); });
@@ -256,15 +280,6 @@ export default function App() {
       localStorage.setItem('members', JSON.stringify(items));
     }, handleSyncError);
 
-    const authInstance = getFirebaseAuth();
-    const unsubAuth = onAuthStateChanged(authInstance, (user) => {
-      setAuthUser(user as FirebaseUser);
-      setAuthLoading(false);
-    }, (err) => {
-      console.error('onAuthStateChanged error:', err);
-      setAuthLoading(false);
-    });
-
     return () => {
       unsubGoals();
       unsubObjectives();
@@ -275,56 +290,73 @@ export default function App() {
       unsubKata();
       unsubProfile();
       unsubMembers();
-      unsubAuth();
     };
-  }, []);
+  }, [authUser, authOfflineBypass]);
 
   // 2. State-to-localStorage & CLOUD dual-write synchronizations
   const saveGoals = (items: Goal[]) => { 
     setGoals(items); 
     localStorage.setItem('goals', JSON.stringify(items)); 
-    syncGoalsToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncGoalsToFirestore(items);
+    }
   };
   const saveObjectives = (items: Objective[]) => { 
     setObjectives(items); 
     localStorage.setItem('objectives', JSON.stringify(items)); 
-    syncObjectivesToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncObjectivesToFirestore(items);
+    }
   };
   const saveProjects = (items: Project[]) => { 
     setProjects(items); 
     localStorage.setItem('projects', JSON.stringify(items)); 
-    syncProjectsToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncProjectsToFirestore(items);
+    }
   };
   const saveInitiatives = (items: Initiative[]) => { 
     setInitiatives(items); 
     localStorage.setItem('initiatives', JSON.stringify(items)); 
-    syncInitiativesToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncInitiativesToFirestore(items);
+    }
   };
   const saveTasks = (items: Task[]) => { 
     setTasks(items); 
     localStorage.setItem('tasks', JSON.stringify(items)); 
-    syncTasksToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncTasksToFirestore(items);
+    }
   };
   const saveKpis = (items: KPI[]) => { 
     setKpis(items); 
     localStorage.setItem('kpis', JSON.stringify(items)); 
-    syncKpisToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncKpisToFirestore(items);
+    }
   };
   const saveKata = (items: KataSession[]) => { 
     setKataSessions(items); 
     localStorage.setItem('kataSessions', JSON.stringify(items)); 
-    syncKataSessionsToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncKataSessionsToFirestore(items);
+    }
   };
   const saveProfile = (p: UserProfile) => { 
     setUserProfile(p); 
     localStorage.setItem('userProfile', JSON.stringify(p)); 
-    syncUserProfileToFirestore(p);
+    if (!authOfflineBypass && authUser) {
+      syncUserProfileToFirestore(p);
+    }
   };
 
   const saveMembers = (items: Member[]) => {
     setMembers(items);
     localStorage.setItem('members', JSON.stringify(items));
-    syncMembersToFirestore(items);
+    if (!authOfflineBypass && authUser) {
+      syncMembersToFirestore(items);
+    }
   };
 
   const handleInviteMember = (email: string, name: string, role: string) => {

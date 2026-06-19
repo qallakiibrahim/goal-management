@@ -60,7 +60,7 @@ export async function bootstrapFirestore() {
       console.log('[Firestore] Seeded empty userProfile.');
     }
   } catch (error) {
-    console.error('[Firestore] Bootstrap error (skipping to local state):', error);
+    console.warn('[Firestore] Bootstrap error (skipping to remote sync):', error);
     throw error;
   }
 }
@@ -85,7 +85,7 @@ export async function syncGoalsToFirestore(items: Goal[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] Goal Sync failure:', err);
+    console.warn('[Firestore] Goal Sync failure:', err);
   }
 }
 
@@ -108,7 +108,7 @@ export async function syncObjectivesToFirestore(items: Objective[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] Objective Sync failure:', err);
+    console.warn('[Firestore] Objective Sync failure:', err);
   }
 }
 
@@ -131,7 +131,7 @@ export async function syncProjectsToFirestore(items: Project[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] Project Sync failure:', err);
+    console.warn('[Firestore] Project Sync failure:', err);
   }
 }
 
@@ -154,7 +154,7 @@ export async function syncInitiativesToFirestore(items: Initiative[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] Initiative Sync failure:', err);
+    console.warn('[Firestore] Initiative Sync failure:', err);
   }
 }
 
@@ -177,7 +177,7 @@ export async function syncTasksToFirestore(items: Task[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] Task Sync failure:', err);
+    console.warn('[Firestore] Task Sync failure:', err);
   }
 }
 
@@ -200,7 +200,7 @@ export async function syncKpisToFirestore(items: KPI[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] KPI Sync failure:', err);
+    console.warn('[Firestore] KPI Sync failure:', err);
   }
 }
 
@@ -223,7 +223,7 @@ export async function syncKataSessionsToFirestore(items: KataSession[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] KataSession Sync failure:', err);
+    console.warn('[Firestore] KataSession Sync failure:', err);
   }
 }
 
@@ -232,7 +232,7 @@ export async function syncUserProfileToFirestore(item: UserProfile) {
     const profileRef = doc(db, 'userProfile', 'current');
     await setDoc(profileRef, item);
   } catch (err) {
-    console.error('[Firestore] UserProfile Sync failure:', err);
+    console.warn('[Firestore] UserProfile Sync failure:', err);
   }
 }
 
@@ -255,6 +255,6 @@ export async function syncMembersToFirestore(items: any[]) {
     });
     await batch.commit();
   } catch (err) {
-    console.error('[Firestore] Members Sync failure:', err);
+    console.warn('[Firestore] Members Sync failure:', err);
   }
 }
