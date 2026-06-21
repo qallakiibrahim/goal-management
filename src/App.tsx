@@ -60,6 +60,7 @@ import SettingsView from './components/SettingsView';
 import AIAssistant from './components/AIAssistant';
 import LoginView from './components/LoginView';
 import MembersView from './components/MembersView';
+import VsmView from './components/VsmView';
 
 // Firestore Integration imports
 import { collection, onSnapshot, doc } from 'firebase/firestore';
@@ -926,6 +927,15 @@ export default function App() {
               onQuickAddKpi={(kpi) => saveKpis([...kpis, kpi])}
               onQuickAddProject={(proj) => saveProjects([...projects, proj])}
               onQuickAddKata={(session) => saveKata([...kataSessions, session])}
+            />
+          )}
+
+          {currentView === 'vsm' && (
+            <VsmView
+              goals={goals}
+              objectives={objectives}
+              projects={projects}
+              onAddProject={(proj) => saveProjects([...projects, proj])}
             />
           )}
 

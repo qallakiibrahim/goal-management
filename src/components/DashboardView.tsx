@@ -17,7 +17,9 @@ import {
   ArrowRight, 
   Sparkles,
   Award,
-  BookOpen
+  BookOpen,
+  Activity,
+  Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Objective, Project, Initiative, Task, KPI, KataSession } from '../types';
@@ -165,95 +167,185 @@ export default function DashboardView({
       {/* Main Framework Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        {/* Column 1: Balanced Scorecard Mini View */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-semibold text-slate-800 text-sm tracking-tight">
-                Balanced Scorecard (BSC)
-              </h3>
-              <button 
-                onClick={() => onNavigateToView('bsc')}
-                className="text-xs text-indigo-700 font-medium hover:underline flex items-center gap-1"
-              >
-                Detaljer <ChevronRight className="w-3 h-3" />
-              </button>
+        {/* Column 1: Strategic Perspectives Stack */}
+        <div className="lg:col-span-1 flex flex-col gap-6">
+          
+          {/* Balanced Scorecard Mini View */}
+          <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display font-semibold text-slate-800 dark:text-slate-100 text-sm tracking-tight">
+                  Balanced Scorecard (BSC)
+                </h3>
+                <button 
+                  onClick={() => onNavigateToView('bsc')}
+                  className="text-xs text-indigo-700 dark:text-indigo-400 font-medium hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  Detaljer <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-5 text-left">
+                Strategisk fördelning över de fyra grundläggande perspektiven.
+              </p>
+
+              <div className="space-y-4">
+                <div 
+                  onClick={() => onNavigateToView('goals')}
+                  className="p-3 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-xl border border-emerald-100/80 dark:border-emerald-900/35 cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition text-left"
+                >
+                  <div className="flex items-center justify-between text-xs font-semibold text-emerald-800 dark:text-emerald-305">
+                    <span className="flex items-center gap-1.5">💰 Finansiellt</span>
+                    <span>
+                      {goals.filter(g => g.category === 'financial').length} Mål
+                    </span>
+                  </div>
+                  <div className="mt-2 h-1.5 bg-slate-200/60 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: '75%' }}></div>
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => onNavigateToView('goals')}
+                  className="p-3 bg-blue-50/50 dark:bg-blue-950/10 rounded-xl border border-blue-100/80 dark:border-blue-900/35 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-950/20 transition text-left"
+                >
+                  <div className="flex items-center justify-between text-xs font-semibold text-blue-800 dark:text-blue-305">
+                    <span className="flex items-center gap-1.5">🤝 Kund</span>
+                    <span>
+                      {goals.filter(g => g.category === 'customer').length} Mål
+                    </span>
+                  </div>
+                  <div className="mt-2 h-1.5 bg-slate-200/60 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="bg-blue-500 h-full rounded-full" style={{ width: '65%' }}></div>
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => onNavigateToView('goals')}
+                  className="p-3 bg-amber-50/50 dark:bg-amber-955/10 rounded-xl border border-amber-100/80 dark:border-amber-900/35 cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950/20 transition text-left"
+                >
+                  <div className="flex items-center justify-between text-xs font-semibold text-amber-800 dark:text-amber-305">
+                    <span className="flex items-center gap-1.5">⚙️ Processer</span>
+                    <span>
+                      {goals.filter(g => g.category === 'process').length} Mål
+                    </span>
+                  </div>
+                  <div className="mt-2 h-1.5 bg-slate-200/60 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="bg-amber-500 h-full rounded-full" style={{ width: '80%' }}></div>
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => onNavigateToView('goals')}
+                  className="p-3 bg-pink-50/50 dark:bg-pink-955/10 rounded-xl border border-pink-100/80 dark:border-pink-900/35 cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-950/20 transition text-left"
+                >
+                  <div className="flex items-center justify-between text-xs font-semibold text-pink-800 dark:text-pink-305">
+                    <span className="flex items-center gap-1.5">📚 Lärande</span>
+                    <span>
+                      {goals.filter(g => g.category === 'learning').length} Mål
+                    </span>
+                  </div>
+                  <div className="mt-2 h-1.5 bg-slate-200/60 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="bg-pink-500 h-full rounded-full" style={{ width: '60%' }}></div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-slate-500 mb-5">
-              Strategisk fördelning över de fyra grundläggande perspektiven.
-            </p>
 
-            <div className="space-y-4">
-              <div 
-                onClick={() => onNavigateToView('goals')}
-                className="p-3 bg-emerald-50/50 rounded-xl border border-emerald-100/80 cursor-pointer hover:bg-emerald-50 transition"
-              >
-                <div className="flex items-center justify-between text-xs font-semibold text-emerald-800">
-                  <span className="flex items-center gap-1.5">💰 Finansiellt</span>
-                  <span>
-                    {goals.filter(g => g.category === 'financial').length} Mål
-                  </span>
-                </div>
-                <div className="mt-2 h-1.5 bg-slate-200/60 rounded-full overflow-hidden">
-                  <div className="bg-emerald-500 h-full rounded-full" style={{ width: '75%' }}></div>
-                </div>
+            <div className="mt-6 p-3 bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-xl text-left">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-semibold mb-1">
+                <Sparkles className="w-3 h-3 text-indigo-700 dark:text-indigo-400" />
+                <span>ALIGNMENT STATUS</span>
               </div>
-
-              <div 
-                onClick={() => onNavigateToView('goals')}
-                className="p-3 bg-blue-50/50 rounded-xl border border-blue-100/80 cursor-pointer hover:bg-blue-50 transition"
-              >
-                <div className="flex items-center justify-between text-xs font-semibold text-blue-800">
-                  <span className="flex items-center gap-1.5">🤝 Kund</span>
-                  <span>
-                    {goals.filter(g => g.category === 'customer').length} Mål
-                  </span>
-                </div>
-                <div className="mt-2 h-1.5 bg-slate-200/60 rounded-full overflow-hidden">
-                  <div className="bg-blue-500 h-full rounded-full" style={{ width: '65%' }}></div>
-                </div>
-              </div>
-
-              <div 
-                onClick={() => onNavigateToView('goals')}
-                className="p-3 bg-amber-50/50 rounded-xl border border-amber-100/80 cursor-pointer hover:bg-amber-50 transition"
-              >
-                <div className="flex items-center justify-between text-xs font-semibold text-amber-800">
-                  <span className="flex items-center gap-1.5">⚙️ Processer</span>
-                  <span>
-                    {goals.filter(g => g.category === 'process').length} Mål
-                  </span>
-                </div>
-                <div className="mt-2 h-1.5 bg-slate-200/60 rounded-full overflow-hidden">
-                  <div className="bg-amber-500 h-full rounded-full" style={{ width: '80%' }}></div>
-                </div>
-              </div>
-
-              <div 
-                onClick={() => onNavigateToView('goals')}
-                className="p-3 bg-pink-50/50 rounded-xl border border-pink-100/80 cursor-pointer hover:bg-pink-50 transition"
-              >
-                <div className="flex items-center justify-between text-xs font-semibold text-pink-800">
-                  <span className="flex items-center gap-1.5">📚 Lärande</span>
-                  <span>
-                    {goals.filter(g => g.category === 'learning').length} Mål
-                  </span>
-                </div>
-                <div className="mt-2 h-1.5 bg-slate-200/60 rounded-full overflow-hidden">
-                  <div className="bg-pink-500 h-full rounded-full" style={{ width: '60%' }}></div>
-                </div>
-              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-normal">
+                Alla 5 hierarkiska steg synkroniseras nu automatiskt. Redigera noder via Redigeraren.
+              </p>
             </div>
           </div>
 
-          <div className="mt-6 p-3 bg-slate-50 border border-slate-100 rounded-xl">
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-semibold mb-1">
-              <Sparkles className="w-3 h-3 text-indigo-700" />
-              <span>ALIGNMENT STATUS</span>
+          {/* Vördeflödesanalys (VSM) Mini Summary Dashboard Card */}
+          <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between text-left">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-1.5">
+                  <Activity className="w-4 h-4 text-rose-500" />
+                  <h3 className="font-display font-semibold text-slate-800 dark:text-slate-100 text-sm tracking-tight">
+                    Värdeflöden (VSM)
+                  </h3>
+                </div>
+                <span className="text-[9px] bg-rose-50 dark:bg-rose-950/45 text-rose-605 dark:text-rose-400 font-bold px-2 py-0.5 rounded-md">
+                  VMS-Takt
+                </span>
+              </div>
+              
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-normal">
+                Ledtidseffektivisering (PCE) genom eliminering av slöserier i verksamheten.
+              </p>
+
+              <div className="bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 p-3.5 rounded-xl space-y-2.5">
+                <div className="space-y-0.5">
+                  <span className="text-[9px] text-slate-400 uppercase font-bold block tracking-wider">Aktivt Ström-Fokus:</span>
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">
+                    {(() => {
+                      try {
+                        const local = localStorage.getItem('vsm_streams');
+                        if (local) {
+                          const s = JSON.parse(local);
+                          if (s?.length > 0) return s[0].name;
+                        }
+                      } catch (e) {}
+                      return 'Order till Leverans (Logistik)';
+                    })()}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-1 border-t border-slate-150/50 dark:border-slate-800/60">
+                  <div>
+                    <span className="text-[9px] text-slate-400 block font-bold leading-none uppercase">Processteg</span>
+                    <strong className="text-sm font-black text-slate-850 dark:text-slate-200 font-mono">
+                      {(() => {
+                        try {
+                          const local = localStorage.getItem('vsm_streams');
+                          if (local) {
+                            const s = JSON.parse(local);
+                            if (s?.length > 0) return s[0].steps.length;
+                          }
+                        } catch (e) {}
+                        return 5;
+                      })()} st
+                    </strong>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-slate-400 block font-bold leading-none uppercase">Flödeseffektivitet</span>
+                    <strong className="text-sm font-black text-rose-500 font-mono">
+                      {(() => {
+                        try {
+                          const local = localStorage.getItem('vsm_streams');
+                          if (local) {
+                            const s = JSON.parse(local);
+                            if (s?.length > 0) {
+                              const stream = s[0];
+                              let pt = 0, lt = 0;
+                              stream.steps.forEach((st: any) => { pt += st.processTime; lt += Math.max(st.leadTime, st.processTime); });
+                              return `${lt > 0 ? (pt/lt * 100).toFixed(1) : 0}%`;
+                            }
+                          }
+                        } catch (e) {}
+                        return '9.4%';
+                      })()}
+                    </strong>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-[11px] text-slate-500 leading-normal">
-              Alla 5 hierarkiska steg synkroniseras nu automatiskt. Redigera noder via Redigeraren.
-            </p>
+
+            <div className="mt-5">
+              <button
+                onClick={() => onNavigateToView('vsm')}
+                className="w-full text-center py-2 bg-indigo-900 hover:bg-slate-900 text-white dark:bg-indigo-650 dark:hover:bg-indigo-600 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+              >
+                Analysera Värdeflöde <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
 
