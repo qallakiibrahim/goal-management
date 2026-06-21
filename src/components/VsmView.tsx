@@ -981,7 +981,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                         <input
                           type="text"
                           required
-                          value={stepForm.name}
+                          value={stepForm.name ?? ''}
                           onChange={e => setStepForm({ ...stepForm, name: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
                         />
@@ -994,7 +994,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           step="any"
                           required
                           min="0.01"
-                          value={stepForm.processTime}
+                          value={stepForm.processTime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, processTime: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
                         />
@@ -1007,7 +1007,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           step="any"
                           required
                           min="0"
-                          value={stepForm.changeoverTime}
+                          value={stepForm.changeoverTime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, changeoverTime: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
                         />
@@ -1020,7 +1020,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           min="0"
                           max="100"
                           required
-                          value={stepForm.uptime}
+                          value={stepForm.uptime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, uptime: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
                         />
@@ -1032,7 +1032,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           type="number"
                           min="0"
                           required
-                          value={stepForm.inventory}
+                          value={stepForm.inventory ?? ''}
                           onChange={e => setStepForm({ ...stepForm, inventory: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
                         />
@@ -1045,7 +1045,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           step="any"
                           required
                           min="0.05"
-                          value={stepForm.leadTime}
+                          value={stepForm.leadTime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, leadTime: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
                         />
@@ -1058,7 +1058,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           min="0"
                           max="100"
                           required
-                          value={stepForm.caRate}
+                          value={stepForm.caRate ?? ''}
                           onChange={e => setStepForm({ ...stepForm, caRate: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
                         />
@@ -1069,7 +1069,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                         <input
                           type="text"
                           required
-                          value={stepForm.role}
+                          value={stepForm.role ?? ''}
                           onChange={e => setStepForm({ ...stepForm, role: e.target.value })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
                         />
@@ -1078,7 +1078,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                       <div className="space-y-1 col-span-2">
                         <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Huvudsaklig slöserityp (Muda/Waste):</label>
                         <select
-                          value={stepForm.wasteType}
+                          value={stepForm.wasteType ?? 'none'}
                           onChange={e => setStepForm({ ...stepForm, wasteType: e.target.value as any })}
                           className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-semibold"
                         >
@@ -1094,13 +1094,13 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                         </select>
                       </div>
 
-                      {stepForm.wasteType !== 'none' && (
+                      {(stepForm.wasteType ?? 'none') !== 'none' && (
                         <div className="space-y-1 col-span-2">
                           <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Beskrivning av flaskhals / slöseri:</label>
                           <textarea
                             required
                             rows={2}
-                            value={stepForm.wasteDescription}
+                            value={stepForm.wasteDescription ?? ''}
                             onChange={e => setStepForm({ ...stepForm, wasteDescription: e.target.value })}
                             placeholder="Hur tar sig detta slöseri uttryck i vardagen?"
                             className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
