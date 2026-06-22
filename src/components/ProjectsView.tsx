@@ -25,7 +25,7 @@ interface ProjectsViewProps {
   goals: Goal[];
   onOpenAddModal: () => void;
   onOpenEditModal: (project: Project) => void;
-  onDeleteProject: (id: string) => void;
+  onDeleteProject: (id: string, title?: string) => void;
   onUpdateProjectProgress: (id: string, progress: number) => void;
   onToggleTask: (taskId: string) => void;
   onAddTaskToProject: (projectId: string, title: string) => void;
@@ -133,12 +133,8 @@ export default function ProjectsView({
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(`Är du säker på att du vill radera projektet "${p.title}"?`)) {
-                            onDeleteProject(p.id);
-                          }
-                        }}
-                        className="p-1.5 hover:bg-red-50 rounded text-slate-500 hover:text-red-650 transition"
+                        onClick={() => onDeleteProject(p.id, p.title)}
+                        className="p-1.5 hover:bg-red-50 rounded text-slate-500 hover:text-red-655 transition"
                         title="Ta bort"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

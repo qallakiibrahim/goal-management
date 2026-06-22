@@ -22,7 +22,7 @@ interface KpisViewProps {
   kpis: KPI[];
   onOpenAddModal: () => void;
   onOpenEditModal: (kpi: KPI) => void;
-  onDeleteKpi: (id: string) => void;
+  onDeleteKpi: (id: string, title?: string) => void;
   onUpdateKpiProgress: (id: string, progress: number) => void;
 }
 
@@ -119,12 +119,8 @@ export default function KpisView({
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(`Är du säker på att du vill radera mätetalet "${k.title}"?`)) {
-                            onDeleteKpi(k.id);
-                          }
-                        }}
-                        className="p-1.5 hover:bg-red-50 rounded text-slate-500 hover:text-red-650 transition"
+                        onClick={() => onDeleteKpi(k.id, k.title)}
+                        className="p-1.5 hover:bg-red-50 rounded text-slate-500 hover:text-red-655 transition"
                         title="Ta bort"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

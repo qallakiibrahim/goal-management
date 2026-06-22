@@ -21,7 +21,7 @@ import { Member } from '../types';
 interface MembersViewProps {
   members: Member[];
   onInviteMember: (email: string, name: string, role: string) => void;
-  onRemoveMember: (id: string) => void;
+  onRemoveMember: (id: string, name?: string) => void;
   currentUserIdEmail?: string | null;
   currentUserRole?: string;
 }
@@ -250,12 +250,8 @@ export default function MembersView({
                           <td className="px-5 py-3.5 text-right">
                             <button
                               disabled={isSelf}
-                              onClick={() => {
-                                if (confirm(`Är du säker på att du vill ta bort ${member.name} från behörighetslistan? De kommer inte kunna logga in igen.`)) {
-                                  onRemoveMember(member.id);
-                                }
-                              }}
-                              className="p-1 text-slate-400 hover:text-red-650 rounded-lg hover:bg-slate-100 transition disabled:opacity-30 cursor-pointer"
+                              onClick={() => onRemoveMember(member.id, member.name)}
+                              className="p-1 text-slate-400 hover:text-red-655 rounded-lg hover:bg-slate-100 transition disabled:opacity-30 cursor-pointer"
                               title="Ta bort inbjudan"
                             >
                               <Trash2 className="w-4 h-4" />

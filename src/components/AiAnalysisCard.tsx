@@ -533,7 +533,7 @@ export default function AiAnalysisCard({
         </div>
 
         {analysis.recommendation && (
-          <div className="md:w-1/3 p-4 bg-indigo-505 dark:bg-indigo-950/10 border border-indigo-100/50 dark:border-indigo-950/20 rounded-xl space-y-2.5 flex flex-col justify-center text-left">
+          <div className="md:w-1/3 p-4 bg-indigo-50 dark:bg-indigo-950/10 border border-indigo-100/50 dark:border-indigo-950/20 rounded-xl space-y-2.5 flex flex-col justify-center text-left">
             <span className="font-extrabold text-indigo-900 dark:text-indigo-300 text-[10px] uppercase tracking-wider block">AI-Rekommendation:</span>
             <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
               {analysis.recommendation}

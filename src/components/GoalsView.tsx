@@ -24,7 +24,7 @@ interface GoalsViewProps {
   goals: Goal[];
   onOpenAddModal: () => void;
   onOpenEditModal: (goal: Goal) => void;
-  onDeleteGoal: (id: string) => void;
+  onDeleteGoal: (id: string, title?: string) => void;
   onUpdateGoalProgress: (id: string, progress: number) => void;
 }
 
@@ -161,12 +161,8 @@ export default function GoalsView({
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => {
-                          if(confirm(`Är du säker på att du vill ta bort målet "${g.title}"?`)) {
-                            onDeleteGoal(g.id);
-                          }
-                        }}
-                        className="p-1.5 hover:bg-red-50 rounded text-slate-500 hover:text-red-650 transition"
+                        onClick={() => onDeleteGoal(g.id, g.title)}
+                        className="p-1.5 hover:bg-red-50 rounded text-slate-500 hover:text-red-655 transition"
                         title="Ta bort"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

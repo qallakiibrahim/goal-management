@@ -32,7 +32,7 @@ interface KataViewProps {
   kataSessions: KataSession[];
   onOpenAddModal: () => void;
   onOpenEditModal: (session: KataSession) => void;
-  onDeleteSession: (id: string) => void;
+  onDeleteSession: (id: string, title?: string) => void;
   onUpdateSessionProgress: (id: string, progress: number) => void;
   onQuickAddKata?: (session: KataSession) => void;
 }
@@ -537,12 +537,8 @@ export default function KataView({
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      onClick={() => {
-                        if (confirm(`Är du säker på att du vill ta bort Kata-sessionen för "${session.title}"?`)) {
-                          onDeleteSession(session.id);
-                        }
-                      }}
-                      className="p-1.5 hover:bg-rose-50 rounded text-slate-500 hover:text-red-650 transition"
+                      onClick={() => onDeleteSession(session.id, session.title)}
+                      className="p-1.5 hover:bg-rose-50 rounded text-slate-500 hover:text-red-655 transition"
                       title="Ta bort session"
                     >
                       <Trash2 className="w-3.5 h-3.5" />

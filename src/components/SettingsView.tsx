@@ -56,11 +56,7 @@ export default function SettingsView({
   };
 
   const handleReset = () => {
-    if (confirm('Är du helt säker på att du vill nollställa systemet? Alla dina egna ändringar, mål, KPI:er, projekt och Kata-sessioner kommer att raderas och ersättas med ursprungliga demodata.')) {
-      onResetDatabase();
-      alert('Systemet har nollställts till standardinställningar.');
-      window.location.reload();
-    }
+    onResetDatabase();
   };
 
   return (

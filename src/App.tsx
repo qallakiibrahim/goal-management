@@ -132,6 +132,19 @@ export default function App() {
   const [formKpi, setFormKpi] = useState({ title: '', value: '', target: '', progress: 0, deadline: 'Löpande', category: 'financial' as GoalCategory });
   const [formKata, setFormKata] = useState({ title: '', date: '', goal: '', current: '', obstacles: '', nextStep: '', learnings: '', progress: 0 });
 
+  // Custom Iframe-safe confirmation modal state
+  const [confirmModal, setConfirmModal] = useState<{
+    show: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    show: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
+
   // System alert displays
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
@@ -390,9 +403,16 @@ export default function App() {
     saveMembers([...members, newMember]);
   };
 
-  const handleRemoveMember = (id: string) => {
-    const updated = members.filter(m => m.id !== id);
-    saveMembers(updated);
+  const handleRemoveMember = (id: string, name?: string) => {
+    setConfirmModal({
+      show: true,
+      title: 'Ta bort medarbetare',
+      message: `Är du säker på att du vill ta bort medarbetaren "${name || 'denna medarbetare'}" från behörighetslistan? De kommer inte att kunna logga in igen.`,
+      onConfirm: () => {
+        const updated = members.filter(m => m.id !== id);
+        saveMembers(updated);
+      }
+    });
   };
 
   // 3. Action callbacks
@@ -478,24 +498,51 @@ export default function App() {
     }
   };
 
-  const handleDeleteGoal = (id: string) => {
-    saveGoals(goals.filter(g => g.id !== id));
-    // clean orphaned child Objectives
-    saveObjectives(objectives.filter(o => o.goalId !== id));
+  const handleDeleteGoal = (id: string, title?: string) => {
+    setConfirmModal({
+      show: true,
+      title: 'Radera Strategiskt Mål',
+      message: `Är du säker på att du vill ta bort målet "${title || 'detta mål'}" och alla dess underordnade målsättningar?`,
+      onConfirm: () => {
+        saveGoals(goals.filter(g => g.id !== id));
+        saveObjectives(objectives.filter(o => o.goalId !== id));
+      }
+    });
   };
 
-  const handleDeleteProject = (id: string) => {
-    saveProjects(projects.filter(p => p.id !== id));
-    saveTasks(tasks.filter(t => t.projectId !== id));
-    saveInitiatives(initiatives.filter(i => i.projectId !== id));
+  const handleDeleteProject = (id: string, title?: string) => {
+    setConfirmModal({
+      show: true,
+      title: 'Radera Operativt Projekt',
+      message: `Är du säker på att du vill ta bort projektet "${title || 'detta projekt'}"? Alla tillhörande uppgifter och initiativ raderas också permanently.`,
+      onConfirm: () => {
+        saveProjects(projects.filter(p => p.id !== id));
+        saveTasks(tasks.filter(t => t.projectId !== id));
+        saveInitiatives(initiatives.filter(i => i.projectId !== id));
+      }
+    });
   };
 
-  const handleDeleteKpi = (id: string) => {
-    saveKpis(kpis.filter(k => k.id !== id));
+  const handleDeleteKpi = (id: string, title?: string) => {
+    setConfirmModal({
+      show: true,
+      title: 'Radera BSC-KPI',
+      message: `Är du säker på att du vill ta bort mätetalet "${title || 'denna KPI'}"?`,
+      onConfirm: () => {
+        saveKpis(kpis.filter(k => k.id !== id));
+      }
+    });
   };
 
-  const handleDeleteSession = (id: string) => {
-    saveKata(kataSessions.filter(s => s.id !== id));
+  const handleDeleteSession = (id: string, title?: string) => {
+    setConfirmModal({
+      show: true,
+      title: 'Radera Toyota Kata-session',
+      message: `Är du säker på att du vill ta bort förbättringsloggen för "${title || 'denna session'}"?`,
+      onConfirm: () => {
+        saveKata(kataSessions.filter(s => s.id !== id));
+      }
+    });
   };
 
   const handleUpdateProfile = (p: UserProfile) => {
@@ -503,15 +550,25 @@ export default function App() {
   };
 
   const handleResetDatabase = () => {
-    localStorage.clear();
-    saveGoals(DEFAULT_GOALS);
-    saveObjectives(DEFAULT_OBJECTIVES);
-    saveProjects(DEFAULT_PROJECTS);
-    saveInitiatives(DEFAULT_INITIATIVES);
-    saveTasks(DEFAULT_TASKS);
-    saveKpis(DEFAULT_KPIS);
-    saveKata(DEFAULT_KATA_SESSIONS);
-    saveProfile(DEFAULT_USER_PROFILE);
+    setConfirmModal({
+      show: true,
+      title: 'Nollställ Systemet (Återställ)',
+      message: 'Är du helt säker på att du vill nollställa systemet? Alla dina egna ändringar, mål, KPI:er, projekt och Kata-sessioner kommer att raderas och ersättas med ursprungliga demodata.',
+      onConfirm: () => {
+        localStorage.clear();
+        saveGoals(DEFAULT_GOALS);
+        saveObjectives(DEFAULT_OBJECTIVES);
+        saveProjects(DEFAULT_PROJECTS);
+        saveInitiatives(DEFAULT_INITIATIVES);
+        saveTasks(DEFAULT_TASKS);
+        saveKpis(DEFAULT_KPIS);
+        saveKata(DEFAULT_KATA_SESSIONS);
+        saveProfile(DEFAULT_USER_PROFILE);
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
+    });
   };
 
   const handleExportData = () => {
@@ -1409,6 +1466,43 @@ export default function App() {
         kpis={kpis}
         kataSessions={kataSessions}
       />
+
+      {confirmModal.show && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-3xs flex items-center justify-center p-4 z-[9999] flex-col">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-6 text-left animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-xl">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-display font-bold text-slate-800 dark:text-white">
+                {confirmModal.title}
+              </h3>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              {confirmModal.message}
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))}
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold select-none cursor-pointer"
+              >
+                Avbryt
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  confirmModal.onConfirm();
+                  setConfirmModal(prev => ({ ...prev, show: false }));
+                }}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold select-none cursor-pointer shadow-xs transition"
+              >
+                Bekräfta
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

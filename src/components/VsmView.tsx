@@ -230,6 +230,19 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
   const [isEditingStep, setIsEditingStep] = useState(false);
   const [stepForm, setStepForm] = useState<any | null>(null);
 
+  // Custom iframe-safe confirmation state for VSM deletions
+  const [vsmConfirm, setVsmConfirm] = useState<{
+    show: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    show: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
+
   // New Stream creation form
   const [showNewStreamModal, setShowNewStreamModal] = useState(false);
   const [newStreamName, setNewStreamName] = useState('');
@@ -429,21 +442,31 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       alert("Du måste ha minst ett värdeflöde registrerat i systemet!");
       return;
     }
-    if (confirm("Är du säker på att du vill ta bort detta värdeflöde och alla dess steg?")) {
-      const remaining = streams.filter(s => s.id !== streamId);
-      setStreams(remaining);
-      setSelectedStreamId(remaining[0].id);
-      setSelectedStepId(remaining[0].steps[0]?.id || null);
-    }
+    setVsmConfirm({
+      show: true,
+      title: 'Radera Värdeflöde',
+      message: 'Är du säker på att du vill ta bort detta värdeflöde och alla dess tillhörande processteg?',
+      onConfirm: () => {
+        const remaining = streams.filter(s => s.id !== streamId);
+        setStreams(remaining);
+        setSelectedStreamId(remaining[0].id);
+        setSelectedStepId(remaining[0].steps[0]?.id || null);
+      }
+    });
   };
 
   // Reset to defaults
   const handleResetToDefaults = () => {
-    if (confirm("Vill du återställa alla värdeflöden och tidsavsättningar till branschmallarna?")) {
-      setStreams(DEFAULT_STREAMS);
-      setSelectedStreamId(DEFAULT_STREAMS[0].id);
-      setSelectedStepId(DEFAULT_STREAMS[0].steps[0].id);
-    }
+    setVsmConfirm({
+      show: true,
+      title: 'Återställ Värdeflöden',
+      message: 'Vill du återställa alla värdeflöden och tidsavsättningar till branschmallarna?',
+      onConfirm: () => {
+        setStreams(DEFAULT_STREAMS);
+        setSelectedStreamId(DEFAULT_STREAMS[0].id);
+        setSelectedStepId(DEFAULT_STREAMS[0].steps[0].id);
+      }
+    });
   };
 
   // Open Initiate Project Modal
@@ -1376,6 +1399,43 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
           </div>
         )}
       </AnimatePresence>
+
+      {vsmConfirm.show && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-3xs flex items-center justify-center p-4 z-[9999] flex-col">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-6 text-left animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-xl">
+                <AlertCircle className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-display font-bold text-slate-800 dark:text-white">
+                {vsmConfirm.title}
+              </h3>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              {vsmConfirm.message}
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => setVsmConfirm(prev => ({ ...prev, show: false }))}
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold select-none cursor-pointer"
+              >
+                Avbryt
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  vsmConfirm.onConfirm();
+                  setVsmConfirm(prev => ({ ...prev, show: false }));
+                }}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold select-none cursor-pointer shadow-xs transition"
+              >
+                Bekräfta
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
