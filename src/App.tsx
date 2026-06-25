@@ -1490,6 +1490,7 @@ export default function App() {
         projects={projects}
         kpis={kpis}
         kataSessions={kataSessions}
+        ctqKanoItems={ctqKanoItems}
       />
 
       {confirmModal.show && (

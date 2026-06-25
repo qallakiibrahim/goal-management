@@ -13,16 +13,18 @@ import {
   Target, 
   Briefcase, 
   TrendingUp, 
-  RefreshCw 
+  RefreshCw,
+  Scale
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Goal, Project, KPI, KataSession } from '../types';
+import { Goal, Project, KPI, KataSession, CtqKanoItem } from '../types';
 
 interface AIAssistantProps {
   goals: Goal[];
   projects: Project[];
   kpis: KPI[];
   kataSessions: KataSession[];
+  ctqKanoItems: CtqKanoItem[];
 }
 
 interface Message {
@@ -36,7 +38,8 @@ export default function AIAssistant({
   goals,
   projects,
   kpis,
-  kataSessions
+  kataSessions,
+  ctqKanoItems
 }: AIAssistantProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -92,7 +95,7 @@ export default function AIAssistant({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query,
-          state: { goals, projects, kpis, kataSessions }
+          state: { goals, projects, kpis, kataSessions, ctqKanoItems }
         })
       });
 
@@ -129,6 +132,13 @@ export default function AIAssistant({
           : 0;
         reply = `Jag har analyserat era **${goals.length} aktiva målvisioner** i databasen. Medeluppfyllnaden ligger för närvarande på **${avgGoals}%**.\n\nEra nuvarande registrerade mål är: ${goalNames || 'inga registrerade än'}.\n\n*Rekommendation*: Målet "Bli den mest hållbara aktören" är särskilt viktigt, men har en utmanande CO₂-mätning. Du bör para ihop detta mål med en Kata-session för att experimentera med lösningar på transporthinder!`;
       } 
+      else if (text.includes('kano') || text.includes('ctq') || text.includes('krav') || text.includes('voc')) {
+        const total = ctqKanoItems.length;
+        const mustBe = ctqKanoItems.filter(i => i.kanoCategory === 'Must-be').length;
+        const attractive = ctqKanoItems.filter(i => i.kanoCategory === 'Attractive').length;
+        const oneDim = ctqKanoItems.filter(i => i.kanoCategory === 'One-dimensional').length;
+        reply = `Jag har analyserat era **${total} kravspecifikationer** i Kano & CTQ-modulen:\n\n• **Ska-krav (Must-be):** ${mustBe} st\n• **Prestandakrav (One-dimensional):** ${oneDim} st\n• **Wow-faktorer (Attractive):** ${attractive} st\n\n*Strategisk rekommendation:* Prioritera alltid att åtgärda och leverera era **Must-be** (Ska-krav) först. Att lansera attraktiva wow-funktioner utan att grundkraven fungerar leder till missnöjda kunder. Koppla dina CTQ-specifikationer till strategiska mål för att säkerställa att utvecklingen är helt kundstyrd!`;
+      }
       else if (text.includes('projekt') || text.includes('aktivitet') || text.includes('schema')) {
         const progressList = projects.map(p => `"${p.title}" (${p.progress}% slutfört)`);
         const lagging = projects.filter(p => p.progress < 45);
@@ -177,6 +187,7 @@ export default function AIAssistant({
   };
 
   const suggestions = [
+    { text: 'Kano & CTQ kravanalys 📋', query: 'kano' },
     { text: 'Analysera mina strategiska Mål 🎯', query: 'mål' },
     { text: 'Projektstatus & risker ⚠️', query: 'projekt' },
     { text: 'Granska KPI-benchmark 📈', query: 'kpi' },
@@ -273,6 +284,7 @@ export default function AIAssistant({
                   onClick={() => selectSuggestion(s.text)}
                   className="px-2.5 py-1.5 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-150 rounded-lg text-[10px] font-semibold text-slate-600 hover:text-indigo-900 transition text-left cursor-pointer flex items-center gap-1 shrink-0"
                 >
+                  {s.query === 'kano' && <Scale className="w-3 h-3 text-amber-500" />}
                   {s.query === 'mål' && <Target className="w-3 h-3 text-indigo-700" />}
                   {s.query === 'projekt' && <Briefcase className="w-3 h-3 text-violet-600" />}
                   {s.query === 'kpi' && <TrendingUp className="w-3 h-3 text-emerald-600" />}

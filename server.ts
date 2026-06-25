@@ -190,8 +190,8 @@ app.post('/api/gemini/generate', async (req, res) => {
       return;
     }
 
-    const systemPrompt = `Du är en expert på verksamhetsstyrning, Balanced Scorecard (Kaplan & Norton) och Toyota Kata.
-Ditt mål är att coacha användaren att sätta tydliga, mätbara och linjära mål, projekt och experimentiella cykler.
+    const systemPrompt = `Du är en expert på verksamhetsstyrning, Balanced Scorecard (Kaplan & Norton), Toyota Kata samt Kano-modellen & Critical to Quality (CTQ) kravanalys.
+Ditt mål är att coacha användaren att sätta tydliga, mätbara och linjära mål, projekt och experimentiella cykler, samt utvärdera kundkrav (Voice of Customer) via Kano och översätta dem till mätbara CTQ-specifikationer.
 Svara alltid professionellt på trevlig och professionell svenska. Håll svaret fokuserat på användarens data om den skickas med.
 Undvik generiskt AI-fluff, ge konkreta förslag och använd gärna punktlistor med fetstil.
 
@@ -200,6 +200,7 @@ Här är nuvarande tillstånd i databasen:
 - KPIer: ${JSON.stringify(state?.kpis || [])}
 - Projekt: ${JSON.stringify(state?.projects || [])}
 - Kata-sessioner: ${JSON.stringify(state?.kataSessions || [])}
+- Kano & CTQ-krav: ${JSON.stringify(state?.ctqKanoItems || [])}
 `;
 
     const response = await callGeminiWithRetry({
@@ -217,16 +218,19 @@ Här är nuvarande tillstånd i databasen:
     const goalsCount = req.body.state?.goals?.length || 0;
     const projectsCount = req.body.state?.projects?.length || 0;
     const kpisCount = req.body.state?.kpis?.length || 0;
+    const kanoCount = req.body.state?.ctqKanoItems?.length || 0;
 
     let responseText = '';
-    if (queryLower.includes('mål') || queryLower.includes('strategi')) {
+    if (queryLower.includes('kano') || queryLower.includes('ctq') || queryLower.includes('krav') || queryLower.includes('voc')) {
+      responseText = `Jag har analyserat era **${kanoCount} kravspecifikationer** i Kano & CTQ-modulen.\n\n*Råd:* Se till att era **Must-be** (Ska-krav) är 100% säkrade innan ni lägger krut på att bygga attraktiva wow-funktioner. Koppla dessutom era CTQ-specifikationer direkt till era strategiska Balanced Scorecard-mål som KPI-mätetal!`;
+    } else if (queryLower.includes('mål') || queryLower.includes('strategi')) {
       responseText = `Jag har analyserat era **${goalsCount} aktiva målvisioner** i databasen. Generellt sett är det viktigt att vi fokuserar på att göra målen SMART och kopplade till KPI:er.\n\n*Rekommendation:* Se till att era strategiska prioriteringar bryts ner till mätbara, operativa mål och stöttas av minst ett projekt!`;
     } else if (queryLower.includes('projekt') || queryLower.includes('aktivitet')) {
       responseText = `Just nu spårar jag **${projectsCount} operativa projekt** i systemet.\n\nEtt kritiskt fokusområde är att underlätta för långsamma projekt genom att dela upp dem i mindre delmål (Tasks) och schemalägga veckoexperiment i linje med Toyota Kata-vyn!`;
     } else if (queryLower.includes('kpi') || queryLower.includes('nyckeltal')) {
       responseText = `Ni har **${kpisCount} definierade KPI-mätetal** över era Balanced Scorecard-perspektiv.\n\n*Råd:* Kontrollera att det råder balans så att inte alla mätpunkter ligger under det finansiella perspektivet. Det krävs mätetal för Lärande och Processer för en fullständig vy!`;
     } else {
-      responseText = `Hej! Jag är din strategiska AI-coach. Just nu upplever molnservern hög belastning, men jag analyserar era register lokalt:\n\n• **Mål:** ${goalsCount} st\n• **Projekt:** ${projectsCount} st\n• **KPIer:** ${kpisCount} st\n\nFråga mig gärna om Balanced Scorecard eller hur ni bäst sätter upp veckovisa förbättringsexperiment med Toyota Kata!`;
+      responseText = `Hej! Jag är din strategiska AI-coach. Just nu upplever molnservern hög belastning, men jag analyserar era register lokalt:\n\n• **Kano & CTQ-krav:** ${kanoCount} st\n• **Mål:** ${goalsCount} st\n• **Projekt:** ${projectsCount} st\n• **KPIer:** ${kpisCount} st\n\nFråga mig gärna om Kano-modellen, Balanced Scorecard eller hur ni bäst sätter upp veckovisa förbättringsexperiment med Toyota Kata!`;
     }
 
     res.json({ text: responseText });
