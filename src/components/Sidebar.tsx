@@ -14,9 +14,10 @@ import {
   Layers, 
   Users, 
   Activity, 
-  Award,
+  Award, 
   UserPlus,
-  Scale
+  Scale,
+  ChevronLeft
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -28,9 +29,10 @@ interface SidebarProps {
     kpiPercentage: number;
     kataSessionsCount: number;
   };
+  onClose?: () => void;
 }
 
-export default function Sidebar({ currentView, onViewChange, stats }: SidebarProps) {
+export default function Sidebar({ currentView, onViewChange, stats, onClose }: SidebarProps) {
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Layers, color: 'text-indigo-600' },
     { id: 'vsm', name: 'Värdeflödesanalys (VSM)', icon: Activity, color: 'text-rose-500' },
@@ -49,18 +51,29 @@ export default function Sidebar({ currentView, onViewChange, stats }: SidebarPro
     <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col h-screen shrink-0 sticky top-0" id="appSidebar">
       {/* Brand logo & tagline */}
       <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col justify-center">
-        <div className="flex items-center gap-2">
-          <div className="p-2 bg-indigo-900 dark:bg-indigo-600 rounded-lg text-white">
-            <Target className="w-5 h-5" />
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-indigo-900 dark:bg-indigo-600 rounded-lg text-white">
+              <Target className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="font-display font-bold text-lg text-indigo-900 dark:text-indigo-400 tracking-tight text-left">
+                MålRamverk
+              </h1>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-semibold font-mono text-left">
+                Alignment Engine
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-display font-bold text-lg text-indigo-900 dark:text-indigo-400 tracking-tight text-left">
-              MålRamverk
-            </h1>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-semibold font-mono text-left">
-              Alignment Engine
-            </p>
-          </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+              title="Dölj sidomeny"
+            >
+              <ChevronLeft className="w-4.5 h-4.5" />
+            </button>
+          )}
         </div>
         <div className="mt-3 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 p-2 rounded-md leading-relaxed text-left">
           <span className="font-semibold text-indigo-900 dark:text-indigo-400 text-left">Fokus: </span>

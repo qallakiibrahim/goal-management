@@ -18,7 +18,8 @@ import {
   AlertTriangle,
   LogOut,
   Sun,
-  Moon
+  Moon,
+  Menu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -91,6 +92,18 @@ import {
 export default function App() {
   // Navigation
   const [currentView, setCurrentView] = useState<string>('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
+    const local = localStorage.getItem('sidebarOpen');
+    return local !== 'false'; // default to true
+  });
+
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => {
+      const next = !prev;
+      localStorage.setItem('sidebarOpen', String(next));
+      return next;
+    });
+  };
 
   // Dark mode active theme state with LocalStorage backup
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -898,28 +911,42 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 font-sans antialiased text-slate-800">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans antialiased text-slate-800 dark:text-slate-200">
       
       {/* 1. Sidebar Navigation */}
-      <Sidebar 
-        currentView={currentView} 
-        onViewChange={(view) => setCurrentView(view)} 
-        stats={stats}
-      />
+      {sidebarOpen && (
+        <Sidebar 
+          currentView={currentView} 
+          onViewChange={(view) => setCurrentView(view)} 
+          stats={stats}
+          onClose={toggleSidebar}
+        />
+      )}
 
       {/* 2. Main content compartment */}
-      <main className="flex-1 overflow-y-auto flex flex-col min-h-screen">
+      <main className="flex-1 overflow-y-auto flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950">
         
         {/* Top Header Bar */}
-        <header className="sticky top-0 bg-white border-b border-slate-200 z-10 px-8 py-4 flex items-center justify-between shadow-xs mb-8">
-          <div className="flex items-center gap-2 text-left">
-            <span className="text-sm font-semibold text-slate-400 capitalize tracking-wide">
-              {activeProfile.role} Dashboard
-            </span>
-            <span className="text-slate-350">•</span>
-            <span className="text-xs text-slate-500 font-mono">
-              Inloggad som: <strong className="text-indigo-900">{activeProfile.name}</strong>
-            </span>
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-10 px-8 py-4 flex items-center justify-between shadow-xs mb-8">
+          <div className="flex items-center gap-3 text-left">
+            {!sidebarOpen && (
+              <button
+                onClick={toggleSidebar}
+                className="p-2 -ml-4 mr-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-850 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                title="Visa sidomeny"
+              >
+                <Menu className="w-4.5 h-4.5" />
+              </button>
+            )}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-slate-400 dark:text-slate-550 capitalize tracking-wide">
+                {activeProfile.role} Dashboard
+              </span>
+              <span className="text-slate-350 dark:text-slate-700">•</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                Inloggad som: <strong className="text-indigo-900 dark:text-indigo-400">{activeProfile.name}</strong>
+              </span>
+            </div>
           </div>
           
           <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 font-mono">
