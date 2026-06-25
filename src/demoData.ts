@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile } from './types';
+import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile, CtqKanoItem } from './types';
 
 export const DEFAULT_GOALS: Goal[] = [
   {
@@ -241,3 +241,50 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
   dateFormat: 'YYYY-MM-DD',
   notificationFrequency: 'Dagligen'
 };
+
+export const DEFAULT_CTQ_KANO: CtqKanoItem[] = [
+  {
+    id: 'ck-1',
+    voc: 'Jag vill veta att mina strategiska mål sparas säkert utan att datan försvinner vid uppdatering av sidan.',
+    driver: 'Dataintegritet och automatisk synk',
+    specification: '100% automatisk synkning till Firestore/LocalStorage med visuell statusindikator.',
+    kanoCategory: 'Must-be',
+    functionalScore: 4,
+    dysfunctionalScore: 1,
+    priority: 'High',
+    associatedGoalId: 'g-1'
+  },
+  {
+    id: 'ck-2',
+    voc: 'Systemet måste ladda snabbt, särskilt när vi analyserar värdeflödesanalyser eller stora mätetal.',
+    driver: 'Prestanda och användbarhet',
+    specification: 'Svarstid för laddning av KPI- dashboards under 1.5 sekunder.',
+    kanoCategory: 'One-dimensional',
+    functionalScore: 5,
+    dysfunctionalScore: 2,
+    priority: 'Medium'
+  },
+  {
+    id: 'ck-3',
+    voc: 'Jag skulle älska om systemet kunde analysera våra framsteg automatiskt och ge intelligenta förbättringsförslag.',
+    driver: 'Intelligent beslutsstöd',
+    specification: 'Integrerad AI-analysmodul som rekommenderar konkreta åtgärder baserat på målutfall.',
+    kanoCategory: 'Attractive',
+    functionalScore: 5,
+    dysfunctionalScore: 3,
+    priority: 'High',
+    associatedGoalId: 'g-3',
+    associatedProjectId: 'p-3'
+  },
+  {
+    id: 'ck-4',
+    voc: 'Färgteman på gränssnittet bör anpassas automatiskt efter tid på dygnet så det är skonsamt för ögonen.',
+    driver: 'Visuell ergonomi',
+    specification: 'Manuella eller automatiska mörkt/ljust tema switchar som ändrar hela färgschemat.',
+    kanoCategory: 'Attractive',
+    functionalScore: 4,
+    dysfunctionalScore: 3,
+    priority: 'Low'
+  }
+];
+

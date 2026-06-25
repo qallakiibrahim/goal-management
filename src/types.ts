@@ -96,3 +96,19 @@ export interface Member {
   invitedBy?: string;
 }
 
+export type KanoCategory = 'Must-be' | 'One-dimensional' | 'Attractive' | 'Indifferent' | 'Reverse';
+
+export interface CtqKanoItem {
+  id: string;
+  voc: string;          // Voice of the Customer
+  driver: string;       // Key driver
+  specification: string; // CTQ Specification
+  kanoCategory: KanoCategory;
+  functionalScore: number; // 1-5 score (1: Dislike, 2: Live with, 3: Neutral, 4: Expect, 5: Like)
+  dysfunctionalScore: number; // 1-5 score (1: Dislike, 2: Live with, 3: Neutral, 4: Expect, 5: Like)
+  priority: 'High' | 'Medium' | 'Low';
+  associatedGoalId?: string;
+  associatedProjectId?: string;
+}
+
+

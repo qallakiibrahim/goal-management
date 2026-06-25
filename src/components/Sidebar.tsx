@@ -15,7 +15,8 @@ import {
   Users, 
   Activity, 
   Award,
-  UserPlus
+  UserPlus,
+  Scale
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -33,6 +34,7 @@ export default function Sidebar({ currentView, onViewChange, stats }: SidebarPro
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Layers, color: 'text-indigo-600' },
     { id: 'vsm', name: 'Värdeflödesanalys (VSM)', icon: Activity, color: 'text-rose-500' },
+    { id: 'kano', name: 'Kano & CTQ Analys', icon: Scale, color: 'text-indigo-505' },
     { id: 'bsc', name: 'Balanced Scorecard', icon: Users, color: 'text-emerald-600' },
     { id: 'goals', name: 'Mål', icon: Target, color: 'text-indigo-600', badge: stats.goalsCount },
     { id: 'projects', name: 'Projekt', icon: Briefcase, color: 'text-violet-600', badge: stats.projectsCount },

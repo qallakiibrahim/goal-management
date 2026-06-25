@@ -34,7 +34,8 @@ import {
   KataSession, 
   UserProfile, 
   GoalCategory,
-  Member
+  Member,
+  CtqKanoItem
 } from './types';
 import { 
   DEFAULT_GOALS, 
@@ -44,7 +45,8 @@ import {
   DEFAULT_TASKS, 
   DEFAULT_KPIS, 
   DEFAULT_KATA_SESSIONS, 
-  DEFAULT_USER_PROFILE 
+  DEFAULT_USER_PROFILE,
+  DEFAULT_CTQ_KANO
 } from './demoData';
 
 // Modular view components
@@ -61,6 +63,7 @@ import AIAssistant from './components/AIAssistant';
 import LoginView from './components/LoginView';
 import MembersView from './components/MembersView';
 import VsmView from './components/VsmView';
+import KanoCtqView from './components/KanoCtqView';
 
 // Firestore Integration imports
 import { collection, onSnapshot, doc } from 'firebase/firestore';
@@ -114,6 +117,10 @@ export default function App() {
   const [kpis, setKpis] = useState<KPI[]>([]);
   const [kataSessions, setKataSessions] = useState<KataSession[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
+  const [ctqKanoItems, setCtqKanoItems] = useState<CtqKanoItem[]>(() => {
+    const local = localStorage.getItem('ctqKanoItems');
+    return local ? JSON.parse(local) : DEFAULT_CTQ_KANO;
+  });
 
   // Modal triggering states
   const [activeModal, setActiveModal] = useState<
@@ -169,6 +176,7 @@ export default function App() {
     const localKata = localStorage.getItem('kataSessions');
     const localProfile = localStorage.getItem('userProfile');
     const localMembers = localStorage.getItem('members');
+    const localKano = localStorage.getItem('ctqKanoItems');
 
     if (localGoals) setGoals(JSON.parse(localGoals));
     if (localObjectives) setObjectives(JSON.parse(localObjectives));
@@ -179,6 +187,7 @@ export default function App() {
     if (localKata) setKataSessions(JSON.parse(localKata));
     if (localProfile) setUserProfile(JSON.parse(localProfile));
     if (localMembers) setMembers(JSON.parse(localMembers));
+    if (localKano) setCtqKanoItems(JSON.parse(localKano));
   }, []);
 
   // 2. Auth State Monitoring (runs once on mount)
@@ -390,6 +399,11 @@ export default function App() {
     }
   };
 
+  const saveCtqKanoItems = (items: CtqKanoItem[]) => {
+    setCtqKanoItems(items);
+    localStorage.setItem('ctqKanoItems', JSON.stringify(items));
+  };
+
   const handleInviteMember = (email: string, name: string, role: string) => {
     const newMember: Member = {
       id: email.toLowerCase().replace(/[^a-zA-Z0-9]/g, '_'),
@@ -564,6 +578,7 @@ export default function App() {
         saveKpis(DEFAULT_KPIS);
         saveKata(DEFAULT_KATA_SESSIONS);
         saveProfile(DEFAULT_USER_PROFILE);
+        saveCtqKanoItems(DEFAULT_CTQ_KANO);
         setTimeout(() => {
           window.location.reload();
         }, 100);
@@ -993,6 +1008,16 @@ export default function App() {
               objectives={objectives}
               projects={projects}
               onAddProject={(proj) => saveProjects([...projects, proj])}
+            />
+          )}
+
+          {currentView === 'kano' && (
+            <KanoCtqView
+              items={ctqKanoItems}
+              onAddItem={(item) => saveCtqKanoItems([...ctqKanoItems, item])}
+              onDeleteItem={(id) => saveCtqKanoItems(ctqKanoItems.filter(item => item.id !== id))}
+              goals={goals}
+              projects={projects}
             />
           )}
 
