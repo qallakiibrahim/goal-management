@@ -70,6 +70,7 @@ import MembersView from './components/MembersView';
 import VsmView from './components/VsmView';
 import KanoCtqView from './components/KanoCtqView';
 import CommandPalette from './components/CommandPalette';
+import VoiceCoachModal from './components/VoiceCoachModal';
 
 // Firestore Integration imports
 import { collection, onSnapshot, doc } from 'firebase/firestore';
@@ -106,6 +107,7 @@ export default function App() {
   });
 
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [voiceCoachOpen, setVoiceCoachOpen] = useState(false);
 
   // Global Cmd+K / Ctrl+K shortcut
   useEffect(() => {
@@ -981,6 +983,7 @@ export default function App() {
           onViewChange={(view) => setCurrentView(view)} 
           stats={stats}
           onClose={toggleSidebar}
+          onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
         />
       )}
 
@@ -1101,6 +1104,7 @@ export default function App() {
               onQuickAddKata={(session) => saveKata([...kataSessions, session])}
               onDownloadPdf={handleDownloadStrategicPdf}
               onExportCsv={handleExportStrategicCsv}
+              onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
             />
           )}
 
@@ -1595,6 +1599,17 @@ export default function App() {
         kpis={kpis}
         kataSessions={kataSessions}
         ctqKanoItems={ctqKanoItems}
+        onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
+      />
+
+      <VoiceCoachModal
+        isOpen={voiceCoachOpen}
+        onClose={() => setVoiceCoachOpen(false)}
+        goals={goals}
+        projects={projects}
+        kpis={kpis}
+        kataSessions={kataSessions}
+        ctqKanoItems={ctqKanoItems}
       />
 
         {confirmModal.show && (
@@ -1651,6 +1666,7 @@ export default function App() {
           onExportCsv={handleExportStrategicCsv}
           onToggleTheme={() => setDarkMode(!darkMode)}
           darkMode={darkMode}
+          onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
         />
       </div>
     </ToastProvider>

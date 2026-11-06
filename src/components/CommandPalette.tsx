@@ -21,7 +21,8 @@ import {
   Sun, 
   Plus, 
   ArrowRight,
-  X
+  X,
+  Mic
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Project, KPI, KataSession } from '../types';
@@ -42,6 +43,7 @@ export interface CommandPaletteProps {
   onExportCsv: () => void;
   onToggleTheme: () => void;
   darkMode: boolean;
+  onOpenVoiceCoach?: () => void;
 }
 
 interface SearchItem {
@@ -69,7 +71,8 @@ export default function CommandPalette({
   onDownloadPdf,
   onExportCsv,
   onToggleTheme,
-  darkMode
+  darkMode,
+  onOpenVoiceCoach
 }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -116,6 +119,21 @@ export default function CommandPalette({
     });
 
     // 2. Quick Actions
+    if (onOpenVoiceCoach) {
+      list.push({
+        id: 'action-voice-coach',
+        title: 'Starta Röstsamtal (Live Röstcoach)',
+        subtitle: 'Realtidskonversation med gemini-3.8-live och talat röstsvar',
+        category: 'Åtgärder',
+        icon: Mic,
+        badge: 'gemini-3.8-live',
+        action: () => {
+          onClose();
+          onOpenVoiceCoach();
+        }
+      });
+    }
+
     list.push(
       {
         id: 'action-pdf',

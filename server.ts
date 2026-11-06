@@ -1,12 +1,15 @@
 import express from 'express';
+import http from 'http';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenAI, Type, Modality, LiveServerMessage } from '@google/genai';
+import { WebSocketServer, WebSocket } from 'ws';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
 const PORT = 3000;
 
 app.use(express.json());
@@ -345,6 +348,162 @@ Svara i ett strikt JSON-format.`;
   }
 });
 
+// =====================================================================
+// Gemini Live API (gemini-3.8-live) WebSocket Bridge for Real-time Voice
+// =====================================================================
+const wss = new WebSocketServer({ server, path: '/live' });
+
+wss.on('connection', async (clientWs: WebSocket) => {
+  console.log('[Live API] Client connected to voice bridge (/live)');
+
+  const safeSend = (payload: any) => {
+    if (clientWs.readyState === WebSocket.OPEN) {
+      try {
+        clientWs.send(JSON.stringify(payload));
+      } catch (err) {
+        console.warn('[Live API] Failed to send WS message:', err);
+      }
+    }
+  };
+
+  safeSend({ 
+    type: 'status', 
+    status: 'connecting', 
+    message: 'Initierar session med gemini-3.8-live...' 
+  });
+
+  let session: any = null;
+  let activeVoice = 'Zephyr';
+
+  const initLiveSession = async (voice: string = 'Zephyr', initialContext?: any) => {
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error('GEMINI_API_KEY saknas i servermiljön');
+      }
+
+      let systemPrompt = `Du är en strategisk röstcoach och sparringpartner i MålRamverk Alignment Engine.
+Ditt expertområde är Balanced Scorecard (Kaplan & Norton), Toyota Kata förbättringsmetodik och Kano-modellen med CTQ (Critical to Quality).
+Du pratar med användaren i realtid via röst.
+Håll dina svar naturliga, engagerande och koncisa (1-3 korta meningar per replik) så att det känns som ett äkta samtal.
+Ställ gärna relevanta coachingfrågor, t.ex. Toyota Katas 5 frågor eller hur de mäter sina KPI:er.
+Tala på svenska med trevlig, professionell ton.`;
+
+      if (initialContext) {
+        systemPrompt += `\n\nAktuellt läge i organisationen:
+- Mål (${initialContext.goalsCount || 0} st): ${JSON.stringify(initialContext.goals || [])}
+- KPIer (${initialContext.kpisCount || 0} st): ${JSON.stringify(initialContext.kpis || [])}
+- Projekt (${initialContext.projectsCount || 0} st): ${JSON.stringify(initialContext.projects || [])}
+- Kata-sessioner (${initialContext.kataCount || 0} st): ${JSON.stringify(initialContext.kataSessions || [])}`;
+      }
+
+      session = await ai.live.connect({
+        model: 'gemini-3.8-live',
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: voice as any } },
+          },
+          inputAudioTranscription: {},
+          outputAudioTranscription: {},
+          systemInstruction: systemPrompt,
+        },
+        callbacks: {
+          onmessage: (message: LiveServerMessage) => {
+            const content = message.serverContent;
+            // Transcriptions
+            if (content?.inputTranscription?.text) {
+              safeSend({ type: 'transcript', role: 'user', text: content.inputTranscription.text });
+            }
+            if (content?.outputTranscription?.text) {
+              safeSend({ type: 'transcript', role: 'assistant', text: content.outputTranscription.text });
+            }
+            // 24kHz audio chunks
+            for (const part of content?.modelTurn?.parts ?? []) {
+              if (part.inlineData?.data) {
+                safeSend({ type: 'audio', audio: part.inlineData.data });
+              }
+            }
+            // Interruption signal
+            if (content?.interrupted) {
+              safeSend({ type: 'interrupted', interrupted: true });
+            }
+          },
+          onclose: () => {
+            console.log('[Live API] Gemini Live connection closed');
+            safeSend({ type: 'status', status: 'closed', message: 'Live-session avslutad' });
+          },
+          onerror: (err: any) => {
+            console.error('[Live API] Gemini Live callback error:', err);
+            safeSend({ type: 'error', message: err?.message || 'Gemini Live fel' });
+          }
+        }
+      });
+
+      activeVoice = voice;
+      safeSend({ 
+        type: 'status', 
+        status: 'ready', 
+        voice: activeVoice,
+        message: 'Ansluten till gemini-3.8-live! Börja prata i mikrofonen.' 
+      });
+
+    } catch (err: any) {
+      console.error('[Live API] Session start failed:', err);
+      safeSend({
+        type: 'error',
+        message: `Kunde inte starta gemini-3.8-live (${err?.message || 'Anslutningsfel'}).`
+      });
+    }
+  };
+
+  // Connect on client arrival
+  await initLiveSession(activeVoice);
+
+  clientWs.on('message', async (data) => {
+    try {
+      const msg = JSON.parse(data.toString());
+      if (msg.type === 'audio' && msg.audio) {
+        if (session) {
+          session.sendRealtimeInput({
+            audio: { data: msg.audio, mimeType: 'audio/pcm;rate=16000' }
+          });
+        }
+      } else if (msg.type === 'text' && msg.text) {
+        if (session) {
+          session.sendRealtimeInput({ text: msg.text });
+        }
+      } else if (msg.type === 'contextUpdate' && msg.context) {
+        if (session) {
+          session.sendRealtimeInput({
+            text: `[Uppdatering från användarens vy]: ${JSON.stringify(msg.context)}`
+          });
+        }
+      } else if (msg.type === 'reconfigure' && msg.voice) {
+        try {
+          session?.close();
+        } catch (e) {}
+        await initLiveSession(msg.voice, msg.context);
+      }
+    } catch (err) {
+      console.error('[Live API] Incoming message error:', err);
+    }
+  });
+
+  clientWs.on('close', () => {
+    console.log('[Live API] Client disconnected from /live');
+    try {
+      session?.close();
+    } catch (e) {}
+  });
+
+  clientWs.on('error', (err) => {
+    console.error('[Live API] Socket error:', err);
+    try {
+      session?.close();
+    } catch (e) {}
+  });
+});
+
 // Setup Vite Dev Server / Static Ingress Routing
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
@@ -361,9 +520,10 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`[Server] Goal Management Server active at http://localhost:${PORT}`);
   });
 }
 
 startServer();
+

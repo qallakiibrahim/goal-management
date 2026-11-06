@@ -14,7 +14,9 @@ import {
   Briefcase, 
   TrendingUp, 
   RefreshCw,
-  Scale
+  Scale,
+  Mic,
+  Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Project, KPI, KataSession, CtqKanoItem } from '../types';
@@ -25,6 +27,7 @@ interface AIAssistantProps {
   kpis: KPI[];
   kataSessions: KataSession[];
   ctqKanoItems: CtqKanoItem[];
+  onOpenVoiceCoach?: () => void;
 }
 
 interface Message {
@@ -39,7 +42,8 @@ export default function AIAssistant({
   projects,
   kpis,
   kataSessions,
-  ctqKanoItems
+  ctqKanoItems,
+  onOpenVoiceCoach
 }: AIAssistantProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -196,18 +200,35 @@ export default function AIAssistant({
 
   return (
     <>
-      {/* 1. Floating Round Trigger Button */}
-      <button
-        id="aiAssistantTrigger"
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-900 border border-indigo-950/20 text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 cursor-pointer z-40 transition-transform duration-150 group"
-        title="AI Assistant v2.0"
-      >
-        <div className="relative">
-          <Bot className="w-6 h-6 text-indigo-50 group-hover:rotate-12 transition-transform" />
-          <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-amber-400 border-2 border-indigo-900 rounded-full animate-bounce" />
-        </div>
-      </button>
+      {/* 1. Floating Round Trigger Buttons */}
+      <div className="fixed bottom-6 right-6 flex items-center gap-3 z-40">
+        {onOpenVoiceCoach && (
+          <button
+            id="aiVoiceTrigger"
+            onClick={onOpenVoiceCoach}
+            className="h-12 px-3.5 bg-gradient-to-tr from-rose-600 via-indigo-700 to-indigo-900 border border-white/20 text-white rounded-full flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 cursor-pointer transition-transform duration-150 group"
+            title="Starta Strategisk Röstcoach (gemini-3.8-live)"
+          >
+            <div className="relative flex items-center justify-center">
+              <Mic className="w-5 h-5 text-rose-200 group-hover:scale-110 transition-transform animate-pulse" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 border-2 border-indigo-950 rounded-full" />
+            </div>
+            <span className="text-xs font-semibold tracking-wide pr-1 hidden sm:inline">Röstcoach</span>
+          </button>
+        )}
+
+        <button
+          id="aiAssistantTrigger"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-13 h-13 bg-indigo-900 border border-indigo-950/20 text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 cursor-pointer transition-transform duration-150 group"
+          title="MålAssistant AI Chat"
+        >
+          <div className="relative">
+            <Bot className="w-6 h-6 text-indigo-50 group-hover:rotate-12 transition-transform" />
+            <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-amber-400 border-2 border-indigo-900 rounded-full animate-bounce" />
+          </div>
+        </button>
+      </div>
 
       {/* 2. Floating Chat Container Drawer */}
       <AnimatePresence>
@@ -231,12 +252,28 @@ export default function AIAssistant({
                   <span className="text-[9px] text-indigo-250 font-mono font-medium tracking-wider">ONLINE • VERKSAMHETSSTÖD</span>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-white/10 rounded-lg text-indigo-200 hover:text-white transition cursor-pointer"
-              >
-                <X className="w-4.5 h-4.5" />
-              </button>
+
+              <div className="flex items-center gap-2">
+                {onOpenVoiceCoach && (
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      onOpenVoiceCoach();
+                    }}
+                    className="flex items-center gap-1.5 px-2.5 py-1 bg-white/15 hover:bg-white/25 rounded-lg text-[10px] font-semibold text-white transition cursor-pointer"
+                    title="Byt till muntlig röstcoach (gemini-3.8-live)"
+                  >
+                    <Radio className="w-3 h-3 text-rose-300 animate-pulse" />
+                    <span>Live Röst</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 hover:bg-white/10 rounded-lg text-indigo-200 hover:text-white transition cursor-pointer"
+                >
+                  <X className="w-4.5 h-4.5" />
+                </button>
+              </div>
             </div>
 
             {/* Messages body list */}

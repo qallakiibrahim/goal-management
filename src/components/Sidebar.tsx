@@ -15,7 +15,9 @@ import {
   UserPlus,
   Scale,
   ChevronLeft,
-  X
+  X,
+  Mic,
+  Radio
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -29,9 +31,10 @@ interface SidebarProps {
   };
   onClose?: () => void;
   isMobileDrawer?: boolean;
+  onOpenVoiceCoach?: () => void;
 }
 
-export default function Sidebar({ currentView, onViewChange, stats, onClose }: SidebarProps) {
+export default function Sidebar({ currentView, onViewChange, stats, onClose, onOpenVoiceCoach }: SidebarProps) {
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Layers, color: 'text-indigo-600' },
     { id: 'vsm', name: 'Värdeflödesanalys (VSM)', icon: Activity, color: 'text-rose-500' },
@@ -135,6 +138,34 @@ export default function Sidebar({ currentView, onViewChange, stats, onClose }: S
             );
           })}
         </nav>
+
+        {/* Live Voice Coach Quick Action Card */}
+        {onOpenVoiceCoach && (
+          <div className="p-3 mx-3 mb-2 rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-900 text-white shadow-md border border-indigo-700/40 text-left">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="p-1.5 bg-rose-500/20 rounded-lg text-rose-400">
+                <Mic className="w-4 h-4 animate-pulse" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-white leading-tight">Live Röstcoach</h4>
+                <span className="text-[9px] text-indigo-300 font-mono">gemini-3.8-live</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-300 leading-snug mb-2.5">
+              Prata direkt med strategisk AI i realtid med tvåvägsljud.
+            </p>
+            <button
+              onClick={() => {
+                onClose?.();
+                onOpenVoiceCoach();
+              }}
+              className="w-full py-1.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs"
+            >
+              <Radio className="w-3.5 h-3.5 text-rose-300 animate-pulse" />
+              <span>Starta röstsamtal</span>
+            </button>
+          </div>
+        )}
 
         {/* Footer metadata info */}
         <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/30 text-slate-400 dark:text-slate-500 text-[10px] space-y-1 font-mono text-left">

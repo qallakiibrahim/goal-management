@@ -23,7 +23,9 @@ import {
   FileDown,
   Loader2,
   CheckCircle2,
-  Table
+  Table,
+  Mic,
+  Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile } from '../types';
@@ -46,6 +48,7 @@ interface DashboardViewProps {
   onQuickAddKata?: (session: KataSession) => void;
   onDownloadPdf?: () => void;
   onExportCsv?: () => void;
+  onOpenVoiceCoach?: () => void;
 }
 
 export default function DashboardView({
@@ -63,7 +66,8 @@ export default function DashboardView({
   onQuickAddProject,
   onQuickAddKata,
   onDownloadPdf,
-  onExportCsv
+  onExportCsv,
+  onOpenVoiceCoach
 }: DashboardViewProps) {
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
@@ -151,6 +155,17 @@ export default function DashboardView({
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">
+          {onOpenVoiceCoach && (
+            <button
+              onClick={onOpenVoiceCoach}
+              className="px-3.5 py-2.5 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-700 hover:to-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer select-none"
+              title="Starta direkt röstkonversation med Gemini 3.8 Live Röstcoach"
+            >
+              <Mic className="w-4 h-4 text-rose-200 animate-pulse" />
+              <span>Röstcoach (Live)</span>
+            </button>
+          )}
+
           {onExportCsv && (
             <button
               onClick={onExportCsv}
