@@ -94,7 +94,7 @@ export default function ProjectsView({
             placeholder="Sök efter pågående projekt och leveranser..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-indigo-600 transition"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-indigo-600 transition"
           />
         </div>
       </div>
@@ -115,26 +115,26 @@ export default function ProjectsView({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 key={p.id}
-                className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-slate-300/80 p-5 flex flex-col justify-between transition duration-200 group"
+                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300/80 dark:hover:border-slate-700 p-5 flex flex-col justify-between transition duration-200 group"
               >
                 <div>
                   {/* Card Title Header */}
                   <div className="flex justify-between items-start mb-3 gap-2">
-                    <span className="px-2.5 py-0.5 text-[10px] font-bold text-violet-700 bg-violet-50 rounded-full border border-violet-100">
+                    <span className="px-2.5 py-0.5 text-[10px] font-bold text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-950/40 rounded-full border border-violet-100 dark:border-violet-900/40">
                       PROJEKT
                     </span>
 
                     <div className="flex gap-1.5 opacity-60 group-hover:opacity-100 transition duration-150">
                       <button
                         onClick={() => onOpenEditModal(p)}
-                        className="p-1.5 hover:bg-slate-100 rounded text-slate-500 hover:text-indigo-900 transition"
+                        className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-500 hover:text-indigo-900 dark:hover:text-indigo-400 transition cursor-pointer"
                         title="Redigera"
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => onDeleteProject(p.id, p.title)}
-                        className="p-1.5 hover:bg-red-50 rounded text-slate-500 hover:text-red-655 transition"
+                        className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/30 rounded text-slate-500 hover:text-red-655 transition cursor-pointer"
                         title="Ta bort"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -142,21 +142,21 @@ export default function ProjectsView({
                     </div>
                   </div>
 
-                  <h3 className="text-sm font-semibold text-slate-800 font-display tracking-tight text-left">
+                  <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100 font-display tracking-tight text-left">
                     {p.title}
                   </h3>
-                  <p className="text-slate-500 text-xs leading-relaxed mt-2 text-left line-clamp-3">
+                  <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed mt-2 text-left line-clamp-3">
                     {p.description}
                   </p>
 
                   {/* Tasks Checklist Embed */}
-                  <div className="mt-5 space-y-3 bg-slate-50 border border-slate-100/50 p-3.5 rounded-xl">
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold border-b border-slate-200/55 pb-1.5">
+                  <div className="mt-5 space-y-3 bg-slate-50 dark:bg-slate-800/40 border border-slate-100/80 dark:border-slate-800 p-3.5 rounded-xl">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200/55 dark:border-slate-750 pb-1.5">
                       <span className="flex items-center gap-1">
-                        <ListTodo className="w-3.5 h-3.5 text-indigo-900" /> Kopplad Checklista ({completedTasksCount}/{totalTasksCount})
+                        <ListTodo className="w-3.5 h-3.5 text-indigo-900 dark:text-indigo-400" /> Kopplad Checklista ({completedTasksCount}/{totalTasksCount})
                       </span>
                       {totalTasksCount > 0 && (
-                        <span className="font-mono bg-violet-100/55 text-violet-800 px-1.5 py-0.2 rounded font-bold">
+                        <span className="font-mono bg-violet-100/55 dark:bg-violet-950/50 text-violet-800 dark:text-violet-300 px-1.5 py-0.2 rounded font-bold">
                           {Math.round((completedTasksCount / totalTasksCount) * 100)}%
                         </span>
                       )}
@@ -167,20 +167,20 @@ export default function ProjectsView({
                         <div 
                           key={t.id} 
                           onClick={() => onToggleTask(t.id)}
-                          className="flex items-start gap-2.5 text-xs text-slate-600 bg-white border border-slate-100 p-2.5 rounded-lg cursor-pointer hover:bg-slate-50/50 transition"
+                          className="flex items-start gap-2.5 text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-2.5 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-850 transition"
                         >
                           <input
                             type="checkbox"
                             checked={t.completed}
                             onChange={() => {}} // handled by onClick on the wrapper
-                            className="mt-0.5 rounded text-indigo-900 focus:ring-indigo-800 accent-indigo-900 cursor-pointer h-3.5 w-3.5"
+                            className="mt-0.5 rounded text-indigo-900 dark:text-indigo-500 focus:ring-indigo-800 accent-indigo-900 dark:accent-indigo-500 cursor-pointer h-3.5 w-3.5"
                           />
                           <div className="text-left leading-tight">
-                            <span className={t.completed ? 'line-through text-slate-400 font-medium' : 'text-slate-700 font-medium'}>
+                            <span className={t.completed ? 'line-through text-slate-400 dark:text-slate-500 font-medium' : 'text-slate-700 dark:text-slate-200 font-medium'}>
                               {t.title}
                             </span>
                             {t.kpi && t.completed && (
-                              <span className="text-[9px] block text-emerald-600 font-mono mt-0.5 font-bold">
+                              <span className="text-[9px] block text-emerald-600 dark:text-emerald-400 font-mono mt-0.5 font-bold">
                                 ✓ Framsteg: {t.kpi}
                               </span>
                             )}
@@ -189,7 +189,7 @@ export default function ProjectsView({
                       ))}
 
                       {totalTasksCount === 0 && (
-                        <p className="text-[11px] text-slate-400 italic py-1 text-center">Inga uppdrag tillagda.</p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 italic py-1 text-center">Inga uppdrag tillagda.</p>
                       )}
                     </div>
 
@@ -200,11 +200,11 @@ export default function ProjectsView({
                         placeholder="Skriv ny uppgift..."
                         value={newTaskTitles[p.id] || ''}
                         onChange={(e) => setNewTaskTitles(prev => ({ ...prev, [p.id]: e.target.value }))}
-                        className="bg-white px-2 py-1.5 text-xs border border-slate-200 rounded-lg flex-grow focus:outline-hidden focus:border-indigo-650"
+                        className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 px-2.5 py-1.5 text-xs border border-slate-200 dark:border-slate-700 rounded-lg flex-grow focus:outline-hidden focus:border-indigo-650"
                       />
                       <button
                         type="submit"
-                        className="p-1.5 bg-indigo-900 text-white rounded-lg hover:bg-indigo-950 transition shrink-0"
+                        className="p-1.5 bg-indigo-900 dark:bg-indigo-600 text-white rounded-lg hover:bg-indigo-950 dark:hover:bg-indigo-700 transition shrink-0 cursor-pointer"
                         title="Spara uppgift"
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -214,29 +214,45 @@ export default function ProjectsView({
                 </div>
 
                 {/* Card Progress & Deadline Footer */}
-                <div className="mt-5 pt-4 border-t border-slate-100 space-y-4">
+                <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-4">
                   {/* Manually adjust project status as fallback */}
                   <div className="space-y-1.5 text-left">
-                    <div className="flex justify-between text-xs font-semibold text-slate-600">
+                    <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-slate-350">
                       <span>Milstolpar slutförda:</span>
-                      <span className="font-mono text-indigo-950 font-bold">{p.progress}%</span>
+                      <span className="font-mono text-indigo-950 dark:text-indigo-300 font-bold">{p.progress}%</span>
                     </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={p.progress}
-                      onChange={(e) => onUpdateProjectProgress(p.id, parseInt(e.target.value))}
-                      className="accent-indigo-900 h-1 bg-slate-150 rounded-full cursor-pointer w-full"
-                    />
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onUpdateProjectProgress(p.id, Math.max(0, p.progress - 10))}
+                        className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-[10px] font-mono font-semibold transition cursor-pointer"
+                        title="Minska med 10%"
+                      >
+                        -10%
+                      </button>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={p.progress}
+                        onChange={(e) => onUpdateProjectProgress(p.id, parseInt(e.target.value))}
+                        className="accent-indigo-900 dark:accent-indigo-500 h-1.5 bg-slate-150 dark:bg-slate-800 rounded-full cursor-pointer flex-1"
+                      />
+                      <button
+                        onClick={() => onUpdateProjectProgress(p.id, Math.min(100, p.progress + 10))}
+                        className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-[10px] font-mono font-semibold transition cursor-pointer"
+                        title="Öka med 10%"
+                      >
+                        +10%
+                      </button>
+                    </div>
                   </div>
 
                   {/* Deadline & details */}
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 font-medium">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-indigo-800" /> Deadline: {p.deadline}
+                      <Clock className="w-3.5 h-3.5 text-indigo-800 dark:text-indigo-400" /> Deadline: {p.deadline}
                     </span>
-                    <span className="text-slate-300 font-mono">ID: {p.id}</span>
+                    <span className="text-slate-300 dark:text-slate-600 font-mono text-[10px]">ID: {p.id}</span>
                   </div>
                 </div>
 
@@ -246,10 +262,31 @@ export default function ProjectsView({
         </AnimatePresence>
 
         {filteredProjects.length === 0 && (
-          <div className="col-span-full py-12 text-center bg-white border border-dashed border-slate-200 rounded-2xl">
-            <Briefcase className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-            <h4 className="font-semibold text-slate-700 text-sm">Hittade inga projekt</h4>
-            <p className="text-xs text-slate-400 mt-1">Ändra dina sökord eller klicka på "Nytt Operativt Projekt" för att skapa ett.</p>
+          <div className="col-span-full py-12 text-center bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-6">
+            <Briefcase className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <h4 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Hittade inga projekt</h4>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-sm mx-auto">
+              {searchTerm 
+                ? `Inga projekt matchar sökningen "${searchTerm}".` 
+                : 'Det finns inga aktiva projekt registrerade ännu.'}
+            </p>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              {searchTerm ? (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold cursor-pointer transition"
+                >
+                  Rensa sökning
+                </button>
+              ) : (
+                <button
+                  onClick={onOpenAddModal}
+                  className="px-4 py-2 bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-950 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold cursor-pointer transition"
+                >
+                  Starta första projektet
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>

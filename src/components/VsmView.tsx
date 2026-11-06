@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Objective, Project } from '../types';
+import { toast } from './Toast';
 
 export interface VsmStep {
   id: string;
@@ -374,7 +375,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
   const handleDeleteStep = (stepId: string) => {
     const updatedSteps = activeStream.steps.filter(st => st.id !== stepId);
     if (updatedSteps.length === 0) {
-      alert("En värdeflödeskedja måste innehålla minst ett steg!");
+      toast("En värdeflödeskedja måste innehålla minst ett steg!", "warning");
       return;
     }
 
@@ -439,7 +440,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
   // Delete entire stream
   const handleDeleteStream = (streamId: string) => {
     if (streams.length <= 1) {
-      alert("Du måste ha minst ett värdeflöde registrerat i systemet!");
+      toast("Du måste ha minst ett värdeflöde registrerat i systemet!", "warning");
       return;
     }
     setVsmConfirm({

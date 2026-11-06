@@ -20,6 +20,7 @@ import {
   Scale
 } from 'lucide-react';
 import { CtqKanoItem, KanoCategory, Goal, Project } from '../types';
+import { toast } from './Toast';
 
 interface KanoCtqViewProps {
   items: CtqKanoItem[];
@@ -85,7 +86,7 @@ export default function KanoCtqView({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!voc || !driver || !specification) {
-      alert('Vänligen fyll i Voice of Customer, Drivkraft samt CTQ-Specifikation.');
+      toast('Vänligen fyll i Voice of Customer, Drivkraft samt CTQ-Specifikation.', 'warning');
       return;
     }
 

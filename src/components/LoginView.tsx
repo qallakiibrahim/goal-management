@@ -15,6 +15,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { toast } from './Toast';
 
 interface LoginViewProps {
   onGoogleSignIn: () => void;
@@ -173,7 +174,7 @@ export default function LoginView({
                         onClick={() => {
                           if (typeof window !== 'undefined') {
                             navigator.clipboard.writeText(window.location.hostname);
-                            alert('Domänen kopierades till urklipp!');
+                            toast('Domänen kopierades till urklipp!', 'success');
                           }
                         }}
                         className="py-1 px-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[9px] font-bold font-sans cursor-pointer transition-all shrink-0 active:scale-95"

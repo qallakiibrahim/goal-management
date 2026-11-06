@@ -19,11 +19,16 @@ import {
   Award,
   BookOpen,
   Activity,
-  Clock
+  Clock,
+  FileDown,
+  Loader2,
+  CheckCircle2,
+  Table
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Goal, Objective, Project, Initiative, Task, KPI, KataSession } from '../types';
+import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile } from '../types';
 import AiAnalysisCard from './AiAnalysisCard';
+import { generateStrategicPdfReport } from '../utils/generatePdfReport';
 
 interface DashboardViewProps {
   goals: Goal[];
@@ -33,11 +38,14 @@ interface DashboardViewProps {
   tasks: Task[];
   kpis: KPI[];
   kataSessions: KataSession[];
+  userProfile?: UserProfile;
   onNavigateToView: (view: string) => void;
   onStartKata: () => void;
   onQuickAddKpi?: (kpi: KPI) => void;
   onQuickAddProject?: (proj: Project) => void;
   onQuickAddKata?: (session: KataSession) => void;
+  onDownloadPdf?: () => void;
+  onExportCsv?: () => void;
 }
 
 export default function DashboardView({
@@ -48,12 +56,46 @@ export default function DashboardView({
   tasks,
   kpis,
   kataSessions,
+  userProfile,
   onNavigateToView,
   onStartKata,
   onQuickAddKpi,
   onQuickAddProject,
-  onQuickAddKata
+  onQuickAddKata,
+  onDownloadPdf,
+  onExportCsv
 }: DashboardViewProps) {
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfSuccess, setPdfSuccess] = useState(false);
+
+  const handleDownloadPdf = () => {
+    setIsGeneratingPdf(true);
+    setTimeout(() => {
+      try {
+        if (onDownloadPdf) {
+          onDownloadPdf();
+        } else {
+          generateStrategicPdfReport({
+            goals,
+            objectives,
+            projects,
+            initiatives,
+            tasks,
+            kpis,
+            kataSessions,
+            userProfile
+          });
+        }
+        setPdfSuccess(true);
+        setTimeout(() => setPdfSuccess(false), 3000);
+      } catch (err) {
+        console.error('Failed to generate PDF:', err);
+      } finally {
+        setIsGeneratingPdf(false);
+      }
+    }, 150);
+  };
+
   // Trace path state: users can select which Goal to expand
   const [selectedGoalId, setSelectedGoalId] = useState<string>(
     goals.length > 0 ? goals[0].id : ''
@@ -97,6 +139,55 @@ export default function DashboardView({
 
   return (
     <div className="space-y-8 text-left">
+      {/* Strategic Dashboard Header & PDF Download Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1 border-b border-slate-200/60 dark:border-slate-800/80">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-display font-bold text-slate-800 dark:text-slate-100 tracking-tight">
+            Strategisk Instrumentpanel
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Övergripande status för organisationens målstyrning, projektportfölj och nyckeltal (KPI:er).
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">
+          {onExportCsv && (
+            <button
+              onClick={onExportCsv}
+              className="px-3.5 py-2.5 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+              title="Exportera rådata till CSV för Excel / Google Sheets"
+            >
+              <Table className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Exportera Excel / CSV</span>
+            </button>
+          )}
+
+          <button
+            onClick={handleDownloadPdf}
+            disabled={isGeneratingPdf}
+            className="px-4 py-2.5 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer disabled:opacity-75 shrink-0"
+            title="Generera och ladda ner en fullständig PDF-rapport av den aktuella strategiska statusen"
+          >
+            {isGeneratingPdf ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Genererar PDF-rapport...</span>
+              </>
+            ) : pdfSuccess ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                <span>PDF-rapport nedladdad!</span>
+              </>
+            ) : (
+              <>
+                <FileDown className="w-4 h-4" />
+                <span>Ladda ner PDF-rapport</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
       {/* Stats Cards Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <motion.div 

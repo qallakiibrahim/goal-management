@@ -19,9 +19,13 @@ import {
   LogOut,
   Sun,
   Moon,
-  Menu
+  Menu,
+  Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { generateStrategicPdfReport } from './utils/generatePdfReport';
+import { exportStrategicCsv } from './utils/exportCsv';
+import { ToastProvider, toast } from './components/Toast';
 
 
 // Imports of types and default values
@@ -65,6 +69,7 @@ import LoginView from './components/LoginView';
 import MembersView from './components/MembersView';
 import VsmView from './components/VsmView';
 import KanoCtqView from './components/KanoCtqView';
+import CommandPalette from './components/CommandPalette';
 
 // Firestore Integration imports
 import { collection, onSnapshot, doc } from 'firebase/firestore';
@@ -93,9 +98,26 @@ export default function App() {
   // Navigation
   const [currentView, setCurrentView] = useState<string>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      return false; // Default to closed on iPad/tablets so users have maximum screen space
+    }
     const local = localStorage.getItem('sidebarOpen');
-    return local !== 'false'; // default to true
+    return local !== 'false';
   });
+
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+
+  // Global Cmd+K / Ctrl+K shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(prev => {
@@ -612,6 +634,30 @@ export default function App() {
     return JSON.stringify(fullJson, null, 2);
   };
 
+  const handleDownloadStrategicPdf = () => {
+    generateStrategicPdfReport({
+      goals,
+      objectives,
+      projects,
+      initiatives,
+      tasks,
+      kpis,
+      kataSessions,
+      userProfile: activeProfile
+    });
+    toast('PDF-rapporten har skapats och laddas ner!', 'success');
+  };
+
+  const handleExportStrategicCsv = () => {
+    try {
+      exportStrategicCsv({ goals, projects, kpis, kataSessions });
+      toast('Strategisk statusrapport exporterades till CSV!', 'success');
+    } catch (err) {
+      console.error(err);
+      toast('Kunde inte exportera till CSV.', 'error');
+    }
+  };
+
   const handleImportData = (rawString: string) => {
     try {
       const parsed = JSON.parse(rawString);
@@ -622,8 +668,10 @@ export default function App() {
       if (parsed.tasks && Array.isArray(parsed.tasks)) saveTasks(parsed.tasks);
       if (parsed.kpis && Array.isArray(parsed.kpis)) saveKpis(parsed.kpis);
       if (parsed.kataSessions && Array.isArray(parsed.kataSessions)) saveKata(parsed.kataSessions);
+      toast('All data importerades framgångsrikt!', 'success');
       return true;
     } catch (e) {
+      toast('Kunde inte importera data: Ogiltigt JSON-format.', 'error');
       return false;
     }
   };
@@ -642,7 +690,7 @@ export default function App() {
 
   const submitGoalForm = (e: FormEvent) => {
     e.preventDefault();
-    if (!formGoal.title.trim()) return alert('Titel får ej vara tom.');
+    if (!formGoal.title.trim()) return toast('Måltitel får ej vara tom.', 'warning');
 
     if (activeModal === 'addGoal') {
       const newG: Goal = {
@@ -650,9 +698,11 @@ export default function App() {
         ...formGoal
       };
       saveGoals([...goals, newG]);
+      toast('Nytt strategiskt mål sparades!', 'success');
     } else if (activeModal === 'editGoal' && editingGoal) {
       const updated = goals.map(g => g.id === editingGoal.id ? { ...g, ...formGoal } : g);
       saveGoals(updated);
+      toast('Målet har uppdaterats!', 'success');
     }
     setActiveModal(null);
   };
@@ -670,7 +720,7 @@ export default function App() {
 
   const submitProjectForm = (e: FormEvent) => {
     e.preventDefault();
-    if (!formProject.title.trim()) return alert('Titel får ej vara tom.');
+    if (!formProject.title.trim()) return toast('Projekttitel får ej vara tom.', 'warning');
 
     if (activeModal === 'addProject') {
       const newP: Project = {
@@ -678,9 +728,11 @@ export default function App() {
         ...formProject
       };
       saveProjects([...projects, newP]);
+      toast('Nytt projekt har startats!', 'success');
     } else if (activeModal === 'editProject' && editingProject) {
       const updated = projects.map(p => p.id === editingProject.id ? { ...p, ...formProject } : p);
       saveProjects(updated);
+      toast('Projektet har uppdaterats!', 'success');
     }
     setActiveModal(null);
   };
@@ -698,7 +750,9 @@ export default function App() {
 
   const submitKpiForm = (e: FormEvent) => {
     e.preventDefault();
-    if (!formKpi.title.trim() || !formKpi.value.trim() || !formKpi.target.trim()) return alert('Rubrik, Värde samt Mål är obligatoriska fält.');
+    if (!formKpi.title.trim() || !formKpi.value.trim() || !formKpi.target.trim()) {
+      return toast('Rubrik, Värde samt Mål är obligatoriska fält.', 'warning');
+    }
 
     if (activeModal === 'addKpi') {
       const newK: KPI = {
@@ -706,9 +760,11 @@ export default function App() {
         ...formKpi
       };
       saveKpis([...kpis, newK]);
+      toast('Nytt KPI har lagts till!', 'success');
     } else if (activeModal === 'editKpi' && editingKpi) {
       const updated = kpis.map(k => k.id === editingKpi.id ? { ...k, ...formKpi } : k);
       saveKpis(updated);
+      toast('KPI har uppdaterats!', 'success');
     }
     setActiveModal(null);
   };
@@ -726,7 +782,9 @@ export default function App() {
 
   const submitKataForm = (e: FormEvent) => {
     e.preventDefault();
-    if (!formKata.title.trim() || !formKata.goal.trim()) return alert('Rubrik samt önskat tillstånd är obligatoriska fält.');
+    if (!formKata.title.trim() || !formKata.goal.trim()) {
+      return toast('Rubrik samt önskat tillstånd är obligatoriska fält.', 'warning');
+    }
 
     if (activeModal === 'addKata') {
       const newS: KataSession = {
@@ -734,9 +792,11 @@ export default function App() {
         ...formKata
       };
       saveKata([...kataSessions, newS]);
+      toast('Ny Toyota Kata session sparades!', 'success');
     } else if (activeModal === 'editKata' && editingKata) {
       const updated = kataSessions.map(s => s.id === editingKata.id ? { ...s, ...formKata } : s);
       saveKata(updated);
+      toast('Kata-sessionen har uppdaterats!', 'success');
     }
     setActiveModal(null);
   };
@@ -911,10 +971,11 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans antialiased text-slate-800 dark:text-slate-200">
-      
-      {/* 1. Sidebar Navigation */}
-      {sidebarOpen && (
+    <ToastProvider>
+      <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans antialiased text-slate-800 dark:text-slate-200">
+        
+        {/* 1. Sidebar Navigation */}
+        {sidebarOpen && (
         <Sidebar 
           currentView={currentView} 
           onViewChange={(view) => setCurrentView(view)} 
@@ -942,15 +1003,26 @@ export default function App() {
               <span className="text-sm font-semibold text-slate-400 dark:text-slate-550 capitalize tracking-wide">
                 {activeProfile.role} Dashboard
               </span>
-              <span className="text-slate-350 dark:text-slate-700">•</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+              <span className="text-slate-350 dark:text-slate-700 hidden sm:inline">•</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono hidden sm:inline">
                 Inloggad som: <strong className="text-indigo-900 dark:text-indigo-400">{activeProfile.name}</strong>
               </span>
             </div>
           </div>
           
-          <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 font-mono">
-            <span>{new Date().toLocaleDateString('sv-SE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          <div className="flex items-center gap-3 sm:gap-4 text-xs font-semibold text-slate-500 font-mono">
+            {/* Quick Command Palette Search Button */}
+            <button
+              onClick={() => setCommandPaletteOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-600 dark:text-slate-300 rounded-xl text-xs transition cursor-pointer border border-slate-200/60 dark:border-slate-700"
+              title="Snabb sökning och kommandon (⌘K)"
+            >
+              <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span className="hidden md:inline font-sans">Sök...</span>
+              <kbd className="hidden sm:inline-block font-mono text-[9px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 shadow-2xs">⌘K</kbd>
+            </button>
+
+            <span className="hidden xl:inline">{new Date().toLocaleDateString('sv-SE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
             
             {/* Dark Mode Switch / Toggle Button */}
             <button
@@ -1021,11 +1093,14 @@ export default function App() {
               tasks={tasks}
               kpis={kpis}
               kataSessions={kataSessions}
+              userProfile={activeProfile}
               onNavigateToView={(v) => setCurrentView(v)}
               onStartKata={openAddKataModal}
               onQuickAddKpi={(kpi) => saveKpis([...kpis, kpi])}
               onQuickAddProject={(proj) => saveProjects([...projects, proj])}
               onQuickAddKata={(session) => saveKata([...kataSessions, session])}
+              onDownloadPdf={handleDownloadStrategicPdf}
+              onExportCsv={handleExportStrategicCsv}
             />
           )}
 
@@ -1126,6 +1201,8 @@ export default function App() {
               userProfile={activeProfile}
               onUpdateProfile={handleUpdateProfile}
               onResetDatabase={handleResetDatabase}
+              onDownloadPdf={handleDownloadStrategicPdf}
+              onExportCsv={handleExportStrategicCsv}
             />
           )}
 
@@ -1520,42 +1597,62 @@ export default function App() {
         ctqKanoItems={ctqKanoItems}
       />
 
-      {confirmModal.show && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-3xs flex items-center justify-center p-4 z-[9999] flex-col">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-6 text-left animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-xl">
-                <AlertTriangle className="w-5 h-5" />
+        {confirmModal.show && (
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-3xs flex items-center justify-center p-4 z-[9999] flex-col">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-6 text-left animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-xl">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <h3 className="text-sm font-display font-bold text-slate-800 dark:text-white">
+                  {confirmModal.title}
+                </h3>
               </div>
-              <h3 className="text-sm font-display font-bold text-slate-800 dark:text-white">
-                {confirmModal.title}
-              </h3>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              {confirmModal.message}
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                type="button"
-                onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold select-none cursor-pointer"
-              >
-                Avbryt
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  confirmModal.onConfirm();
-                  setConfirmModal(prev => ({ ...prev, show: false }));
-                }}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold select-none cursor-pointer shadow-xs transition"
-              >
-                Bekräfta
-              </button>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                {confirmModal.message}
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold select-none cursor-pointer"
+                >
+                  Avbryt
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    confirmModal.onConfirm();
+                    setConfirmModal(prev => ({ ...prev, show: false }));
+                  }}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold select-none cursor-pointer shadow-xs transition"
+                >
+                  Bekräfta
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* Global Command Palette (Cmd+K) */}
+        <CommandPalette
+          isOpen={commandPaletteOpen}
+          onClose={() => setCommandPaletteOpen(false)}
+          onNavigate={(v) => setCurrentView(v)}
+          goals={goals}
+          projects={projects}
+          kpis={kpis}
+          kataSessions={kataSessions}
+          onOpenAddGoal={openAddGoalModal}
+          onOpenAddProject={openAddProjectModal}
+          onOpenAddKpi={() => openAddKpiModal()}
+          onOpenAddKata={openAddKataModal}
+          onDownloadPdf={handleDownloadStrategicPdf}
+          onExportCsv={handleExportStrategicCsv}
+          onToggleTheme={() => setDarkMode(!darkMode)}
+          darkMode={darkMode}
+        />
+      </div>
+    </ToastProvider>
   );
 }

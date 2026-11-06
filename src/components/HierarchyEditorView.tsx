@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Goal, Objective, Project, Initiative, Task } from '../types';
 import AiAnalysisCard from './AiAnalysisCard';
+import { toast } from './Toast';
 
 interface HierarchyEditorViewProps {
   goals: Goal[];
@@ -59,7 +60,7 @@ export default function HierarchyEditorView({
   // Handle addition
   const handleSave = () => {
     if (!title.trim() || !description.trim()) {
-      alert('Vänligen fyll i både Titel och Beskrivning för din nya nod.');
+      toast('Vänligen fyll i både Titel och Beskrivning för din nya nod.', 'warning');
       return;
     }
 
@@ -91,7 +92,7 @@ export default function HierarchyEditorView({
     setTitle('');
     setDescription('');
     setKpi('');
-    alert(`Ny ${levelType.toUpperCase()} sparades! Du hittar den under sin respektive flik.`);
+    toast(`Ny ${levelType.toUpperCase()} sparades! Du hittar den under sin respektive flik.`, 'success');
   };
 
   const handleExport = () => {
@@ -154,19 +155,19 @@ export default function HierarchyEditorView({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         
         {/* Form panel */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-5">
-          <h3 className="font-display font-semibold text-sm text-slate-800 flex items-center gap-2">
-            <Plus className="w-4 h-4 text-indigo-900" /> Lägg till en ny nod
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-5">
+          <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <Plus className="w-4 h-4 text-indigo-900 dark:text-indigo-400" /> Lägg till en ny nod
           </h3>
 
           <div className="space-y-4">
             {/* Step Type Selector */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Nivåtyp i målkedjan:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Nivåtyp i målkedjan:</label>
               <select
                 value={levelType}
                 onChange={(e: any) => setLevelType(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-600 font-semibold"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-600 font-semibold"
               >
                 <option value="goal">Goal (Steg 1: Långsiktigt Strategiskt Mål)</option>
                 <option value="objective">Objective (Steg 2: Taktisk Målsättning)</option>
@@ -291,36 +292,36 @@ export default function HierarchyEditorView({
         {/* Preview and database panel */}
         <div className="space-y-6">
           {/* Card Preview */}
-          <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl">
-            <div className="flex items-center gap-1.5 text-indigo-900 font-bold text-xs uppercase tracking-wider mb-4">
-              <Sparkles className="w-4 h-4 text-indigo-950" />
+          <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl">
+            <div className="flex items-center gap-1.5 text-indigo-900 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider mb-4">
+              <Sparkles className="w-4 h-4 text-indigo-950 dark:text-indigo-300" />
               <span>Realtid Förhandsvisning</span>
             </div>
 
-            <div className="bg-white border border-slate-200 p-5 rounded-xl shadow-xs text-left min-h-48 flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl shadow-xs text-left min-h-48 flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase">
+                  <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">
                     {getPreviewIcon()}
                     {getPreviewHeader()}
                   </span>
-                  <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono font-bold">
+                  <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded font-mono font-bold">
                     PREVIEW
                   </span>
                 </div>
                 
-                <h4 className="text-sm font-bold text-slate-800 tracking-tight font-display">
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 tracking-tight font-display">
                   {title || 'Titel på din nya strategi...' }
                 </h4>
-                <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
                   {description || 'Beskrivningen du anger kommer dyka upp här för att ge dina kollegor, coacher och medarbetare tydliga instruktioner.'}
                 </p>
               </div>
 
               {levelType !== 'task' && (
-                <div className="mt-4 pt-3 border-t border-slate-100/80 text-xs">
-                  <span className="text-[10px] uppercase font-mono font-bold text-slate-400 block">Kopplat mätetal:</span>
-                  <span className="text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-100 p-2 rounded-lg block mt-1">
+                <div className="mt-4 pt-3 border-t border-slate-100/80 dark:border-slate-800 text-xs">
+                  <span className="text-[10px] uppercase font-mono font-bold text-slate-400 dark:text-slate-500 block">Kopplat mätetal:</span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-750 p-2 rounded-lg block mt-1">
                     {kpi || 'Ingen KPI mätare definierad'}
                   </span>
                 </div>
@@ -329,24 +330,24 @@ export default function HierarchyEditorView({
           </div>
 
           {/* Import/Export Panel */}
-          <div className="bg-white border border-slate-200 p-5 rounded-2xl text-left space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-150 pb-2 mb-2">
-              <h4 className="font-display font-semibold text-xs text-slate-800 uppercase tracking-wider">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl text-left space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-150 dark:border-slate-800 pb-2 mb-2">
+              <h4 className="font-display font-semibold text-xs text-slate-800 dark:text-slate-100 uppercase tracking-wider">
                 Exportera & Importera Data (JSON)
               </h4>
               <div className="flex gap-2">
                 <button
                   onClick={handleExport}
-                  className="p-1 px-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-150 rounded-lg text-xs font-semibold text-slate-600 transition flex items-center gap-1"
+                  className="p-1 px-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-150 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 transition flex items-center gap-1 cursor-pointer"
                   title="Kopiera text"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copied ? 'Kopierad' : 'Kopiera allt'}</span>
                 </button>
               </div>
             </div>
 
-            <p className="text-slate-500 text-xs leading-relaxed">
+            <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">
               Kopiera den fullständiga databas-JSON-strängen nedan för backuper, eller klistra in en sparad konfiguration för att skriva över nuvarande målyta.
             </p>
 
@@ -356,18 +357,18 @@ export default function HierarchyEditorView({
                 onChange={(e) => setImportJson(e.target.value)}
                 placeholder='Klistra in JSON-sträng här för att importera...'
                 rows={4}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono focus:outline-hidden"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-xs font-mono focus:outline-hidden"
               />
 
               {importStatus && (
-                <div className={`p-2.5 rounded-lg text-xs font-semibold ${importStatus.type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-100' : 'bg-red-50 text-red-800 border border-red-100'}`}>
+                <div className={`p-2.5 rounded-lg text-xs font-semibold ${importStatus.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-100 dark:border-emerald-800' : 'bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-200 border border-red-100 dark:border-red-800'}`}>
                   {importStatus.msg}
                 </div>
               )}
 
               <button
                 onClick={handleImportSubmit}
-                className="w-full py-2 bg-indigo-900 hover:bg-indigo-950 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition"
+                className="w-full py-2 bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-950 dark:hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer"
               >
                 <Upload className="w-3.5 h-3.5" /> Läs in och skriv över lokalt lager
               </button>

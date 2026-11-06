@@ -13,7 +13,10 @@ import {
   Save, 
   Sparkles,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  FileDown,
+  Loader2,
+  Table
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import AiAnalysisCard from './AiAnalysisCard';
@@ -22,12 +25,16 @@ interface SettingsViewProps {
   userProfile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
   onResetDatabase: () => void;
+  onDownloadPdf?: () => void;
+  onExportCsv?: () => void;
 }
 
 export default function SettingsView({
   userProfile,
   onUpdateProfile,
-  onResetDatabase
+  onResetDatabase,
+  onDownloadPdf,
+  onExportCsv
 }: SettingsViewProps) {
   // Local state for profile inputs
   const [name, setName] = useState(userProfile.name);
@@ -38,6 +45,24 @@ export default function SettingsView({
   const [notificationFrequency, setNotificationFrequency] = useState(userProfile.notificationFrequency);
   
   const [savedStatus, setSavedStatus] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [pdfDownloaded, setPdfDownloaded] = useState(false);
+
+  const handleDownloadPdf = () => {
+    if (!onDownloadPdf) return;
+    setIsDownloadingPdf(true);
+    setTimeout(() => {
+      try {
+        onDownloadPdf();
+        setPdfDownloaded(true);
+        setTimeout(() => setPdfDownloaded(false), 3000);
+      } catch (err) {
+        console.error('Failed to generate PDF in settings:', err);
+      } finally {
+        setIsDownloadingPdf(false);
+      }
+    }, 150);
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -183,6 +208,59 @@ export default function SettingsView({
         </div>
 
       </form>
+
+      {/* Strategic PDF Report Export Card */}
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="text-left space-y-1">
+            <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <FileDown className="w-4.5 h-4.5 text-indigo-700 dark:text-indigo-400" />
+              Strategisk Statusrapport (PDF)
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xl">
+              Generera och ladda ner en komplett PDF-rapport av den aktuella strategiska statusen, inklusive övergripande mål, projektstatus, framsteg och alla KPI-värden. Lämplig för ledningsmöten och styrgrupper.
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0 flex-wrap">
+            {onExportCsv && (
+              <button
+                type="button"
+                onClick={onExportCsv}
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition whitespace-nowrap shadow-xs cursor-pointer"
+                title="Exportera data till CSV"
+              >
+                <Table className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Exportera Excel / CSV</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="px-5 py-2.5 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition whitespace-nowrap shadow-xs cursor-pointer disabled:opacity-75"
+              title="Generera och ladda ner PDF-rapport"
+            >
+              {isDownloadingPdf ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Genererar PDF...</span>
+                </>
+              ) : pdfDownloaded ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                  <span>Rapport nedladdad!</span>
+                </>
+              ) : (
+                <>
+                  <FileDown className="w-4 h-4" />
+                  <span>Ladda ner PDF-rapport</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Danger Zone: Nollställ databasen */}
       <div className="bg-red-50/50 border border-red-200/60 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-8">
