@@ -25,7 +25,8 @@ import {
   CheckCircle2,
   Table,
   Mic,
-  Radio
+  Radio,
+  Workflow
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile } from '../types';
@@ -166,6 +167,15 @@ export default function DashboardView({
             </button>
           )}
 
+          <button
+            onClick={() => onNavigateToView('process-map')}
+            className="px-3.5 py-2.5 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+            title="Se hur hela systemet, metodikerna och dataflödet hänger ihop"
+          >
+            <Workflow className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <span>Processkarta & Flöde</span>
+          </button>
+
           {onExportCsv && (
             <button
               onClick={onExportCsv}
@@ -207,55 +217,87 @@ export default function DashboardView({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <motion.div 
           whileHover={{ y: -4 }}
-          className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 flex items-center gap-4 transition-all"
+          onClick={() => onNavigateToView('goals')}
+          className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
+          title="Klicka för att granska alla mål"
         >
-          <div className="p-3 bg-indigo-50 text-indigo-900 rounded-xl">
+          <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-300 rounded-xl group-hover:scale-105 transition-transform">
             <Target className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold font-display tracking-tight text-slate-800">{activeGoalsCount}</div>
-            <div className="text-xs text-slate-500 font-medium">Aktiva Målvisioner</div>
+            <div className="text-2xl font-bold font-display tracking-tight text-slate-800 dark:text-slate-100">{activeGoalsCount}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Aktiva Målvisioner ➔</div>
           </div>
         </motion.div>
 
         <motion.div 
           whileHover={{ y: -4 }}
-          className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 flex items-center gap-4 transition-all"
+          onClick={() => onNavigateToView('projects')}
+          className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
+          title="Klicka för att hantera projekt"
         >
-          <div className="p-3 bg-violet-50 text-violet-700 rounded-xl">
+          <div className="p-3 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 rounded-xl group-hover:scale-105 transition-transform">
             <Briefcase className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold font-display tracking-tight text-slate-800">{activeProjectsCount}</div>
-            <div className="text-xs text-slate-500 font-medium">Pågående Projekt</div>
+            <div className="text-2xl font-bold font-display tracking-tight text-slate-800 dark:text-slate-100">{activeProjectsCount}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">Pågående Projekt ➔</div>
           </div>
         </motion.div>
 
         <motion.div 
           whileHover={{ y: -4 }}
-          className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 flex items-center gap-4 transition-all"
+          onClick={() => onNavigateToView('kpis')}
+          className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
+          title="Klicka för att granska KPI:er"
         >
-          <div className="p-3 bg-emerald-50 text-emerald-700 rounded-xl">
+          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-xl group-hover:scale-105 transition-transform">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-2xl font-bold font-display tracking-tight text-slate-800">{avgKpiProgress}%</div>
-            <div className="text-xs text-slate-500 font-medium">KPI Uppfyllelsegrad</div>
+            <div className="text-2xl font-bold font-display tracking-tight text-slate-800 dark:text-slate-100">{avgKpiProgress}%</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">KPI Uppfyllelsegrad ➔</div>
           </div>
         </motion.div>
 
         <motion.div 
           whileHover={{ y: -4 }}
-          className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 flex items-center gap-4 transition-all"
+          onClick={() => onNavigateToView('kata')}
+          className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
+          title="Klicka för att öppna Toyota Kata coaching"
         >
-          <div className="p-3 bg-rose-50 text-rose-600 rounded-xl">
+          <div className="p-3 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 rounded-xl group-hover:scale-105 transition-transform">
             <RefreshCw className="w-6 h-6 animate-pulse" />
           </div>
           <div>
-            <div className="text-2xl font-bold font-display tracking-tight text-slate-800">{kataSessionsCount}</div>
-            <div className="text-xs text-slate-500 font-medium">Kata Coaching Sessions</div>
+            <div className="text-2xl font-bold font-display tracking-tight text-slate-800 dark:text-slate-100">{kataSessionsCount}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">Kata Coaching Sessions ➔</div>
           </div>
         </motion.div>
+      </div>
+
+      {/* Process Map Quick Overview Banner */}
+      <div className="p-4 bg-gradient-to-r from-indigo-50/80 via-white to-purple-50/80 dark:from-slate-900/80 dark:via-slate-850 dark:to-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5">
+          <div className="p-2.5 bg-indigo-900 dark:bg-indigo-600 text-white rounded-xl shrink-0 shadow-xs">
+            <Workflow className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-xs font-bold font-display text-slate-900 dark:text-slate-100">
+              Hur hänger hela systemet ihop?
+            </h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              Utforska den fullständiga processkartan från Kano/CTQ & VSM till Balanced Scorecard, Målhierarki och Toyota Kata PDCA-cykler.
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => onNavigateToView('process-map')}
+          className="px-3.5 py-2 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer shadow-xs"
+        >
+          <span>Öppna Processkarta & Flöde</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
       </div>
 
       {/* AI Insights & Recommendations Module */}

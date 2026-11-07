@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mic, 
   MicOff, 
@@ -19,8 +19,13 @@ import {
   Bot,
   User,
   Send,
-  MessageSquare,
-  ShieldCheck
+  Target,
+  Briefcase,
+  TrendingUp,
+  Scale,
+  Layers,
+  Globe,
+  Compass
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -30,6 +35,15 @@ import {
 } from '../utils/audioStreamer';
 import { Goal, Project, KPI, KataSession, CtqKanoItem } from '../types';
 
+export type VoiceCoachTopic = 
+  | 'all' 
+  | 'goals' 
+  | 'projects' 
+  | 'kpis' 
+  | 'vsm' 
+  | 'kano' 
+  | 'kata';
+
 interface VoiceCoachModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -38,6 +52,7 @@ interface VoiceCoachModalProps {
   kpis: KPI[];
   kataSessions: KataSession[];
   ctqKanoItems: CtqKanoItem[];
+  initialTopic?: VoiceCoachTopic;
 }
 
 interface TranscriptItem {
@@ -54,8 +69,12 @@ export default function VoiceCoachModal({
   projects,
   kpis,
   kataSessions,
-  ctqKanoItems
+  ctqKanoItems,
+  initialTopic = 'all'
 }: VoiceCoachModalProps) {
+  // Topic Focus Selector
+  const [selectedTopic, setSelectedTopic] = useState<VoiceCoachTopic>(initialTopic);
+
   // Connection and Session States
   const [connectionStatus, setConnectionStatus] = useState<
     'connecting' | 'ready' | 'speaking' | 'listening' | 'error' | 'closed'
@@ -66,6 +85,7 @@ export default function VoiceCoachModal({
   // Microphone & Speaker controls
   const [isMicMuted, setIsMicMuted] = useState<boolean>(false);
   const [isSpeakerMuted, setIsSpeakerMuted] = useState<boolean>(false);
+  const [speechRecActive, setSpeechRecActive] = useState<boolean>(false);
 
   // Audio Visualizer Levels (0.0 to 1.0)
   const [userAudioLevel, setUserAudioLevel] = useState<number>(0);
@@ -76,28 +96,66 @@ export default function VoiceCoachModal({
     {
       id: 'welcome',
       role: 'assistant',
-      text: 'Hej! Jag är din strategiska röstcoach (gemini-3.8-live). Prata med mig om dina mål, Toyota Kata-experiment eller KPI-utveckling!',
+      text: 'Hej! Jag är din strategiska AI-partner för hela verksamheten. Prata med mig om allt från Mål, Projekt och KPI:er till VSM-flöden, Kano-kundkrav och Toyota Kata!',
       timestamp: new Date()
     }
   ]);
   const [textInput, setTextInput] = useState('');
 
   // Refs for audio hardware and streaming
-  const socketRef = useRef<WebSocket | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const sessionIdRef = useRef<string>('');
   const audioPlayerRef = useRef<LiveAudioPlayer | null>(null);
   const inputAudioCtxRef = useRef<AudioContext | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
+  const speechRecognitionRef = useRef<any>(null);
   const animFrameRef = useRef<number | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement | null>(null);
+  const audioChunkBufferRef = useRef<Float32Array[]>([]);
+  const lastAudioSendTimeRef = useRef<number>(0);
 
-  // Suggested conversational starter prompts
-  const starterPrompts = [
-    'Coacha mig genom Toyota Katas 5 frågor',
-    'Hur balanserar våra 4 Balanced Scorecard-perspektiv?',
-    'Vilka projekt löper störst risk för försening?',
-    'Hur hänger Kano-kraven ihop med våra strategiska KPIer?'
-  ];
+  // Suggested conversational starter prompts depending on active topic
+  const starterPromptsMap: Record<VoiceCoachTopic, string[]> = {
+    all: [
+      'Ge en övergripande nulägesanalys av vår verksamhet',
+      'Hur hänger våra mål, projekt och KPI:er ihop?',
+      'Vilka är våra största strategiska risker just nu?',
+      'Hur kan vi förbättra samarbetet mellan metodikerna?'
+    ],
+    goals: [
+      'Hjälp mig formulera ett nytt SMART strategiskt mål',
+      'Vilka av våra mål har lägst framdrift och varför?',
+      'Hur säkerställer vi att målen stöttas av rätt projekt?'
+    ],
+    projects: [
+      'Vilka projekt löper störst risk för försening?',
+      'Hur bryter vi ner projekt i mindre mätbara milstolpar?',
+      'Hjälp mig prioritera bland våra pågående projekt'
+    ],
+    kpis: [
+      'Hur balanserar våra 4 Balanced Scorecard-perspektiv?',
+      'Har vi bra ledande indikatorer (Lead) eller bara släpande (Lag)?',
+      'Föreslå KPI:er för perspektivet Lärande & Förnyelse'
+    ],
+    vsm: [
+      'Hur analyserar vi våra flaskhalsar och kötider i VSM?',
+      'Vad är ett realistiskt mål för vår processverkningsgrad (PCE)?',
+      'Vilka förbättringar ger snabbast minskning av ledtiden?'
+    ],
+    kano: [
+      'Hur översätter vi kundintervjuer till mätbara CTQ-krav?',
+      'Vad skiljer Must-be hygienkrav från Delighter-faktorer?',
+      'Hur kopplar vi CTQ-kraven direkt till våra KPI:er?'
+    ],
+    kata: [
+      'Coacha mig genom Toyota Katas 5 standardfrågor',
+      'Hur definierar jag ett tydligt måltillstånd?',
+      'Hjälp mig formulera nästa snabba PDCA-experiment'
+    ]
+  };
+
+  const starterPrompts = starterPromptsMap[selectedTopic] || starterPromptsMap.all;
 
   // Auto scroll transcript
   useEffect(() => {
@@ -124,6 +182,13 @@ export default function VoiceCoachModal({
       animFrameRef.current = null;
     }
 
+    if (speechRecognitionRef.current) {
+      try {
+        speechRecognitionRef.current.stop();
+      } catch (e) {}
+      speechRecognitionRef.current = null;
+    }
+
     if (scriptProcessorRef.current) {
       try {
         scriptProcessorRef.current.disconnect();
@@ -148,62 +213,93 @@ export default function VoiceCoachModal({
       audioPlayerRef.current = null;
     }
 
-    if (socketRef.current) {
+    if (eventSourceRef.current) {
       try {
-        socketRef.current.close();
+        eventSourceRef.current.close();
       } catch (e) {}
-      socketRef.current = null;
+      eventSourceRef.current = null;
     }
 
     setUserAudioLevel(0);
     setAiAudioLevel(0);
+    setSpeechRecActive(false);
+  };
+
+  const sendInputToLiveSession = (payload: any) => {
+    if (!sessionIdRef.current) return;
+    fetch('/api/live/input', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: sessionIdRef.current,
+        ...payload
+      })
+    }).catch((err) => {
+      console.warn('[Live Voice Client] Failed to send input:', err);
+    });
+  };
+
+  const handleTopicSwitch = (topic: VoiceCoachTopic) => {
+    setSelectedTopic(topic);
+    const labels: Record<VoiceCoachTopic, string> = {
+      all: 'Hela Verksamheten',
+      goals: 'Strategiska Mål (Goals)',
+      projects: 'Operativa Projekt',
+      kpis: 'KPI:er & Scorecard',
+      vsm: 'Värdeflödesanalys (VSM)',
+      kano: 'Kano & Kundkrav (CTQ)',
+      kata: 'Toyota Kata Coaching'
+    };
+    sendInputToLiveSession({
+      text: `[Fokusbyte]: Jag vill nu diskutera och fokusera på området "${labels[topic]}". Ge mig en kort introduktion och fråga vad vi ska börja med inom detta område.`
+    });
   };
 
   const startSession = async () => {
     cleanupAudio();
     setConnectionStatus('connecting');
-    setStatusMessage('Ansluter till Gemini Live WebSocket-brygga...');
+    setStatusMessage('Ansluter till gemini-3.8-live röstcoach...');
 
     // 1. Initialize Audio Player for 24kHz model output
     audioPlayerRef.current = new LiveAudioPlayer();
     audioPlayerRef.current.init();
 
-    // 2. Open WebSocket to backend
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/live`;
-    const ws = new WebSocket(wsUrl);
-    socketRef.current = ws;
+    // 2. Open HTTP Server-Sent Events stream to backend
+    const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    sessionIdRef.current = sessionId;
 
-    ws.onopen = () => {
-      console.log('[Live Voice Client] WebSocket connected to server');
-      // Send current strategic context to ground the conversation
-      ws.send(
-        JSON.stringify({
-          type: 'contextUpdate',
-          context: {
-            goalsCount: goals.length,
-            goals: goals.map((g) => ({ title: g.title, category: g.category, progress: g.progress })),
-            projectsCount: projects.length,
-            projects: projects.map((p) => ({ title: p.title, progress: p.progress })),
-            kpisCount: kpis.length,
-            kpis: kpis.map((k) => ({ title: k.title, value: k.value, target: k.target, progress: k.progress })),
-            kataCount: kataSessions.length,
-            kataSessions: kataSessions.map((k) => ({ title: k.title, nextStep: k.nextStep, obstacles: k.obstacles }))
-          }
-        })
-      );
+    const streamUrl = `/api/live/stream?sessionId=${sessionId}&voice=${encodeURIComponent(activeVoice)}`;
+    const es = new EventSource(streamUrl);
+    eventSourceRef.current = es;
+
+    es.onopen = () => {
+      console.log('[Live Voice Client] Live SSE stream connected to gemini-3.8-live');
     };
 
-    ws.onmessage = (event) => {
+    es.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data);
 
         if (msg.type === 'status') {
           if (msg.status === 'ready') {
             setConnectionStatus('ready');
-            setStatusMessage('Klar! Mikrofonen är aktiv — ställ din fråga.');
-            // Initialize mic capture after server is ready
-            startMicrophone();
+            setStatusMessage('Klar! Mikrofonen lyssnar — prata fritt eller skriv.');
+            // Initialize mic and speech recognition
+            startMicrophoneAndSpeechRecognition();
+            // Ground with current strategic context
+            sendInputToLiveSession({
+              context: {
+                goalsCount: goals.length,
+                goals: goals.map((g) => ({ title: g.title, category: g.category, progress: g.progress })),
+                projectsCount: projects.length,
+                projects: projects.map((p) => ({ title: p.title, progress: p.progress })),
+                kpisCount: kpis.length,
+                kpis: kpis.map((k) => ({ title: k.title, value: k.value, target: k.target, progress: k.progress })),
+                kataCount: kataSessions.length,
+                kataSessions: kataSessions.map((k) => ({ title: k.title, nextStep: k.nextStep, obstacles: k.obstacles })),
+                kanoCount: ctqKanoItems.length
+              }
+            });
           } else {
             setStatusMessage(msg.message || 'Uppdaterar status...');
           }
@@ -215,7 +311,6 @@ export default function VoiceCoachModal({
           setConnectionStatus('listening');
         } else if (msg.type === 'transcript') {
           setTranscripts((prev) => {
-            // Check if last transcript is from the same role to append or add new
             const last = prev[prev.length - 1];
             if (last && last.role === msg.role && Date.now() - last.timestamp.getTime() < 3000) {
               const updated = [...prev];
@@ -245,18 +340,8 @@ export default function VoiceCoachModal({
       }
     };
 
-    ws.onerror = (err) => {
-      console.error('[Live Voice Client] WebSocket error:', err);
-      setConnectionStatus('error');
-      setStatusMessage('Kunde inte nå röstservern. Kontrollera nätverket.');
-    };
-
-    ws.onclose = () => {
-      console.log('[Live Voice Client] WebSocket closed');
-      if (connectionStatus !== 'error') {
-        setConnectionStatus('closed');
-        setStatusMessage('Sessionen har avslutats.');
-      }
+    es.onerror = () => {
+      console.warn('[Live Voice Client] SSE Stream status update');
     };
 
     // 3. Start Visualizer Level Polling
@@ -273,7 +358,60 @@ export default function VoiceCoachModal({
     pollLevels();
   };
 
-  const startMicrophone = async () => {
+  const startMicrophoneAndSpeechRecognition = async () => {
+    // A. Start Web Speech API Recognition for 100% reliable Swedish transcription
+    const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognitionClass) {
+      try {
+        const recognition = new SpeechRecognitionClass();
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = 'sv-SE';
+
+        recognition.onstart = () => {
+          setSpeechRecActive(true);
+        };
+
+        recognition.onresult = (event: any) => {
+          const current = event.resultIndex;
+          const text = event.results[current][0]?.transcript?.trim();
+          if (text) {
+            console.log('[Live Voice Client] SpeechRecognition recognized:', text);
+            // Append to transcripts
+            setTranscripts((prev) => [
+              ...prev,
+              {
+                id: `tr-user-${Date.now()}`,
+                role: 'user',
+                text,
+                timestamp: new Date()
+              }
+            ]);
+            // Send text directly to live session
+            sendInputToLiveSession({ text });
+            setConnectionStatus('listening');
+          }
+        };
+
+        recognition.onerror = (e: any) => {
+          console.warn('[Live Voice Client] SpeechRecognition warning:', e?.error);
+        };
+
+        recognition.onend = () => {
+          // Restart if still open and not muted
+          if (!isMicMuted && isOpen) {
+            try { recognition.start(); } catch (e) {}
+          }
+        };
+
+        recognition.start();
+        speechRecognitionRef.current = recognition;
+      } catch (recErr) {
+        console.warn('[Live Voice Client] Could not start SpeechRecognition:', recErr);
+      }
+    }
+
+    // B. Start Hardware Microphone Audio Capture & 16kHz PCM streaming
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -291,7 +429,6 @@ export default function VoiceCoachModal({
       inputAudioCtxRef.current = inputCtx;
 
       const source = inputCtx.createMediaStreamSource(stream);
-      // ScriptProcessorNode for wide cross-browser audio buffer processing
       const processor = inputCtx.createScriptProcessor(4096, 1, 1);
       scriptProcessorRef.current = processor;
 
@@ -309,29 +446,43 @@ export default function VoiceCoachModal({
           sum += inputBuffer[i] * inputBuffer[i];
         }
         const rms = Math.sqrt(sum / inputBuffer.length);
-        setUserAudioLevel(Math.min(1, rms * 4.5));
+        const level = Math.min(1, rms * 4.5);
+        setUserAudioLevel(level);
 
-        // Resample and convert to 16-bit PCM little-endian
-        const pcmBytes = floatTo16BitPCM(inputBuffer, inputCtx.sampleRate, 16000);
-        const base64 = uint8ArrayToBase64(pcmBytes);
+        // Buffer audio chunks and send every ~250ms when voice activity is present
+        const now = Date.now();
+        audioChunkBufferRef.current.push(new Float32Array(inputBuffer));
 
-        if (socketRef.current?.readyState === WebSocket.OPEN) {
-          socketRef.current.send(
-            JSON.stringify({
-              type: 'audio',
-              audio: base64
-            })
-          );
+        if (now - lastAudioSendTimeRef.current > 250) {
+          lastAudioSendTimeRef.current = now;
+          const chunks = audioChunkBufferRef.current;
+          audioChunkBufferRef.current = [];
+
+          if (chunks.length > 0) {
+            const totalLen = chunks.reduce((acc, c) => acc + c.length, 0);
+            const merged = new Float32Array(totalLen);
+            let offset = 0;
+            for (const c of chunks) {
+              merged.set(c, offset);
+              offset += c.length;
+            }
+
+            // Resample and convert to 16-bit PCM little-endian
+            const pcmBytes = floatTo16BitPCM(merged, inputCtx.sampleRate, 16000);
+            const base64 = uint8ArrayToBase64(pcmBytes);
+
+            // Send to server (which passes it as media: { data, mimeType } to Gemini Live)
+            sendInputToLiveSession({ audio: base64 });
+          }
         }
       };
 
       source.connect(processor);
-      // Connect to destination to keep processing alive in WebKit/Safari
       processor.connect(inputCtx.destination);
 
     } catch (err: any) {
       console.warn('[Live Voice Client] Microphone permission failed:', err);
-      setStatusMessage('Kunde inte få åtkomst till mikrofonen. Kontrollera behörigheter.');
+      setStatusMessage('Kunde inte få åtkomst till mikrofonen. Använd textrutan nedan.');
     }
   };
 
@@ -342,6 +493,13 @@ export default function VoiceCoachModal({
       mediaStreamRef.current.getAudioTracks().forEach((track) => {
         track.enabled = !next;
       });
+    }
+    if (speechRecognitionRef.current) {
+      if (next) {
+        try { speechRecognitionRef.current.stop(); } catch (e) {}
+      } else {
+        try { speechRecognitionRef.current.start(); } catch (e) {}
+      }
     }
     if (next) setUserAudioLevel(0);
   };
@@ -359,26 +517,15 @@ export default function VoiceCoachModal({
 
   const handleVoiceChange = (newVoice: string) => {
     setActiveVoice(newVoice);
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(
-        JSON.stringify({
-          type: 'reconfigure',
-          voice: newVoice,
-          context: {
-            goalsCount: goals.length,
-            projectsCount: projects.length,
-            kpisCount: kpis.length,
-            kataCount: kataSessions.length
-          }
-        })
-      );
-    }
+    cleanupAudio();
+    setTimeout(() => {
+      startSession();
+    }, 100);
   };
 
   const handleSendPrompt = (text: string) => {
     if (!text.trim()) return;
 
-    // Add to transcripts immediately
     setTranscripts((prev) => [
       ...prev,
       {
@@ -389,20 +536,21 @@ export default function VoiceCoachModal({
       }
     ]);
 
-    // Send over WebSocket as text input to gemini-3.8-live
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(
-        JSON.stringify({
-          type: 'text',
-          text
-        })
-      );
-    }
-
+    sendInputToLiveSession({ text });
     setTextInput('');
   };
 
   if (!isOpen) return null;
+
+  const topicsList: { id: VoiceCoachTopic; label: string; icon: any }[] = [
+    { id: 'all', label: 'Hela Appen', icon: Globe },
+    { id: 'goals', label: 'Mål & Visioner', icon: Target },
+    { id: 'projects', label: 'Projekt', icon: Briefcase },
+    { id: 'kpis', label: 'KPI & BSC', icon: TrendingUp },
+    { id: 'vsm', label: 'VSM Flöde', icon: Activity },
+    { id: 'kano', label: 'Kano & CTQ', icon: Scale },
+    { id: 'kata', label: 'Toyota Kata', icon: RefreshCw }
+  ];
 
   return (
     <AnimatePresence>
@@ -412,7 +560,7 @@ export default function VoiceCoachModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-3xl h-[88vh] max-h-[750px] shadow-2xl flex flex-col overflow-hidden text-left"
+          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-3xl h-[90vh] max-h-[800px] shadow-2xl flex flex-col overflow-hidden text-left"
         >
           {/* Header Bar */}
           <div className="p-4 px-6 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
@@ -423,7 +571,7 @@ export default function VoiceCoachModal({
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="font-display font-bold text-sm text-white">
-                    Strategisk Röstcoach
+                    Strategisk AI-Röstpartner
                   </h2>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
                     gemini-3.8-live
@@ -475,13 +623,39 @@ export default function VoiceCoachModal({
             </div>
           </div>
 
+          {/* Topic Focus Selector Bar (Across entire app) */}
+          <div className="px-4 py-2 bg-slate-950 border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <span className="text-[10px] uppercase tracking-wider font-mono font-bold text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+              <Compass className="w-3 h-3 text-indigo-400" />
+              Fokusområde:
+            </span>
+            {topicsList.map((t) => {
+              const Icon = t.icon;
+              const isActive = selectedTopic === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => handleTopicSwitch(t.id)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer ${
+                    isActive
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-slate-850 hover:bg-slate-800 text-slate-300 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-3 h-3" />
+                  <span>{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
           {/* Central Animated Visualizer Section */}
-          <div className="bg-gradient-to-b from-slate-900 via-slate-920 to-slate-950 p-6 flex flex-col items-center justify-center relative overflow-hidden border-b border-slate-800/80">
+          <div className="bg-gradient-to-b from-slate-900 via-slate-920 to-slate-950 p-5 flex flex-col items-center justify-center relative overflow-hidden border-b border-slate-800/80">
             {/* Background Glow effects */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15),transparent_70%)] pointer-events-none" />
 
             {/* Pulsing Orb Visualizer */}
-            <div className="relative w-36 h-36 flex items-center justify-center my-2">
+            <div className="relative w-28 h-28 flex items-center justify-center my-1">
               {/* Outermost reactive wave rings */}
               <motion.div
                 animate={{
@@ -504,7 +678,7 @@ export default function VoiceCoachModal({
 
               {/* Central Core Orb */}
               <div
-                className={`w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 relative z-10 ${
+                className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 relative z-10 ${
                   aiAudioLevel > 0.05
                     ? 'bg-gradient-to-tr from-rose-600 to-amber-500 text-white shadow-rose-500/50 scale-105'
                     : userAudioLevel > 0.05
@@ -513,17 +687,17 @@ export default function VoiceCoachModal({
                 }`}
               >
                 {aiAudioLevel > 0.05 ? (
-                  <Activity className="w-8 h-8 animate-pulse text-white" />
+                  <Activity className="w-7 h-7 animate-pulse text-white" />
                 ) : userAudioLevel > 0.05 ? (
-                  <Mic className="w-8 h-8 animate-bounce text-white" />
+                  <Mic className="w-7 h-7 animate-bounce text-white" />
                 ) : (
-                  <Bot className="w-8 h-8 text-indigo-400" />
+                  <Bot className="w-7 h-7 text-indigo-400" />
                 )}
               </div>
             </div>
 
             {/* Dynamic Real-time Status Badge */}
-            <div className="mt-2 text-center z-10">
+            <div className="mt-1 text-center z-10">
               <span
                 className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${
                   aiAudioLevel > 0.05
@@ -536,27 +710,27 @@ export default function VoiceCoachModal({
                 {aiAudioLevel > 0.05 ? (
                   <>
                     <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
-                    Gemini talar (24kHz PCM)...
+                    AI talar i högtalaren (24kHz)...
                   </>
                 ) : userAudioLevel > 0.05 ? (
                   <>
                     <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-                    Lyssnar på dig (16kHz PCM)...
+                    Hör din röst i realtid...
                   </>
                 ) : (
                   <>
                     <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    Mikrofon redo • Ställ din fråga
+                    Mikrofon aktiv & taligenkänning redo • Säg vad som helst!
                   </>
                 )}
               </span>
             </div>
 
             {/* Equalizer Frequency Bars */}
-            <div className="flex items-center gap-1.5 mt-4 h-6">
+            <div className="flex items-center gap-1 mt-3 h-5">
               {[0.4, 0.7, 1.0, 0.6, 0.8, 1.2, 0.5, 0.9, 0.3, 0.7, 1.1, 0.6].map((mult, idx) => {
                 const combinedLevel = Math.max(userAudioLevel, aiAudioLevel);
-                const height = Math.max(4, Math.min(24, combinedLevel * 28 * mult));
+                const height = Math.max(3, Math.min(20, combinedLevel * 24 * mult));
                 return (
                   <motion.div
                     key={idx}
@@ -615,7 +789,7 @@ export default function VoiceCoachModal({
           <div className="p-2.5 px-4 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
             <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              Snabbtips:
+              Frågeförslag:
             </span>
             {starterPrompts.map((prompt, i) => (
               <button
@@ -692,7 +866,7 @@ export default function VoiceCoachModal({
                 type="text"
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
-                placeholder="Eller skriv textfråga till röstcoachen..."
+                placeholder="Skriv textfråga eller tala i mic..."
                 className="flex-1 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-hidden focus:border-indigo-600 dark:text-white placeholder-slate-400"
               />
               <button

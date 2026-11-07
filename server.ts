@@ -179,6 +179,20 @@ function getFallbackAnalyze(type: string, goals: any[], projects: any[], kpis: a
       `Du spårar för närvarande ${kpis.length} styrtal över dessa perspektiv.`
     ];
     rec = "Se till att er interna kapacitet (Lärande/Processer) kan bära de höga kundkrav ni ställer.";
+  } else if (type === 'vsm') {
+    title = "Värdeflödes- & Flaskhalsanalys (VSM)";
+    insights = [
+      "Värdeflödet kartlägger förhållandet mellan aktiv processtid och väntetider.",
+      "Flaskhalsar i manuella överlämningar utgör normalt över 70% av den totala ledtiden."
+    ];
+    rec = "Fokusera på att minska kötiderna mellan stegen snarare än att öka hastigheten i enskilda processer.";
+  } else if (type === 'kano') {
+    title = "Kano- & Kundkravsanalys (CTQ)";
+    insights = [
+      "Kundkrav måste särskiljas mellan hygienkrav (Must-be) och differentierande faktorer (Delighters).",
+      "Ska-krav skapar inget mervärde när de är uppfyllda, men totalt missnöje om de brister."
+    ];
+    rec = "Säkra 100% uppfyllelse av Must-be-kraven innan resurser läggs på Delighter-initiativ.";
   }
 
   return { title, insights, recommendation: rec };
@@ -345,6 +359,172 @@ Svara i ett strikt JSON-format.`;
     // Cache the fallback so we don't spam failed queries in quota-exhausted environments
     analyzeCache.set(cacheKey, fallbackData);
     res.json(fallbackData);
+  }
+});
+
+// =====================================================================
+// Gemini Live API (gemini-3.8-live) HTTP SSE & Input Bridge
+// Enables 100% reliable Live Audio streaming in iframes & cloud proxies
+// =====================================================================
+interface HttpLiveSession {
+  id: string;
+  session: any;
+  res?: express.Response;
+  voice: string;
+  lastActive: number;
+}
+const httpLiveSessions = new Map<string, HttpLiveSession>();
+
+// Cleanup stale sessions
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, s] of httpLiveSessions.entries()) {
+    if (now - s.lastActive > 5 * 60 * 1000) {
+      try { s.session?.close(); } catch (e) {}
+      httpLiveSessions.delete(id);
+    }
+  }
+}, 60000);
+
+// SSE Stream endpoint for real-time Live API events
+app.get('/api/live/stream', async (req, res) => {
+  const sessionId = (req.query.sessionId as string) || `sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  const voice = (req.query.voice as string) || 'Zephyr';
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders?.();
+
+  const sendEvent = (data: any) => {
+    try {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    } catch (e) {}
+  };
+
+  sendEvent({ type: 'status', status: 'connecting', sessionId, message: 'Initierar session med gemini-3.8-live...' });
+
+  try {
+    const systemPrompt = `Du är en strategisk AI-partner och röstcoach för HELA applikationen MålRamverk Alignment Engine.
+Du är INTE bara till för Toyota Kata! Du har full insyn och behärskar samtliga delar i plattformen:
+1. Strategiska Mål & Visioner (Goals): Formulera SMART-mål, prioritera och koppla mål till framgångsfaktorer.
+2. Operativa Projekt (Projects): Analysera projektframdrift, identifiera risker, föreslå deluppgifter och milstolpar.
+3. KPI:er & Balanced Scorecard: Balansera de fyra perspektiven (Finans, Kund, Interna Processer, Lärande & Förnyelse) och säkra rätt mätetal.
+4. Värdeflödesanalys (VSM): Sänka ledtider (LT), eliminera slöseri och optimera cykeltider (PT) och PCE.
+5. Kano & CTQ: Översätta kundens röst (Voice of Customer) till mätbara tekniska krav (Critical to Quality).
+6. Toyota Kata: Standardiserad coaching i de 5 frågorna och snabba PDCA-experiment när användaren vill förbättra ett processhinder.
+
+Regler för samtalet:
+- Du samtalar med användaren i realtid via röst och text.
+- Håll dina svar naturliga, engagerande och koncisa (1-3 korta meningar per replik) så att samtalet flyter som en riktig dialog.
+- Lyssna noga på vad användaren frågar om. Om användaren frågar om mål, svara om mål. Om användaren frågar om projekt eller KPI:er, anpassa dig direkt.
+- Svara alltid på trevlig, professionell svenska.`;
+
+    const session = await ai.live.connect({
+      model: 'gemini-3.8-live',
+      config: {
+        responseModalities: [Modality.AUDIO],
+        speechConfig: {
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: voice as any } },
+        },
+        inputAudioTranscription: {},
+        outputAudioTranscription: {},
+        systemInstruction: systemPrompt,
+      },
+      callbacks: {
+        onmessage: (message: LiveServerMessage) => {
+          const content = message.serverContent;
+          if (content?.inputTranscription?.text) {
+            sendEvent({ type: 'transcript', role: 'user', text: content.inputTranscription.text });
+          }
+          if (content?.outputTranscription?.text) {
+            sendEvent({ type: 'transcript', role: 'assistant', text: content.outputTranscription.text });
+          }
+          for (const part of content?.modelTurn?.parts ?? []) {
+            if (part.inlineData?.data) {
+              sendEvent({ type: 'audio', audio: part.inlineData.data });
+            }
+          }
+          if (content?.interrupted) {
+            sendEvent({ type: 'interrupted', interrupted: true });
+          }
+        },
+        onclose: () => {
+          sendEvent({ type: 'status', status: 'closed', message: 'Live-session avslutades' });
+        },
+        onerror: (err: any) => {
+          console.error('[Live API SSE] Gemini error:', err);
+          sendEvent({ type: 'error', message: err?.message || 'Gemini Live fel' });
+        }
+      }
+    });
+
+    httpLiveSessions.set(sessionId, {
+      id: sessionId,
+      session,
+      res,
+      voice,
+      lastActive: Date.now()
+    });
+
+    sendEvent({
+      type: 'status',
+      status: 'ready',
+      sessionId,
+      voice,
+      message: 'Ansluten till gemini-3.8-live! Börja prata i mikrofonen.'
+    });
+
+    req.on('close', () => {
+      console.log(`[Live API SSE] Stream closed for session ${sessionId}`);
+      try {
+        session.close();
+      } catch (e) {}
+      httpLiveSessions.delete(sessionId);
+    });
+
+  } catch (err: any) {
+    console.error('[Live API SSE] Failed to connect to Gemini Live session:', err);
+    sendEvent({
+      type: 'error',
+      message: `Kunde inte starta gemini-3.8-live (${err?.message || 'Anslutningsfel'}).`
+    });
+  }
+});
+
+// Endpoint for sending real-time audio/text input into an active Live session
+app.post('/api/live/input', (req, res) => {
+  const { sessionId, audio, text, context } = req.body;
+  if (!sessionId) {
+    res.status(400).json({ error: 'sessionId is required' });
+    return;
+  }
+
+  const liveState = httpLiveSessions.get(sessionId);
+  if (!liveState || !liveState.session) {
+    res.status(404).json({ error: 'Session not found or expired' });
+    return;
+  }
+
+  liveState.lastActive = Date.now();
+
+  try {
+    if (audio) {
+      liveState.session.sendRealtimeInput({
+        media: { data: audio, mimeType: 'audio/pcm;rate=16000' }
+      });
+    } else if (text) {
+      liveState.session.sendRealtimeInput({ text });
+    } else if (context) {
+      liveState.session.sendRealtimeInput({
+        text: `[Kontextuppdatering från applikationen]: Mål: ${context.goalsCount || 0} st, Projekt: ${context.projectsCount || 0} st, KPIer: ${context.kpisCount || 0} st, Kata-sessioner: ${context.kataCount || 0} st. Detaljer: ${JSON.stringify(context)}`
+      });
+    }
+    res.json({ ok: true });
+  } catch (err: any) {
+    console.error('[Live API Input Error]', err);
+    res.status(500).json({ error: err.message });
   }
 });
 

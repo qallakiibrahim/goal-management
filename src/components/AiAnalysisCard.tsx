@@ -22,7 +22,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Project, KPI, KataSession } from '../types';
 
 interface AiAnalysisCardProps {
-  type: 'dashboard' | 'bsc' | 'goals' | 'projects' | 'kpis' | 'kata' | 'hierarchy' | 'settings';
+  type: 'dashboard' | 'bsc' | 'goals' | 'projects' | 'kpis' | 'kata' | 'hierarchy' | 'settings' | 'vsm' | 'kano';
   goals?: Goal[];
   projects?: Project[];
   kpis?: KPI[];

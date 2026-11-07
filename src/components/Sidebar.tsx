@@ -17,7 +17,8 @@ import {
   ChevronLeft,
   X,
   Mic,
-  Radio
+  Radio,
+  Workflow
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -37,6 +38,7 @@ interface SidebarProps {
 export default function Sidebar({ currentView, onViewChange, stats, onClose, onOpenVoiceCoach }: SidebarProps) {
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Layers, color: 'text-indigo-600' },
+    { id: 'process-map', name: 'Processkarta & Flöde', icon: Workflow, color: 'text-indigo-700' },
     { id: 'vsm', name: 'Värdeflödesanalys (VSM)', icon: Activity, color: 'text-rose-500' },
     { id: 'kano', name: 'Kano & CTQ Analys', icon: Scale, color: 'text-indigo-505' },
     { id: 'bsc', name: 'Balanced Scorecard', icon: Users, color: 'text-emerald-600' },

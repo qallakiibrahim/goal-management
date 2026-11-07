@@ -122,14 +122,14 @@ export default function LoginView({
                 <span className="text-left font-display">
                   {authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain')))
                     ? 'Börja genast! Starta i Demoläge / Gäst'
-                    : 'Fortsätt lokalt (Offline-gäst)'}
+                    : 'Utforska som Gäst (Fullständig åtkomst)'}
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-medium ${
+                <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-medium ${
                   authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain')))
                     ? 'bg-emerald-800 text-emerald-200'
-                    : 'bg-slate-800 text-slate-400'
+                    : 'bg-indigo-950/80 text-indigo-300 border border-indigo-700/50'
                 }`}>Fungerar direkt</span>
                 <ChevronRight className="w-4 h-4 text-slate-300" />
               </div>

@@ -71,6 +71,7 @@ import VsmView from './components/VsmView';
 import KanoCtqView from './components/KanoCtqView';
 import CommandPalette from './components/CommandPalette';
 import VoiceCoachModal from './components/VoiceCoachModal';
+import ProcessMapView from './components/ProcessMapView';
 
 // Firestore Integration imports
 import { collection, onSnapshot, doc } from 'firebase/firestore';
@@ -1108,6 +1109,14 @@ export default function App() {
             />
           )}
 
+          {currentView === 'process-map' && (
+            <ProcessMapView
+              onNavigateToView={(v) => setCurrentView(v)}
+              onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
+              onDownloadPdf={handleDownloadStrategicPdf}
+            />
+          )}
+
           {currentView === 'vsm' && (
             <VsmView
               goals={goals}
@@ -1600,6 +1609,7 @@ export default function App() {
         kataSessions={kataSessions}
         ctqKanoItems={ctqKanoItems}
         onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
+        currentView={currentView}
       />
 
       <VoiceCoachModal

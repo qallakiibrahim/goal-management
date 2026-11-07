@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { CtqKanoItem, KanoCategory, Goal, Project } from '../types';
 import { toast } from './Toast';
+import AiAnalysisCard from './AiAnalysisCard';
 
 interface KanoCtqViewProps {
   items: CtqKanoItem[];
@@ -188,6 +189,9 @@ export default function KanoCtqView({
           </div>
         </div>
       </div>
+
+      {/* Kano & CTQ Strategic AI Analysis */}
+      <AiAnalysisCard type="kano" goals={goals} projects={projects} />
 
       {/* Interactive Add Form (Animate in) */}
       {showAddForm && (

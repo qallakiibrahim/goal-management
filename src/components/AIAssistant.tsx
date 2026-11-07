@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useRef, useEffect, FormEvent } from 'react';
+import { useState, useRef, useEffect, useMemo, FormEvent } from 'react';
 import { 
   Bot, 
   X, 
@@ -16,7 +16,8 @@ import {
   RefreshCw,
   Scale,
   Mic,
-  Radio
+  Radio,
+  Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Project, KPI, KataSession, CtqKanoItem } from '../types';
@@ -28,6 +29,7 @@ interface AIAssistantProps {
   kataSessions: KataSession[];
   ctqKanoItems: CtqKanoItem[];
   onOpenVoiceCoach?: () => void;
+  currentView?: string;
 }
 
 interface Message {
@@ -43,7 +45,8 @@ export default function AIAssistant({
   kpis,
   kataSessions,
   ctqKanoItems,
-  onOpenVoiceCoach
+  onOpenVoiceCoach,
+  currentView
 }: AIAssistantProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -190,13 +193,55 @@ export default function AIAssistant({
     }
   };
 
-  const suggestions = [
-    { text: 'Kano & CTQ kravanalys 📋', query: 'kano' },
-    { text: 'Analysera mina strategiska Mål 🎯', query: 'mål' },
-    { text: 'Projektstatus & risker ⚠️', query: 'projekt' },
-    { text: 'Granska KPI-benchmark 📈', query: 'kpi' },
-    { text: 'Toyota Kata coachtips 🧪', query: 'kata' }
-  ];
+  const suggestions = useMemo(() => {
+    switch (currentView) {
+      case 'goals':
+        return [
+          { text: 'Formulera ett SMART-mål 🎯', query: 'mål' },
+          { text: 'Vilka mål saknar mätetal? 🔍', query: 'mål' },
+          { text: 'Koppla mål till BSC-perspektiv ⚖️', query: 'mål' }
+        ];
+      case 'projects':
+        return [
+          { text: 'Projektstatus & risker ⚠️', query: 'projekt' },
+          { text: 'Bryt ner projekt i uppgifter 📋', query: 'projekt' },
+          { text: 'Prioritera mellan projekt 🚀', query: 'projekt' }
+        ];
+      case 'kpis':
+      case 'bsc':
+        return [
+          { text: 'Granska KPI-balans 📊', query: 'kpi' },
+          { text: 'Föreslå ledande mätetal 📈', query: 'kpi' },
+          { text: 'Vilka KPI:er släpar efter? ⚠️', query: 'kpi' }
+        ];
+      case 'vsm':
+        return [
+          { text: 'Hur sänker vi ledtider? ⏱️', query: 'vsm' },
+          { text: 'Vad är bra PCE-verkningsgrad? ⚡', query: 'vsm' },
+          { text: 'Eliminera flaskhalsar 🛑', query: 'vsm' }
+        ];
+      case 'kano':
+        return [
+          { text: 'Kano & CTQ kravanalys 📋', query: 'kano' },
+          { text: 'Prioritera Must-be krav 🛡️', query: 'kano' },
+          { text: 'Översätt Voice of Customer 🗣️', query: 'kano' }
+        ];
+      case 'kata':
+        return [
+          { text: 'Toyota Kata coachtips 🧪', query: 'kata' },
+          { text: 'Formulera nästa PDCA-steg 🔄', query: 'kata' },
+          { text: 'Definiera måltillstånd 🎯', query: 'kata' }
+        ];
+      default:
+        return [
+          { text: 'Kano & CTQ kravanalys 📋', query: 'kano' },
+          { text: 'Analysera mina strategiska Mål 🎯', query: 'mål' },
+          { text: 'Projektstatus & risker ⚠️', query: 'projekt' },
+          { text: 'Granska KPI-benchmark 📈', query: 'kpi' },
+          { text: 'Toyota Kata coachtips 🧪', query: 'kata' }
+        ];
+    }
+  }, [currentView]);
 
   return (
     <>

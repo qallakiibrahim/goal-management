@@ -29,6 +29,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Objective, Project } from '../types';
 import { toast } from './Toast';
+import AiAnalysisCard from './AiAnalysisCard';
 
 export interface VsmStep {
   id: string;
@@ -584,6 +585,9 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
           </button>
         </div>
       </div>
+
+      {/* VSM Strategic AI Analysis */}
+      <AiAnalysisCard type="vsm" goals={goals} projects={projects} />
 
       {/* Stream Selector & Overview */}
       <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">

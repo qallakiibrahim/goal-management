@@ -22,7 +22,8 @@ import {
   Plus, 
   ArrowRight,
   X,
-  Mic
+  Mic,
+  Workflow
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Project, KPI, KataSession } from '../types';
@@ -92,6 +93,7 @@ export default function CommandPalette({
     // 1. Navigation items
     const navItems = [
       { id: 'view-dashboard', title: 'Dashboard', subtitle: 'Övergripande vy och nyckeltal', icon: Layers, view: 'dashboard' },
+      { id: 'view-process-map', title: 'Processkarta & Arkitektur', subtitle: 'Se hur metoderna och systemet hänger ihop', icon: Workflow, view: 'process-map' },
       { id: 'view-vsm', title: 'Värdeflödesanalys (VSM)', subtitle: 'Kartlägg processtider och ledtider', icon: Activity, view: 'vsm' },
       { id: 'view-kano', title: 'Kano & CTQ Analys', subtitle: 'Kunderbjudande och kritiska kvalitetsfaktorer', icon: Scale, view: 'kano' },
       { id: 'view-bsc', title: 'Balanced Scorecard', subtitle: 'Balanserad styrning över 4 perspektiv', icon: Users, view: 'bsc' },
