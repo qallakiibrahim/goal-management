@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, useRef, FormEvent } from 'react';
 import { 
   Plus, 
   X, 
@@ -20,7 +20,15 @@ import {
   Sun,
   Moon,
   Menu,
-  Search
+  Search,
+  Mic,
+  Workflow,
+  Table,
+  FileDown,
+  Layers,
+  UserPlus,
+  Settings,
+  ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { generateStrategicPdfReport } from './utils/generatePdfReport';
@@ -115,6 +123,26 @@ export default function App() {
 
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [voiceCoachOpen, setVoiceCoachOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close profile dropdown on outside click or Escape
+  useEffect(() => {
+    const handlePointerDown = (e: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setProfileMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
 
   // Global Cmd+K / Ctrl+K shortcut
   useEffect(() => {
@@ -1084,92 +1112,239 @@ export default function App() {
     <ToastProvider>
       <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans antialiased text-slate-800 dark:text-slate-200">
         
-        {/* 1. Sidebar Navigation */}
-        {sidebarOpen && (
+        {/* 1. Sidebar Navigation (persistent collapsible icon rail on desktop, drawer on mobile) */}
         <Sidebar 
           currentView={currentView} 
           onViewChange={(view) => setCurrentView(view)} 
           stats={stats}
-          onClose={toggleSidebar}
-          onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
+          isOpen={sidebarOpen}
+          onClose={() => {
+            setSidebarOpen(false);
+            localStorage.setItem('sidebarOpen', 'false');
+          }}
+          onToggle={toggleSidebar}
         />
-      )}
 
       {/* 2. Main content compartment */}
       <main className="flex-1 overflow-y-auto flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950">
         
         {/* Top Header Bar */}
-        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-10 px-8 py-4 flex items-center justify-between shadow-xs mb-8">
-          <div className="flex items-center gap-3 text-left">
-            {!sidebarOpen && (
-              <button
-                onClick={toggleSidebar}
-                className="p-2 -ml-4 mr-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-850 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
-                title="Visa sidomeny"
-              >
-                <Menu className="w-4.5 h-4.5" />
-              </button>
-            )}
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-slate-400 dark:text-slate-550 capitalize tracking-wide">
-                {activeProfile.role} Dashboard
+        <header className="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 z-20 px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3 shadow-2xs mb-6">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              onClick={toggleSidebar}
+              className="lg:hidden h-8 w-8 flex items-center justify-center bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition cursor-pointer text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0"
+              title="Visa sidomeny"
+              aria-label="Visa sidomeny"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xs sm:text-sm font-display font-semibold text-slate-800 dark:text-slate-100 truncate">
+                {activeProfile.role}
               </span>
-              <span className="text-slate-350 dark:text-slate-700 hidden sm:inline">•</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono hidden sm:inline">
-                Inloggad som: <strong className="text-indigo-900 dark:text-indigo-400">{activeProfile.name}</strong>
+              <span className="text-slate-300 dark:text-slate-700 hidden md:inline shrink-0">/</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 hidden md:inline truncate">
+                {activeProfile.name}
               </span>
             </div>
           </div>
           
-          <div className="flex items-center gap-3 sm:gap-4 text-xs font-semibold text-slate-500 font-mono">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Compact Strategic Actions */}
+            <button
+              onClick={() => setVoiceCoachOpen(true)}
+              className="h-8 px-2.5 sm:px-3 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-700 hover:to-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer select-none whitespace-nowrap shrink-0"
+              title="Starta direkt röstkonversation med Gemini Live Röstcoach"
+            >
+              <Mic className="w-3.5 h-3.5 text-rose-100 shrink-0" />
+              <span className="hidden sm:inline">Röstcoach</span>
+            </button>
+
+            <button
+              onClick={() => setCurrentView('process-map')}
+              className={`h-8 px-2.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition border cursor-pointer whitespace-nowrap shrink-0 ${
+                currentView === 'process-map'
+                  ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
+              }`}
+              title="Processkarta & Flöde — se hur hela systemet hänger ihop"
+            >
+              <Workflow className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <span className="hidden lg:inline">Processkarta</span>
+            </button>
+
+            <button
+              onClick={handleExportStrategicCsv}
+              className="h-8 px-2.5 bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap shrink-0"
+              title="Exportera rådata till CSV för Excel / Google Sheets"
+            >
+              <Table className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span className="hidden xl:inline">CSV</span>
+            </button>
+
+            <button
+              onClick={handleDownloadStrategicPdf}
+              className="h-8 px-2.5 sm:px-3 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0"
+              title="Generera och ladda ner fullständig PDF-rapport"
+            >
+              <FileDown className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden md:inline">PDF-rapport</span>
+            </button>
+
+            <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5 hidden sm:block shrink-0" />
+
             {/* Quick Command Palette Search Button */}
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-600 dark:text-slate-300 rounded-xl text-xs transition cursor-pointer border border-slate-200/60 dark:border-slate-700"
+              className="h-8 px-2.5 bg-slate-100/90 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs transition cursor-pointer border border-slate-200/70 dark:border-slate-700 flex items-center gap-1.5 whitespace-nowrap shrink-0"
               title="Snabb sökning och kommandon (⌘K)"
             >
-              <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-              <span className="hidden md:inline font-sans">Sök...</span>
-              <kbd className="hidden sm:inline-block font-mono text-[9px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 shadow-2xs">⌘K</kbd>
+              <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <span className="hidden xl:inline">Sök</span>
+              <kbd className="hidden sm:inline-block font-mono text-[10px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 leading-none">⌘K</kbd>
             </button>
-
-            <span className="hidden xl:inline">{new Date().toLocaleDateString('sv-SE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
             
             {/* Dark Mode Switch / Toggle Button */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-center select-none"
+              className="h-8 w-8 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer flex items-center justify-center select-none shrink-0"
               title={darkMode ? "Byt till ljust tema" : "Byt till mörkt tema"}
               aria-label="Byt färgtema"
             >
               {darkMode ? (
-                <Sun className="w-4 h-4 text-amber-400 hover:scale-110 transition-transform" />
+                <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-indigo-900 hover:scale-110 transition-transform" />
+                <Moon className="w-4 h-4 text-indigo-900" />
               )}
             </button>
 
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-indigo-900 text-white font-bold flex items-center justify-center font-display shadow-xs shrink-0 select-none">
-                {activeProfile.name.slice(0, 2).toUpperCase()}
-              </div>
-              
-              {/* Logout button */}
-              {(authUser || authOfflineBypass) && (
-                <button
-                  onClick={handleSignOut}
-                  title="Logga ut"
-                  className="p-1.5 text-slate-400 hover:text-red-650 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+            {/* User Profile & Administration Dropdown */}
+            <div className="relative shrink-0" ref={profileMenuRef}>
+              <button
+                type="button"
+                onClick={() => setProfileMenuOpen(prev => !prev)}
+                className={`h-8 pl-1 pr-2 rounded-full flex items-center gap-1.5 transition cursor-pointer border ${
+                  profileMenuOpen || ['hierarchy-editor', 'members', 'settings'].includes(currentView)
+                    ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-950/60 dark:border-indigo-800'
+                    : 'bg-slate-50 hover:bg-slate-100 border-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:border-slate-700'
+                }`}
+                title={`${activeProfile.name} (${activeProfile.role}) — Profil & Administration`}
+                aria-expanded={profileMenuOpen}
+                aria-haspopup="menu"
+              >
+                <div className="w-6 h-6 rounded-full bg-indigo-900 dark:bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center font-display shrink-0 select-none">
+                  {activeProfile.name.slice(0, 2).toUpperCase()}
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-500 dark:text-slate-400 transition-transform duration-150 ${profileMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {profileMenuOpen && (
+                <div 
+                  role="menu"
+                  className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-lg py-2 z-50 text-left"
                 >
-                  <LogOut className="w-4 h-4" />
-                </button>
+                  {/* Profile Identity Header */}
+                  <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-full bg-indigo-900 dark:bg-indigo-600 text-white text-xs font-bold flex items-center justify-center font-display shrink-0 select-none">
+                      {activeProfile.name.slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+                        {activeProfile.name}
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        {activeProfile.email}
+                      </div>
+                      <div className="text-[10px] font-semibold text-indigo-700 dark:text-indigo-400 mt-0.5 truncate">
+                        {activeProfile.role}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Administration Links */}
+                  <div className="py-1.5 px-1.5">
+                    <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none">
+                      Administration
+                    </div>
+
+                    <button
+                      role="menuitem"
+                      type="button"
+                      onClick={() => {
+                        setCurrentView('hierarchy-editor');
+                        setProfileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
+                        currentView === 'hierarchy-editor'
+                          ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-200 font-semibold'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800 font-medium'
+                      }`}
+                    >
+                      <Layers className="w-4 h-4 text-blue-500 shrink-0" />
+                      <span>Hierarkiredigerare</span>
+                    </button>
+
+                    <button
+                      role="menuitem"
+                      type="button"
+                      onClick={() => {
+                        setCurrentView('members');
+                        setProfileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
+                        currentView === 'members'
+                          ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-200 font-semibold'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800 font-medium'
+                      }`}
+                    >
+                      <UserPlus className="w-4 h-4 text-violet-600 dark:text-violet-400 shrink-0" />
+                      <span>Användare & Inbjudna</span>
+                    </button>
+
+                    <button
+                      role="menuitem"
+                      type="button"
+                      onClick={() => {
+                        setCurrentView('settings');
+                        setProfileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
+                        currentView === 'settings'
+                          ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-200 font-semibold'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800 font-medium'
+                      }`}
+                    >
+                      <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
+                      <span>Inställningar</span>
+                    </button>
+                  </div>
+
+                  {/* Sign out */}
+                  {(authUser || authOfflineBypass) && (
+                    <div className="pt-1.5 mt-1 border-t border-slate-100 dark:border-slate-800 px-1.5">
+                      <button
+                        role="menuitem"
+                        type="button"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          handleSignOut();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4 shrink-0" />
+                        <span>Logga ut</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
         </header>
 
         {/* Dynamic viewport container */}
-        <div className="flex-1 px-8 pb-12 w-full max-w-7xl mx-auto space-y-6">
+        <div className="flex-1 px-4 sm:px-6 lg:px-8 pb-12 w-full max-w-7xl mx-auto space-y-6">
           
           {/* Firebase rules restriction warning */}
           {firebaseError === 'rules_restricted' && (
