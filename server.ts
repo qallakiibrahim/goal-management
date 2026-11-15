@@ -12,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 const PORT = 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 
 // Initialize Gemini client with proper configuration and User-Agent
 const ai = new GoogleGenAI({
@@ -512,7 +512,7 @@ app.post('/api/live/input', (req, res) => {
   try {
     if (audio) {
       liveState.session.sendRealtimeInput({
-        media: { data: audio, mimeType: 'audio/pcm;rate=16000' }
+        audio: { data: audio, mimeType: 'audio/pcm;rate=16000' }
       });
     } else if (text) {
       liveState.session.sendRealtimeInput({ text });

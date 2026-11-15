@@ -23,9 +23,10 @@ import {
   Briefcase,
   TrendingUp,
   Scale,
-  Layers,
   Globe,
-  Compass
+  Compass,
+  AlertTriangle,
+  ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -85,7 +86,8 @@ export default function VoiceCoachModal({
   // Microphone & Speaker controls
   const [isMicMuted, setIsMicMuted] = useState<boolean>(false);
   const [isSpeakerMuted, setIsSpeakerMuted] = useState<boolean>(false);
-  const [speechRecActive, setSpeechRecActive] = useState<boolean>(false);
+  const [micStatus, setMicStatus] = useState<'pending' | 'active' | 'denied' | 'unavailable'>('pending');
+  const [micError, setMicError] = useState<string | null>(null);
 
   // Audio Visualizer Levels (0.0 to 1.0)
   const [userAudioLevel, setUserAudioLevel] = useState<number>(0);
@@ -102,18 +104,25 @@ export default function VoiceCoachModal({
   ]);
   const [textInput, setTextInput] = useState('');
 
-  // Refs for audio hardware and streaming
+  // Refs for audio hardware, streaming, and avoiding stale closures
   const eventSourceRef = useRef<EventSource | null>(null);
   const sessionIdRef = useRef<string>('');
+  const sessionReadyRef = useRef<boolean>(false);
+  const isMicMutedRef = useRef<boolean>(false);
   const audioPlayerRef = useRef<LiveAudioPlayer | null>(null);
   const inputAudioCtxRef = useRef<AudioContext | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
-  const speechRecognitionRef = useRef<any>(null);
+  const silentGainRef = useRef<GainNode | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement | null>(null);
   const audioChunkBufferRef = useRef<Float32Array[]>([]);
   const lastAudioSendTimeRef = useRef<number>(0);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    isMicMutedRef.current = isMicMuted;
+  }, [isMicMuted]);
 
   // Suggested conversational starter prompts depending on active topic
   const starterPromptsMap: Record<VoiceCoachTopic, string[]> = {
@@ -176,24 +185,19 @@ export default function VoiceCoachModal({
     };
   }, [isOpen]);
 
-  const cleanupAudio = () => {
-    if (animFrameRef.current) {
-      cancelAnimationFrame(animFrameRef.current);
-      animFrameRef.current = null;
-    }
-
-    if (speechRecognitionRef.current) {
-      try {
-        speechRecognitionRef.current.stop();
-      } catch (e) {}
-      speechRecognitionRef.current = null;
-    }
-
+  const cleanupMicrophone = () => {
     if (scriptProcessorRef.current) {
       try {
         scriptProcessorRef.current.disconnect();
       } catch (e) {}
       scriptProcessorRef.current = null;
+    }
+
+    if (silentGainRef.current) {
+      try {
+        silentGainRef.current.disconnect();
+      } catch (e) {}
+      silentGainRef.current = null;
     }
 
     if (mediaStreamRef.current) {
@@ -208,6 +212,20 @@ export default function VoiceCoachModal({
       inputAudioCtxRef.current = null;
     }
 
+    audioChunkBufferRef.current = [];
+    setUserAudioLevel(0);
+  };
+
+  const cleanupAudio = () => {
+    sessionReadyRef.current = false;
+
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+
+    cleanupMicrophone();
+
     if (audioPlayerRef.current) {
       audioPlayerRef.current.close();
       audioPlayerRef.current = null;
@@ -220,9 +238,7 @@ export default function VoiceCoachModal({
       eventSourceRef.current = null;
     }
 
-    setUserAudioLevel(0);
     setAiAudioLevel(0);
-    setSpeechRecActive(false);
   };
 
   const sendInputToLiveSession = (payload: any) => {
@@ -255,6 +271,148 @@ export default function VoiceCoachModal({
     });
   };
 
+  const initMicrophone = async () => {
+    cleanupMicrophone();
+    setMicStatus('pending');
+    setMicError(null);
+
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setMicStatus('unavailable');
+      setMicError('Webbläsaren blockerar mikrofonåtkomst i denna vy (saknar mediaDevices-stöd eller säker kontext).');
+      return;
+    }
+
+    try {
+      // Check browser permission status first if available
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const perm = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+          if (perm.state === 'denied') {
+            setMicStatus('denied');
+            setMicError('Mikrofonen är blockerad i webbläsarens behörigheter för den här sidan.');
+            return;
+          }
+        } catch {
+          // Safari/Firefox may not support permissions.query({ name: 'microphone' }), continue to getUserMedia
+        }
+      }
+
+      // Request hardware microphone without strict sampleRate constraint (resampler handles any sampleRate)
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+      } catch (constraintErr: any) {
+        if (constraintErr?.name === 'OverconstrainedError' || constraintErr?.name === 'ConstraintNotSatisfiedError') {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } else {
+          throw constraintErr;
+        }
+      }
+
+      mediaStreamRef.current = stream;
+
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const inputCtx = new AudioCtx();
+      if (inputCtx.state === 'suspended') {
+        await inputCtx.resume();
+      }
+      inputAudioCtxRef.current = inputCtx;
+
+      const source = inputCtx.createMediaStreamSource(stream);
+      const processor = inputCtx.createScriptProcessor(4096, 1, 1);
+      scriptProcessorRef.current = processor;
+
+      // Silent gain sink keeps ScriptProcessor active without audio loopback/echo
+      const silentGain = inputCtx.createGain();
+      silentGain.gain.value = 0;
+      silentGainRef.current = silentGain;
+
+      processor.onaudioprocess = (e) => {
+        if (isMicMutedRef.current) {
+          setUserAudioLevel(0);
+          return;
+        }
+
+        const inputBuffer = e.inputBuffer.getChannelData(0);
+
+        // Compute RMS for visualizer
+        let sum = 0;
+        for (let i = 0; i < inputBuffer.length; i++) {
+          sum += inputBuffer[i] * inputBuffer[i];
+        }
+        const rms = Math.sqrt(sum / inputBuffer.length);
+        const level = Math.min(1, rms * 4.5);
+        setUserAudioLevel(level);
+
+        // Wait until Gemini Live session is ready before streaming PCM chunks
+        if (!sessionReadyRef.current) {
+          return;
+        }
+
+        // Buffer audio chunks and send every ~250ms
+        const now = Date.now();
+        audioChunkBufferRef.current.push(new Float32Array(inputBuffer));
+
+        if (now - lastAudioSendTimeRef.current > 250) {
+          lastAudioSendTimeRef.current = now;
+          const chunks = audioChunkBufferRef.current;
+          audioChunkBufferRef.current = [];
+
+          if (chunks.length > 0) {
+            const totalLen = chunks.reduce((acc, c) => acc + c.length, 0);
+            const merged = new Float32Array(totalLen);
+            let offset = 0;
+            for (const c of chunks) {
+              merged.set(c, offset);
+              offset += c.length;
+            }
+
+            // Resample from hardware sampleRate to 16000Hz 16-bit PCM little-endian
+            const pcmBytes = floatTo16BitPCM(merged, inputCtx.sampleRate, 16000);
+            const base64 = uint8ArrayToBase64(pcmBytes);
+
+            sendInputToLiveSession({ audio: base64 });
+          }
+        }
+      };
+
+      source.connect(processor);
+      processor.connect(silentGain);
+      silentGain.connect(inputCtx.destination);
+
+      setMicStatus('active');
+      setMicError(null);
+      if (sessionReadyRef.current) {
+        setStatusMessage('Klar! Mikrofonen lyssnar — prata fritt eller skriv.');
+      }
+    } catch (err: any) {
+      console.warn('[Live Voice Client] Microphone permission/device failed:', err);
+      const errName = err?.name || '';
+      if (errName === 'NotAllowedError' || errName === 'PermissionDeniedError' || errName === 'SecurityError') {
+        setMicStatus('denied');
+        setMicError(
+          'Mikrofonbehörighet nekades (NotAllowedError). Tillåt mikrofonen i webbläsarens adressfält eller ladda om sidan.'
+        );
+      } else if (errName === 'NotFoundError' || errName === 'DevicesNotFoundError') {
+        setMicStatus('unavailable');
+        setMicError('Ingen mikrofon hittades på den här enheten. Anslut en mikrofon eller använd textrutan nedan.');
+      } else if (errName === 'NotReadableError' || errName === 'TrackStartError') {
+        setMicStatus('unavailable');
+        setMicError('Mikrofonen används redan av ett annat program eller en annan flik.');
+      } else {
+        setMicStatus('denied');
+        setMicError(`Kunde inte starta mikrofonen (${errName || 'okänt fel'}). Använd textrutan nedan eller försök igen.`);
+      }
+    }
+  };
+
   const startSession = async () => {
     cleanupAudio();
     setConnectionStatus('connecting');
@@ -264,7 +422,10 @@ export default function VoiceCoachModal({
     audioPlayerRef.current = new LiveAudioPlayer();
     audioPlayerRef.current.init();
 
-    // 2. Open HTTP Server-Sent Events stream to backend
+    // 2. Request Microphone immediately (preserves user gesture on Safari/iPad/Chrome)
+    initMicrophone();
+
+    // 3. Open HTTP Server-Sent Events stream to backend
     const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     sessionIdRef.current = sessionId;
 
@@ -282,10 +443,9 @@ export default function VoiceCoachModal({
 
         if (msg.type === 'status') {
           if (msg.status === 'ready') {
+            sessionReadyRef.current = true;
             setConnectionStatus('ready');
             setStatusMessage('Klar! Mikrofonen lyssnar — prata fritt eller skriv.');
-            // Initialize mic and speech recognition
-            startMicrophoneAndSpeechRecognition();
             // Ground with current strategic context
             sendInputToLiveSession({
               context: {
@@ -344,7 +504,7 @@ export default function VoiceCoachModal({
       console.warn('[Live Voice Client] SSE Stream status update');
     };
 
-    // 3. Start Visualizer Level Polling
+    // 4. Start Visualizer Level Polling
     const pollLevels = () => {
       if (audioPlayerRef.current) {
         const aiVol = audioPlayerRef.current.getVolumeRMS();
@@ -358,148 +518,18 @@ export default function VoiceCoachModal({
     pollLevels();
   };
 
-  const startMicrophoneAndSpeechRecognition = async () => {
-    // A. Start Web Speech API Recognition for 100% reliable Swedish transcription
-    const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognitionClass) {
-      try {
-        const recognition = new SpeechRecognitionClass();
-        recognition.continuous = true;
-        recognition.interimResults = false;
-        recognition.lang = 'sv-SE';
-
-        recognition.onstart = () => {
-          setSpeechRecActive(true);
-        };
-
-        recognition.onresult = (event: any) => {
-          const current = event.resultIndex;
-          const text = event.results[current][0]?.transcript?.trim();
-          if (text) {
-            console.log('[Live Voice Client] SpeechRecognition recognized:', text);
-            // Append to transcripts
-            setTranscripts((prev) => [
-              ...prev,
-              {
-                id: `tr-user-${Date.now()}`,
-                role: 'user',
-                text,
-                timestamp: new Date()
-              }
-            ]);
-            // Send text directly to live session
-            sendInputToLiveSession({ text });
-            setConnectionStatus('listening');
-          }
-        };
-
-        recognition.onerror = (e: any) => {
-          console.warn('[Live Voice Client] SpeechRecognition warning:', e?.error);
-        };
-
-        recognition.onend = () => {
-          // Restart if still open and not muted
-          if (!isMicMuted && isOpen) {
-            try { recognition.start(); } catch (e) {}
-          }
-        };
-
-        recognition.start();
-        speechRecognitionRef.current = recognition;
-      } catch (recErr) {
-        console.warn('[Live Voice Client] Could not start SpeechRecognition:', recErr);
-      }
-    }
-
-    // B. Start Hardware Microphone Audio Capture & 16kHz PCM streaming
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          channelCount: 1,
-          sampleRate: 16000,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
-      });
-      mediaStreamRef.current = stream;
-
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      const inputCtx = new AudioCtx();
-      inputAudioCtxRef.current = inputCtx;
-
-      const source = inputCtx.createMediaStreamSource(stream);
-      const processor = inputCtx.createScriptProcessor(4096, 1, 1);
-      scriptProcessorRef.current = processor;
-
-      processor.onaudioprocess = (e) => {
-        if (isMicMuted) {
-          setUserAudioLevel(0);
-          return;
-        }
-
-        const inputBuffer = e.inputBuffer.getChannelData(0);
-
-        // Compute RMS for visualizer
-        let sum = 0;
-        for (let i = 0; i < inputBuffer.length; i++) {
-          sum += inputBuffer[i] * inputBuffer[i];
-        }
-        const rms = Math.sqrt(sum / inputBuffer.length);
-        const level = Math.min(1, rms * 4.5);
-        setUserAudioLevel(level);
-
-        // Buffer audio chunks and send every ~250ms when voice activity is present
-        const now = Date.now();
-        audioChunkBufferRef.current.push(new Float32Array(inputBuffer));
-
-        if (now - lastAudioSendTimeRef.current > 250) {
-          lastAudioSendTimeRef.current = now;
-          const chunks = audioChunkBufferRef.current;
-          audioChunkBufferRef.current = [];
-
-          if (chunks.length > 0) {
-            const totalLen = chunks.reduce((acc, c) => acc + c.length, 0);
-            const merged = new Float32Array(totalLen);
-            let offset = 0;
-            for (const c of chunks) {
-              merged.set(c, offset);
-              offset += c.length;
-            }
-
-            // Resample and convert to 16-bit PCM little-endian
-            const pcmBytes = floatTo16BitPCM(merged, inputCtx.sampleRate, 16000);
-            const base64 = uint8ArrayToBase64(pcmBytes);
-
-            // Send to server (which passes it as media: { data, mimeType } to Gemini Live)
-            sendInputToLiveSession({ audio: base64 });
-          }
-        }
-      };
-
-      source.connect(processor);
-      processor.connect(inputCtx.destination);
-
-    } catch (err: any) {
-      console.warn('[Live Voice Client] Microphone permission failed:', err);
-      setStatusMessage('Kunde inte få åtkomst till mikrofonen. Använd textrutan nedan.');
-    }
-  };
-
   const toggleMic = () => {
+    if (micStatus === 'denied' || micStatus === 'unavailable') {
+      initMicrophone();
+      return;
+    }
     const next = !isMicMuted;
     setIsMicMuted(next);
+    isMicMutedRef.current = next;
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getAudioTracks().forEach((track) => {
         track.enabled = !next;
       });
-    }
-    if (speechRecognitionRef.current) {
-      if (next) {
-        try { speechRecognitionRef.current.stop(); } catch (e) {}
-      } else {
-        try { speechRecognitionRef.current.start(); } catch (e) {}
-      }
     }
     if (next) setUserAudioLevel(0);
   };
@@ -525,6 +555,9 @@ export default function VoiceCoachModal({
 
   const handleSendPrompt = (text: string) => {
     if (!text.trim()) return;
+
+    // Ensure audio output player is resumed on user click gesture
+    audioPlayerRef.current?.init();
 
     setTranscripts((prev) => [
       ...prev,
@@ -560,7 +593,7 @@ export default function VoiceCoachModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-3xl h-[90vh] max-h-[800px] shadow-2xl flex flex-col overflow-hidden text-left"
+          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-3xl h-[90vh] max-h-[820px] shadow-2xl flex flex-col overflow-hidden text-left"
         >
           {/* Header Bar */}
           <div className="p-4 px-6 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
@@ -573,8 +606,8 @@ export default function VoiceCoachModal({
                   <h2 className="font-display font-bold text-sm text-white">
                     Strategisk AI-Röstpartner
                   </h2>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
-                    gemini-3.8-live
+                  <span className="text-[11px] font-mono text-indigo-300">
+                    · gemini-3.8-live
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
@@ -656,7 +689,6 @@ export default function VoiceCoachModal({
 
             {/* Pulsing Orb Visualizer */}
             <div className="relative w-28 h-28 flex items-center justify-center my-1">
-              {/* Outermost reactive wave rings */}
               <motion.div
                 animate={{
                   scale: 1 + Math.max(userAudioLevel, aiAudioLevel) * 0.9,
@@ -666,7 +698,6 @@ export default function VoiceCoachModal({
                 className="absolute inset-0 rounded-full bg-gradient-to-tr from-indigo-500/20 via-rose-500/20 to-amber-500/20 blur-md"
               />
 
-              {/* Intermediate audio ring */}
               <motion.div
                 animate={{
                   scale: 1 + Math.max(userAudioLevel, aiAudioLevel) * 0.5,
@@ -676,7 +707,6 @@ export default function VoiceCoachModal({
                 className="absolute inset-2 rounded-full border-2 border-indigo-500/40 opacity-70"
               />
 
-              {/* Central Core Orb */}
               <div
                 className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 relative z-10 ${
                   aiAudioLevel > 0.05
@@ -696,34 +726,39 @@ export default function VoiceCoachModal({
               </div>
             </div>
 
-            {/* Dynamic Real-time Status Badge */}
-            <div className="mt-1 text-center z-10">
-              <span
-                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${
-                  aiAudioLevel > 0.05
-                    ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                    : userAudioLevel > 0.05
-                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                    : 'bg-slate-800 text-slate-400 border-slate-700'
-                }`}
-              >
-                {aiAudioLevel > 0.05 ? (
-                  <>
-                    <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
-                    AI talar i högtalaren (24kHz)...
-                  </>
-                ) : userAudioLevel > 0.05 ? (
-                  <>
-                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-                    Hör din röst i realtid...
-                  </>
-                ) : (
-                  <>
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    Mikrofon aktiv & taligenkänning redo • Säg vad som helst!
-                  </>
-                )}
-              </span>
+            {/* Dynamic Real-time Status Text */}
+            <div className="mt-1 text-center z-10 flex items-center gap-2 text-xs font-medium text-slate-300">
+              {aiAudioLevel > 0.05 ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
+                  <span>AI talar i högtalaren (24kHz)...</span>
+                </>
+              ) : micStatus === 'denied' || micStatus === 'unavailable' ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                  <span className="text-amber-300">Mikrofon saknar behörighet • Skriv eller tillåt mikrofon nedan</span>
+                </>
+              ) : isMicMuted ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-rose-400" />
+                  <span className="text-rose-300">Mikrofon mutad</span>
+                </>
+              ) : userAudioLevel > 0.05 ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+                  <span className="text-indigo-200">Hör din röst i realtid...</span>
+                </>
+              ) : micStatus === 'active' ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span>Mikrofon aktiv (16kHz PCM) • Prata fritt!</span>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span>Begär mikrofonåtkomst...</span>
+                </>
+              )}
             </div>
 
             {/* Equalizer Frequency Bars */}
@@ -748,6 +783,40 @@ export default function VoiceCoachModal({
               })}
             </div>
           </div>
+
+          {/* Microphone Permission Diagnostic Banner */}
+          {(micStatus === 'denied' || micStatus === 'unavailable') && (
+            <div className="px-4 py-3 bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-950 dark:text-amber-200 leading-snug">
+                  <strong className="font-bold block">Mikrofonen behöver behörighet</strong>
+                  <span className="text-[11px] text-amber-800 dark:text-amber-300">
+                    {micError || 'Klicka på lås-/mikrofonikonen i webbläsarens adressfält för att tillåta mikrofon.'}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={initMicrophone}
+                  className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-[11px] font-bold transition cursor-pointer flex items-center gap-1.5"
+                >
+                  <Mic className="w-3.5 h-3.5" />
+                  <span>Tillåt mikrofon</span>
+                </button>
+                <a
+                  href={typeof window !== 'undefined' ? window.location.href : '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800 rounded-xl text-[11px] font-semibold transition flex items-center gap-1"
+                  title="Öppna appen i en egen flik för direkt mikrofonåtkomst"
+                >
+                  <span>Ny flik</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          )}
 
           {/* Transcript Scroll Area */}
           <div className="flex-1 p-4 sm:p-6 overflow-y-auto bg-slate-50 dark:bg-slate-950 space-y-3.5 text-left">
@@ -806,18 +875,40 @@ export default function VoiceCoachModal({
           <div className="p-3 sm:p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Primary Voice Action Buttons */}
             <div className="flex items-center gap-2 w-full sm:w-auto justify-center">
-              {/* Mic Toggle Button */}
+              {/* Mic Toggle / Activate Button */}
               <button
                 onClick={toggleMic}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition shadow-xs cursor-pointer select-none ${
-                  isMicMuted
+                  micStatus === 'denied' || micStatus === 'unavailable'
+                    ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                    : isMicMuted
                     ? 'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-800'
                     : 'bg-indigo-600 hover:bg-indigo-700 text-white'
                 }`}
-                title={isMicMuted ? 'Slå på mikrofon' : 'Muta mikrofon'}
+                title={
+                  micStatus === 'denied' || micStatus === 'unavailable'
+                    ? 'Försök aktivera mikrofon igen'
+                    : isMicMuted
+                    ? 'Slå på mikrofon'
+                    : 'Muta mikrofon'
+                }
               >
-                {isMicMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4 animate-pulse" />}
-                <span>{isMicMuted ? 'Mikrofon avstängd' : 'Mikrofon aktiv'}</span>
+                {micStatus === 'denied' || micStatus === 'unavailable' ? (
+                  <>
+                    <MicOff className="w-4 h-4" />
+                    <span>Aktivera mikrofon</span>
+                  </>
+                ) : isMicMuted ? (
+                  <>
+                    <MicOff className="w-4 h-4" />
+                    <span>Mikrofon avstängd</span>
+                  </>
+                ) : (
+                  <>
+                    <Mic className="w-4 h-4 animate-pulse" />
+                    <span>Mikrofon aktiv</span>
+                  </>
+                )}
               </button>
 
               {/* Interrupt / Stop talking button */}
