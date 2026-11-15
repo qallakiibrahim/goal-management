@@ -21,7 +21,6 @@ import {
   Moon,
   Menu,
   Search,
-  Mic,
   Workflow,
   Table,
   Download,
@@ -1190,15 +1189,6 @@ export default function App() {
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Compact Strategic Actions */}
             <button
-              onClick={() => setVoiceCoachOpen(true)}
-              className="h-8 px-2.5 sm:px-3 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-700 hover:to-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer select-none whitespace-nowrap shrink-0"
-              title="Starta direkt röstkonversation med Gemini Live Röstcoach"
-            >
-              <Mic className="w-3.5 h-3.5 text-rose-100 shrink-0" />
-              <span className="hidden sm:inline">Röstcoach</span>
-            </button>
-
-            <button
               onClick={() => setCurrentView('process-map')}
               className={`h-8 px-2.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition border cursor-pointer whitespace-nowrap shrink-0 ${
                 currentView === 'process-map'
@@ -2015,11 +2005,16 @@ export default function App() {
 
       <AIAssistant
         goals={goals}
+        objectives={objectives}
         projects={projects}
+        initiatives={initiatives}
+        tasks={tasks}
         kpis={kpis}
         kataSessions={kataSessions}
         ctqKanoItems={ctqKanoItems}
         matrixRelations={matrixRelations}
+        members={members}
+        activeProfile={activeProfile}
         onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
         currentView={currentView}
       />
@@ -2028,11 +2023,17 @@ export default function App() {
         isOpen={voiceCoachOpen}
         onClose={() => setVoiceCoachOpen(false)}
         goals={goals}
+        objectives={objectives}
         projects={projects}
+        initiatives={initiatives}
+        tasks={tasks}
         kpis={kpis}
         kataSessions={kataSessions}
         ctqKanoItems={ctqKanoItems}
         matrixRelations={matrixRelations}
+        members={members}
+        activeProfile={activeProfile}
+        currentView={currentView}
       />
 
         {confirmModal.show && (

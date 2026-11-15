@@ -16,18 +16,37 @@ import {
   RefreshCw,
   Scale,
   Radio,
-  Activity
+  Activity,
+  Compass
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Goal, Project, KPI, KataSession, CtqKanoItem, MatrixRelation } from '../types';
+import {
+  Goal,
+  Objective,
+  Project,
+  Initiative,
+  Task,
+  KPI,
+  KataSession,
+  CtqKanoItem,
+  MatrixRelation,
+  Member
+} from '../types';
+import { summarizeVsmStreamsForAi } from '../utils/vsmHelpers';
+import { computeXMatrixGaps } from '../utils/xMatrixHelpers';
 
 interface AIAssistantProps {
   goals: Goal[];
+  objectives?: Objective[];
   projects: Project[];
+  initiatives?: Initiative[];
+  tasks?: Task[];
   kpis: KPI[];
   kataSessions: KataSession[];
   ctqKanoItems: CtqKanoItem[];
   matrixRelations?: MatrixRelation[];
+  members?: Member[];
+  activeProfile?: { name: string; email?: string; role: string };
   onOpenVoiceCoach?: () => void;
   currentView?: string;
 }
@@ -41,11 +60,16 @@ interface Message {
 
 export default function AIAssistant({
   goals,
+  objectives = [],
   projects,
+  initiatives = [],
+  tasks = [],
   kpis,
   kataSessions,
   ctqKanoItems,
   matrixRelations = [],
+  members = [],
+  activeProfile,
   onOpenVoiceCoach,
   currentView
 }: AIAssistantProps) {
@@ -54,7 +78,7 @@ export default function AIAssistant({
     {
       id: 'welcome',
       sender: 'bot',
-      text: 'Hej! Jag är din strategiska AI-assistent. Jag analyserar företagets Balanced Scorecard-mål och Toyota Kata-sessioner i realtid. Hur kan jag hjälpa dig med din verksamhetsstyrning idag?',
+      text: 'Hej! Jag är din strategiska AI-assistent. Jag har full överblick över hela plattformen — mål, delmål, Balanced Scorecard, X-matris, projekt, uppgifter, KPI:er, VSM, Kano/CTQ, team och Toyota Kata. Vad vill du fråga om?',
       timestamp: new Date()
     }
   ]);
@@ -97,13 +121,47 @@ export default function AIAssistant({
   const triggerAIResponse = async (query: string) => {
     setIsTyping(true);
 
+    const vsmStreams = summarizeVsmStreamsForAi();
+    const xMatrixGaps = computeXMatrixGaps({
+      goals,
+      objectives,
+      projects,
+      initiatives,
+      kpis,
+      relations: matrixRelations,
+      members
+    });
+    const history = messages
+      .filter((m) => m.id !== 'welcome')
+      .slice(-6)
+      .map((m) => ({
+        role: m.sender === 'user' ? 'user' : 'assistant',
+        text: m.text
+      }));
+
     try {
       const response = await fetch('/api/gemini/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query,
-          state: { goals, projects, kpis, kataSessions, ctqKanoItems, matrixRelations }
+          history,
+          state: {
+            currentView,
+            activeProfile,
+            goals,
+            objectives,
+            projects,
+            initiatives,
+            tasks,
+            kpis,
+            kataSessions,
+            ctqKanoItems,
+            matrixRelations,
+            xMatrixGaps,
+            vsmStreams,
+            members
+          }
         })
       });
 
@@ -133,53 +191,85 @@ export default function AIAssistant({
       let reply = '';
       const text = query.toLowerCase();
 
-      if (text.includes('mål') || text.includes('strategi') || text.includes('vision')) {
+      if (text.includes('x-matris') || text.includes('matris') || text.includes('hoshin') || text.includes('glapp') || text.includes('gap') || text.includes('samband')) {
+        const critical = xMatrixGaps.filter((g) => g.severity === 'critical');
+        const warnings = xMatrixGaps.filter((g) => g.severity === 'warning');
+        reply = `Jag har skannat er **Hoshin Kanri X-Matris** (${matrixRelations.filter(r => r.strength > 0).length} aktiva korrelationer):\n\n• **Kritiska glapp:** ${critical.length} st\n• **Varningar:** ${warnings.length} st\n\n`;
+        if (xMatrixGaps.length > 0) {
+          reply += xMatrixGaps.slice(0, 3).map(g => `• ${g.message}`).join('\n');
+        } else {
+          reply += `✓ Alla mål, delmål, projekt och KPI:er har fullständig strategisk koppling och utpekade ägare!`;
+        }
+      }
+      else if (text.includes('vsm') || text.includes('flöde') || text.includes('pce') || text.includes('ledtid') || text.includes('flaskhals')) {
+        const primary = vsmStreams[0];
+        if (primary) {
+          reply = `Här är nuläget för ert primära värdeflöde **"${primary.name}"** (${primary.stepCount} processteg):\n\n• **Processtid (PT):** ${primary.totalProcessTimeHours} h\n• **Total ledtid (LT):** ${primary.totalLeadTimeHours} h\n• **Flödeseffektivitet (PCE):** ${primary.pcePercent}%\n• **First Pass Yield:** ${primary.rolledFirstPassYieldPercent}%\n\n`;
+          if (primary.bottleneckStep) {
+            reply += `*Största flaskhals:* **"${primary.bottleneckStep.name}"** (${primary.bottleneckStep.waitHours} h väntetid — ${primary.bottleneckStep.wasteDescription || primary.bottleneckStep.wasteType}).`;
+          }
+        } else {
+          reply = `Inga värdeflöden hittades i VSM-modulen just nu.`;
+        }
+      }
+      else if (text.includes('delmål') || text.includes('objective')) {
+        const avgObj = objectives.length > 0 ? Math.round(objectives.reduce((s, o) => s + o.progress, 0) / objectives.length) : 0;
+        reply = `Ni har **${objectives.length} delmål (Objectives)** med ett genomsnitt på **${avgObj}%** framdrift.\n\n${objectives.slice(0, 4).map(o => `• **${o.title}** (${o.progress}%) — KPI: ${o.kpi}`).join('\n')}`;
+      }
+      else if (text.includes('uppgift') || text.includes('task') || text.includes('initiativ')) {
+        const doneTasks = tasks.filter(t => t.completed).length;
+        reply = `Ni har **${initiatives.length} initiativ** och **${tasks.length} dagliga uppgifter** (${doneTasks} slutförda, ${tasks.length - doneTasks} kvarstående).\n\n${tasks.filter(t => !t.completed).slice(0, 4).map(t => `• Kvar att göra: ${t.title}`).join('\n')}`;
+      }
+      else if (text.includes('team') || text.includes('medlem') || text.includes('användare') || text.includes('ägare')) {
+        reply = `Organisationen har **${members.length} registrerade teammedlemmar** (aktiv användare: **${activeProfile?.name || 'Användare'}**, ${activeProfile?.role || 'Strateg'}).\n\n${members.slice(0, 5).map(m => `• **${m.name}** — ${m.role} (${m.status})`).join('\n')}`;
+      }
+      else if (text.includes('mål') || text.includes('strategi') || text.includes('vision')) {
         const goalNames = goals.map(g => `"${g.title}" (${g.progress}% klart)`).join(', ');
         const avgGoals = goals.length > 0 
           ? Math.round(goals.reduce((sum, g) => sum + g.progress, 0) / goals.length) 
           : 0;
-        reply = `Jag har analyserat era **${goals.length} aktiva målvisioner** i databasen. Medeluppfyllnaden ligger för närvarande på **${avgGoals}%**.\n\nEra nuvarande registrerade mål är: ${goalNames || 'inga registrerade än'}.\n\n*Rekommendation*: Målet "Bli den mest hållbara aktören" är särskilt viktigt, men har en utmanande CO₂-mätning. Du bör para ihop detta mål med en Kata-session för att experimentera med lösningar på transporthinder!`;
+        reply = `Jag har analyserat era **${goals.length} aktiva målvisioner** och **${objectives.length} delmål**. Medeluppfyllnaden för målen ligger på **${avgGoals}%**.\n\nRegistrerade mål: ${goalNames || 'inga registrerade än'}.\n\n*Rekommendation*: Säkerställ att varje mål bryts ner i delmål och stöttas av aktiva projekt i X-matrisen.`;
       } 
       else if (text.includes('kano') || text.includes('ctq') || text.includes('krav') || text.includes('voc')) {
         const total = ctqKanoItems.length;
         const mustBe = ctqKanoItems.filter(i => i.kanoCategory === 'Must-be').length;
         const attractive = ctqKanoItems.filter(i => i.kanoCategory === 'Attractive').length;
         const oneDim = ctqKanoItems.filter(i => i.kanoCategory === 'One-dimensional').length;
-        reply = `Jag har analyserat era **${total} kravspecifikationer** i Kano & CTQ-modulen:\n\n• **Ska-krav (Must-be):** ${mustBe} st\n• **Prestandakrav (One-dimensional):** ${oneDim} st\n• **Wow-faktorer (Attractive):** ${attractive} st\n\n*Strategisk rekommendation:* Prioritera alltid att åtgärda och leverera era **Must-be** (Ska-krav) först. Att lansera attraktiva wow-funktioner utan att grundkraven fungerar leder till missnöjda kunder. Koppla dina CTQ-specifikationer till strategiska mål för att säkerställa att utvecklingen är helt kundstyrd!`;
+        reply = `Jag har analyserat era **${total} kravspecifikationer** i Kano & CTQ-modulen:\n\n• **Ska-krav (Must-be):** ${mustBe} st\n• **Prestandakrav (One-dimensional):** ${oneDim} st\n• **Wow-faktorer (Attractive):** ${attractive} st\n\n*Strategisk rekommendation:* Prioritera alltid att åtgärda och leverera era **Must-be** (Ska-krav) först innan ni lägger resurser på Delighter-funktioner.`;
       }
       else if (text.includes('projekt') || text.includes('aktivitet') || text.includes('schema')) {
         const progressList = projects.map(p => `"${p.title}" (${p.progress}% slutfört)`);
         const lagging = projects.filter(p => p.progress < 45);
-        reply = `Just nu övervakar jag **${projects.length} operativa projekt**.\n\n${progressList.map(p => `• ${p}`).join('\n')}\n\n`;
+        reply = `Just nu övervakar jag **${projects.length} operativa projekt** och **${initiatives.length} initiativ**.\n\n${progressList.map(p => `• ${p}`).join('\n')}\n\n`;
         if (lagging.length > 0) {
-          reply += `⚠️ **Risk-notis:** Projektet ${lagging.map(p => `"${p.title}"`).join(', ')} utvecklas långsamt och riskerar flaskhalsar. Det är starkt rekommenderat att omfördela 10% av kapaciteten eller lägga till konkreta underuppgifter (Tasks) för att få fart på framdriften!`;
+          reply += `⚠️ **Risk-notis:** Projektet ${lagging.map(p => `"${p.title}"`).join(', ')} utvecklas långsamt. Dela upp i mindre uppgifter (${tasks.filter(t => !t.completed).length} öppna uppgifter i systemet) eller koppla till en Kata-session.`;
         } else {
-          reply += `✓ **Status:** Samtliga projekt framskrider enligt schema och uppvisar stabil framgång. Bra jobbat!`;
+          reply += `✓ **Status:** Samtliga projekt framskrider enligt schema och uppvisar stabil framgång.`;
         }
       } 
       else if (text.includes('kpi') || text.includes('mätetal') || text.includes('index')) {
         const avgKpi = kpis.length > 0 
           ? Math.round(kpis.reduce((acc, k) => acc + k.progress, 0) / kpis.length)
           : 0;
-        const lowestKpi = kpis.reduce((min, k) => k.progress < min.progress ? k : min, kpis[0] || { title: 'Inga', progress: 100 });
-        reply = `Era KPI:er uppvisar en genomsnittlig uppfyllelsegrad på **${avgKpi}%**.\n\n`;
-        if (lowestKpi && lowestKpi.title !== 'Inga') {
-          reply += `Mätaren som kräver omedelbara åtgärder är **"${lowestKpi.title}"** som just nu bara uppnår **${lowestKpi.progress}%** måluppfyllnad.\n\n*Strategisk åtgärd:* Eftersom mätetalen är uppdelade över de 4 BSC-perspektiven, tenderar svaga ekonomiska siffror ofta att bero på att lärande eller marknadsaktiviteter släpar efter. Investera mer i interna kompetensutbildningar!`;
-        } else {
-          reply += `Inga tydliga avvikelser eller riskfaktorer har hittats i mätgalleriet för närvarande.`;
+        const lowestKpi = kpis.length > 0
+          ? kpis.reduce((min, k) => k.progress < min.progress ? k : min, kpis[0])
+          : null;
+        reply = `Era **${kpis.length} KPI:er** uppvisar en genomsnittlig uppfyllelsegrad på **${avgKpi}%**.\n\n`;
+        if (lowestKpi) {
+          reply += `Mätaren som kräver mest uppmärksamhet är **"${lowestKpi.title}"** som just nu ligger på **${lowestKpi.progress}%** (${lowestKpi.value} / mål ${lowestKpi.target}).`;
         }
       } 
       else if (text.includes('kata') || text.includes('coaching') || text.includes('hinder') || text.includes('experiment')) {
-        reply = `Toyota Kata är ryggraden i er förbättringsmetodik. Du har för närvarande **${kataSessions.length} aktiva förbättringssessioner**.\n\n`;
+        reply = `Ni har för närvarande **${kataSessions.length} Toyota Kata-sessioner**.\n\n`;
         if (kataSessions.length > 0) {
           const latest = kataSessions[0];
-          reply += `Senaste sessionen behandlar **"${latest.title}"** med fokus på hindret: *"${latest.obstacles}"*.\n\n*Coachtips:* Ditt nästa planerade experiment är *"${latest.nextStep}"*. Se till att följa upp detta redan imorgon för att utvärdera lärdomarna snabbt!`;
+          reply += `Senaste sessionen behandlar **"${latest.title}"** med fokus på hindret: *"${latest.obstacles}"*.\n\n*Nästa steg:* *"${latest.nextStep}"*.`;
         } else {
-          reply += `Du har inte skapat några Toyota Kata-sessioner ännu. Klicka på "Starta Kata" på Dashboarden för att påbörja ditt första experiment!`;
+          reply += `Du har inte skapat några Toyota Kata-sessioner ännu.`;
         }
       }
       else {
-        reply = `Baserat på systemets nuvarande register ({ Mål: ${goals.length}, Projekt: ${projects.length}, KPI-medel: ${avgKpiProgress}% }) rekommenderar jag att fokusera på **📚 Lärande och välmående** för att övervinna operativa trösklar.`;
+        reply = `Jag har full överblick över er data: **${goals.length} mål**, **${objectives.length} delmål**, **${projects.length} projekt**, **${kpis.length} KPI:er** (snitt ${avgKpiProgress}%), **${vsmStreams.length} värdeflöden**, **${ctqKanoItems.length} Kano-krav**, **${kataSessions.length} Kata-sessioner** och **${xMatrixGaps.length} identifierade X-matrisglapp**. Vad vill du dyka djupare i?`;
       }
 
       const botMsg: Message = {
@@ -363,6 +453,8 @@ export default function AIAssistant({
                   {s.query === 'projekt' && <Briefcase className="w-3 h-3 text-violet-600" />}
                   {s.query === 'kpi' && <TrendingUp className="w-3 h-3 text-emerald-600" />}
                   {s.query === 'kata' && <RefreshCw className="w-3 h-3 text-rose-500" />}
+                  {s.query === 'vsm' && <Activity className="w-3 h-3 text-cyan-600" />}
+                  {(s.query.includes('x-matris') || s.query.includes('hoshin')) && <Compass className="w-3 h-3 text-indigo-600" />}
                   <span>{s.text}</span>
                 </button>
               ))}

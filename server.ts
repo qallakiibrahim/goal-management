@@ -201,54 +201,108 @@ function getFallbackAnalyze(type: string, goals: any[], projects: any[], kpis: a
 // Endpoint for true AI-powered Assistant Chat
 app.post('/api/gemini/generate', async (req, res) => {
   try {
-    const { query, state } = req.body;
+    const { query, state, history } = req.body;
     if (!query) {
       res.status(400).json({ error: 'Query is required' });
       return;
     }
 
-    const systemPrompt = `Du är en expert på verksamhetsstyrning, Balanced Scorecard (Kaplan & Norton), Toyota Kata samt Kano-modellen & Critical to Quality (CTQ) kravanalys.
-Ditt mål är att coacha användaren att sätta tydliga, mätbara och linjära mål, projekt och experimentiella cykler, samt utvärdera kundkrav (Voice of Customer) via Kano och översätta dem till mätbara CTQ-specifikationer.
-Svara alltid professionellt på trevlig och professionell svenska. Håll svaret fokuserat på användarens data om den skickas med.
-Undvik generiskt AI-fluff, ge konkreta förslag och använd gärna punktlistor med fetstil.
+    const tasksList = Array.isArray(state?.tasks) ? state.tasks : [];
+    const completedTasksCount = tasksList.filter((t: any) => t.completed).length;
 
-Här är nuvarande tillstånd i databasen:
-- Mål: ${JSON.stringify(state?.goals || [])}
-- KPIer: ${JSON.stringify(state?.kpis || [])}
-- Projekt: ${JSON.stringify(state?.projects || [])}
-- Kata-sessioner: ${JSON.stringify(state?.kataSessions || [])}
-- Kano & CTQ-krav: ${JSON.stringify(state?.ctqKanoItems || [])}
-- Hoshin X-Matris samband: ${JSON.stringify(state?.matrixRelations || [])}
+    const systemPrompt = `Du är en expert på verksamhetsstyrning och har FULL INSYN i hela applikationen MålRamverk Alignment Engine.
+Du behärskar och kan svara på frågor om samtliga moduler i systemet:
+1. Översikt & Processkarta: Hur kundinsikt (Kano/CTQ & VSM) -> Strategi (BSC & Mål/Delmål & X-Matris) -> Exekvering (Projekt/Initiativ/Uppgifter, KPI:er & Toyota Kata) hänger ihop.
+2. Kano & Critical to Quality (CTQ): Kundens röst (VoC), Must-be / One-dimensional / Attractive / Indifferent / Reverse och tekniska CTQ-specifikationer.
+3. Värdeflödesanalys (VSM): Processtid (PT), Total Ledtid (LT), Flödeseffektivitet (PCE%), First Pass Yield (C/A%), slöserier (Muda) och flaskhalsar.
+4. Balanced Scorecard (Kaplan & Norton): Finansiellt, Kund & Marknad, Interna Processer samt Lärande & Förnyelse.
+5. Strategiska Mål (Goals) & Nedbrutna Delmål (Objectives).
+6. Hoshin Kanri X-Matris: Korrelationer mellan Mål, Delmål, Projekt/Initiativ, KPI:er och ägare, samt automatiskt identifierade strategiska glapp (xMatrixGaps).
+7. Projekt (Projects), Initiativ (Initiatives) & Dagliga Uppgifter (Tasks).
+8. Nyckeltal (KPI:er) & Ägarskap.
+9. Toyota Kata: 5 standardfrågor, måltillstånd, hinder och PDCA-experiment.
+10. Teammedlemmar, Användarroller & Ansvarsfördelning (Members & Active Profile).
+
+Regler:
+- Svara alltid på tydlig, trevlig och professionell svenska.
+- Basera dina svar direkt på organisationens verkliga data nedan (ange exakta titlar, siffror, procent och identifierade glapp/flaskhalsar när det är relevant).
+- Hitta aldrig på data som inte finns. Om något saknas i datan, påpeka exakt vad som saknas och föreslå hur användaren kan komplettera det.
+- Håll svaren konkreta, välstrukturerade med punktlistor och fetstil.
+
+Aktiv vy just nu: ${state?.currentView || 'okänd'}
+Inloggad profil: ${JSON.stringify(state?.activeProfile || {})}
+
+Här är organisationens fullständiga livedata:
+- Strategiska Mål (${state?.goals?.length || 0} st): ${JSON.stringify(state?.goals || [])}
+- Delmål / Objectives (${state?.objectives?.length || 0} st): ${JSON.stringify(state?.objectives || [])}
+- Operativa Projekt (${state?.projects?.length || 0} st): ${JSON.stringify(state?.projects || [])}
+- Initiativ (${state?.initiatives?.length || 0} st): ${JSON.stringify(state?.initiatives || [])}
+- Dagliga Uppgifter / Tasks (${tasksList.length} st, varav ${completedTasksCount} slutförda): ${JSON.stringify(tasksList)}
+- KPI:er (${state?.kpis?.length || 0} st): ${JSON.stringify(state?.kpis || [])}
+- Värdeflöden / VSM (${state?.vsmStreams?.length || 0} st): ${JSON.stringify(state?.vsmStreams || [])}
+- Kano & CTQ-krav (${state?.ctqKanoItems?.length || 0} st): ${JSON.stringify(state?.ctqKanoItems || [])}
+- Kata-sessioner (${state?.kataSessions?.length || 0} st): ${JSON.stringify(state?.kataSessions || [])}
+- Hoshin X-Matris samband (${state?.matrixRelations?.length || 0} st): ${JSON.stringify(state?.matrixRelations || [])}
+- Identifierade X-Matrisglapp (${state?.xMatrixGaps?.length || 0} st): ${JSON.stringify(state?.xMatrixGaps || [])}
+- Teammedlemmar & Ägare (${state?.members?.length || 0} st): ${JSON.stringify(state?.members || [])}
 `;
 
+    const historyText = Array.isArray(history) && history.length > 0
+      ? `Tidigare konversation:\n${history.map((h: any) => `${h.role === 'user' ? 'Användare' : 'AI'}: ${h.text}`).join('\n')}\n\nAktuell fråga från användaren:\n${query}`
+      : query;
+
     const response = await callGeminiWithRetry({
-      contents: query,
+      contents: historyText,
       systemInstruction: systemPrompt,
-      temperature: 0.7,
+      temperature: 0.6,
     });
 
     res.json({ text: response.text });
   } catch (error: any) {
     console.log('[AI Advisor] Assembling local context advice.');
     
-    // Smart, custom Swedish fallback chat responses to always satisfy user experience
+    // Smart, custom Swedish fallback chat responses covering all modules
     const queryLower = (req.body.query || '').toLowerCase();
-    const goalsCount = req.body.state?.goals?.length || 0;
-    const projectsCount = req.body.state?.projects?.length || 0;
-    const kpisCount = req.body.state?.kpis?.length || 0;
-    const kanoCount = req.body.state?.ctqKanoItems?.length || 0;
+    const s = req.body.state || {};
+    const goalsCount = s.goals?.length || 0;
+    const objectivesCount = s.objectives?.length || 0;
+    const projectsCount = s.projects?.length || 0;
+    const initiativesCount = s.initiatives?.length || 0;
+    const tasksList = Array.isArray(s.tasks) ? s.tasks : [];
+    const kpisCount = s.kpis?.length || 0;
+    const kanoCount = s.ctqKanoItems?.length || 0;
+    const kataCount = s.kataSessions?.length || 0;
+    const vsmStreams = Array.isArray(s.vsmStreams) ? s.vsmStreams : [];
+    const xMatrixGaps = Array.isArray(s.xMatrixGaps) ? s.xMatrixGaps : [];
+    const membersCount = s.members?.length || 0;
 
     let responseText = '';
-    if (queryLower.includes('kano') || queryLower.includes('ctq') || queryLower.includes('krav') || queryLower.includes('voc')) {
-      responseText = `Jag har analyserat era **${kanoCount} kravspecifikationer** i Kano & CTQ-modulen.\n\n*Råd:* Se till att era **Must-be** (Ska-krav) är 100% säkrade innan ni lägger krut på att bygga attraktiva wow-funktioner. Koppla dessutom era CTQ-specifikationer direkt till era strategiska Balanced Scorecard-mål som KPI-mätetal!`;
+    if (queryLower.includes('x-matris') || queryLower.includes('matris') || queryLower.includes('hoshin') || queryLower.includes('glapp') || queryLower.includes('gap')) {
+      responseText = `Er **Hoshin Kanri X-Matris** visar just nu **${xMatrixGaps.length} identifierade strategiska glapp**.\n\n${xMatrixGaps.slice(0, 3).map((g: any) => `• ${g.message}`).join('\n') || '✓ Alla kopplingar mellan mål, projekt och KPI:er är aktiva.'}`;
+    } else if (queryLower.includes('vsm') || queryLower.includes('värdeflöde') || queryLower.includes('flöde') || queryLower.includes('pce') || queryLower.includes('ledtid') || queryLower.includes('flaskhals')) {
+      const primary = vsmStreams[0];
+      responseText = primary
+        ? `Ert aktiva värdeflöde **"${primary.name}"** har **${primary.pcePercent}% flödeseffektivitet (PCE)** (${primary.totalProcessTimeHours} h processtid av ${primary.totalLeadTimeHours} h total ledtid).\n\n*Största flaskhals:* **${primary.bottleneckStep?.name || 'okänd'}** (${primary.bottleneckStep?.waitHours || 0} h väntetid).`
+        : `Ni har **${vsmStreams.length} värdeflöden** registrerade i VSM-modulen. Fokusera på att kapa väntetider i stegen med lägst C/A% och högst ledtid.`;
+    } else if (queryLower.includes('kano') || queryLower.includes('ctq') || queryLower.includes('krav') || queryLower.includes('voc')) {
+      responseText = `Jag har analyserat era **${kanoCount} kravspecifikationer** i Kano & CTQ-modulen.\n\n*Råd:* Se till att era **Must-be** (Ska-krav) är 100% säkrade innan ni lägger resurser på Delighter-funktioner, och koppla era CTQ-krav direkt till strategiska mål och KPI:er.`;
+    } else if (queryLower.includes('delmål') || queryLower.includes('objective')) {
+      responseText = `Ni har **${objectivesCount} delmål (Objectives)** kopplade under era ${goalsCount} strategiska mål. Kontrollera i X-matrisen att varje delmål har minst ett drivande projekt.`;
+    } else if (queryLower.includes('uppgift') || queryLower.includes('task') || queryLower.includes('initiativ')) {
+      const done = tasksList.filter((t: any) => t.completed).length;
+      responseText = `Ni har **${initiativesCount} initiativ** och **${tasksList.length} dagliga uppgifter** (${done} klara, ${tasksList.length - done} kvarstående).`;
+    } else if (queryLower.includes('team') || queryLower.includes('medlem') || queryLower.includes('användare') || queryLower.includes('ägare')) {
+      responseText = `Organisationen har **${membersCount} registrerade teammedlemmar**. Se i KPI- eller X-matrisvyn att alla kritiska KPI:er och mål har en tydlig huvudägare.`;
+    } else if (queryLower.includes('kata') || queryLower.includes('experiment') || queryLower.includes('hinder')) {
+      responseText = `Ni har **${kataCount} Toyota Kata-sessioner** registrerade. Arbeta igenom de 5 frågorna och dokumentera lärdomarna efter varje PDCA-test.`;
     } else if (queryLower.includes('mål') || queryLower.includes('strategi')) {
-      responseText = `Jag har analyserat era **${goalsCount} aktiva målvisioner** i databasen. Generellt sett är det viktigt att vi fokuserar på att göra målen SMART och kopplade till KPI:er.\n\n*Rekommendation:* Se till att era strategiska prioriteringar bryts ner till mätbara, operativa mål och stöttas av minst ett projekt!`;
+      responseText = `Ni har **${goalsCount} aktiva strategiska mål** och **${objectivesCount} delmål**. Se till att målen har SMART-definitioner och stöttas av aktiva projekt och KPI:er i X-matrisen.`;
     } else if (queryLower.includes('projekt') || queryLower.includes('aktivitet')) {
-      responseText = `Just nu spårar jag **${projectsCount} operativa projekt** i systemet.\n\nEtt kritiskt fokusområde är att underlätta för långsamma projekt genom att dela upp dem i mindre delmål (Tasks) och schemalägga veckoexperiment i linje med Toyota Kata-vyn!`;
-    } else if (queryLower.includes('kpi') || queryLower.includes('nyckeltal')) {
-      responseText = `Ni har **${kpisCount} definierade KPI-mätetal** över era Balanced Scorecard-perspektiv.\n\n*Råd:* Kontrollera att det råder balans så att inte alla mätpunkter ligger under det finansiella perspektivet. Det krävs mätetal för Lärande och Processer för en fullständig vy!`;
+      responseText = `Just nu spårar systemet **${projectsCount} operativa projekt**, **${initiativesCount} initiativ** och **${tasksList.length} uppgifter**.`;
+    } else if (queryLower.includes('kpi') || queryLower.includes('nyckeltal') || queryLower.includes('bsc')) {
+      responseText = `Ni har **${kpisCount} definierade KPI-mätetal** över era 4 Balanced Scorecard-perspektiv. Kontrollera balansen mellan Finansiellt, Kund, Interna Processer och Lärande.`;
     } else {
-      responseText = `Hej! Jag är din strategiska AI-coach. Just nu upplever molnservern hög belastning, men jag analyserar era register lokalt:\n\n• **Kano & CTQ-krav:** ${kanoCount} st\n• **Mål:** ${goalsCount} st\n• **Projekt:** ${projectsCount} st\n• **KPIer:** ${kpisCount} st\n\nFråga mig gärna om Kano-modellen, Balanced Scorecard eller hur ni bäst sätter upp veckovisa förbättringsexperiment med Toyota Kata!`;
+      responseText = `Hej! Jag har full överblick över er livedata:\n\n• **Mål & Delmål:** ${goalsCount} mål, ${objectivesCount} delmål\n• **Projekt, Initiativ & Uppgifter:** ${projectsCount} projekt, ${initiativesCount} initiativ, ${tasksList.length} uppgifter\n• **KPI:er & X-Matris:** ${kpisCount} KPI:er, ${xMatrixGaps.length} identifierade glapp\n• **VSM & Kano/CTQ:** ${vsmStreams.length} värdeflöden, ${kanoCount} kundkrav\n• **Toyota Kata & Team:** ${kataCount} sessioner, ${membersCount} medlemmar\n\nStäll valfri fråga om någon av delarna!`;
     }
 
     res.json({ text: responseText });
@@ -407,20 +461,21 @@ app.get('/api/live/stream', async (req, res) => {
   sendEvent({ type: 'status', status: 'connecting', sessionId, message: 'Initierar session med gemini-3.8-live...' });
 
   try {
-    const systemPrompt = `Du är en strategisk AI-partner och röstcoach för HELA applikationen MålRamverk Alignment Engine.
-Du är INTE bara till för Toyota Kata! Du har full insyn och behärskar samtliga delar i plattformen:
-1. Strategiska Mål & Visioner (Goals): Formulera SMART-mål, prioritera och koppla mål till framgångsfaktorer.
-2. Operativa Projekt (Projects): Analysera projektframdrift, identifiera risker, föreslå deluppgifter och milstolpar.
-3. KPI:er & Balanced Scorecard: Balansera de fyra perspektiven (Finans, Kund, Interna Processer, Lärande & Förnyelse) och säkra rätt mätetal.
-4. Värdeflödesanalys (VSM): Sänka ledtider (LT), eliminera slöseri och optimera cykeltider (PT) och PCE.
-5. Kano & CTQ: Översätta kundens röst (Voice of Customer) till mätbara tekniska krav (Critical to Quality).
-6. Toyota Kata: Standardiserad coaching i de 5 frågorna och snabba PDCA-experiment när användaren vill förbättra ett processhinder.
-7. Hoshin Kanri X-Matris: Spåra orsak-verkan-kedjan mellan långsiktiga mål, delmål, projekt/initiativ, KPI:er och ägare, samt identifiera strategiska glapp.
+    const systemPrompt = `Du är en strategisk AI-partner och röstcoach med FULL INSYN i hela applikationen MålRamverk Alignment Engine.
+Du behärskar och kan svara på frågor om samtliga moduler i plattformen:
+1. Strategiska Mål (Goals) & Nedbrutna Delmål (Objectives): Formulera SMART-mål, prioritera och spåra måluppfyllnad.
+2. Operativa Projekt (Projects), Initiativ (Initiatives) & Dagliga Uppgifter (Tasks): Analysera framdrift, uppgiftsstatus, risker och milstolpar.
+3. KPI:er & Balanced Scorecard: Balansera de fyra perspektiven (Finans, Kund, Interna Processer, Lärande & Förnyelse) och granska ägarskap.
+4. Värdeflödesanalys (VSM): Analysera värdeflöden, processtid (PT), total ledtid (LT), PCE%, flaskhalsar och slöserier (Muda).
+5. Kano & CTQ: Översätta kundens röst (VoC) till Must-be/One-dimensional/Attractive och mätbara CTQ-specifikationer.
+6. Hoshin Kanri X-Matris: Spåra korrelationer mellan mål, delmål, projekt, KPI:er och ägare, samt identifierade strategiska glapp (xMatrixGaps).
+7. Toyota Kata: Coaching i de 5 standardfrågorna och PDCA-experiment.
+8. Teammedlemmar, Roller & Processkarta: Svara på vem som äger vad och hur flödet från kundinsikt -> strategi -> exekvering hänger ihop.
 
 Regler för samtalet:
-- Du samtalar med användaren i realtid via röst och text.
+- Du samtalar med användaren i realtid via röst och text, och får direkt en kontextuppdatering med organisationens livedata.
+- Använd den exakta datan (titlar, siffror, glapp, flaskhalsar, uppgifter, teammedlemmar) när användaren frågar om verksamheten.
 - Håll dina svar naturliga, engagerande och koncisa (1-3 korta meningar per replik) så att samtalet flyter som en riktig dialog.
-- Lyssna noga på vad användaren frågar om. Om användaren frågar om mål, svara om mål. Om användaren frågar om projekt eller KPI:er, anpassa dig direkt.
 - Svara alltid på trevlig, professionell svenska.`;
 
     const session = await ai.live.connect({
@@ -520,7 +575,7 @@ app.post('/api/live/input', (req, res) => {
       liveState.session.sendRealtimeInput({ text });
     } else if (context) {
       liveState.session.sendRealtimeInput({
-        text: `[Kontextuppdatering från applikationen]: Mål: ${context.goalsCount || 0} st, Projekt: ${context.projectsCount || 0} st, KPIer: ${context.kpisCount || 0} st, Kata-sessioner: ${context.kataCount || 0} st. Detaljer: ${JSON.stringify(context)}`
+        text: `[Fullständig livedata från applikationen — svara utifrån denna data utan att rabbla upp allt]: Aktiv vy: ${context.currentView || 'okänd'}, Profil: ${JSON.stringify(context.activeProfile || {})}. Antal: Mål ${context.goalsCount || 0}, Delmål ${context.objectivesCount || 0}, Projekt ${context.projectsCount || 0}, Initiativ ${context.initiativesCount || 0}, Uppgifter ${context.tasksCount || 0} (${context.completedTasksCount || 0} klara), KPIer ${context.kpisCount || 0}, Kata ${context.kataCount || 0}, Kano/CTQ ${context.kanoCount || 0}, VSM-flöden ${context.vsmStreamsCount || 0}, X-Matrisglapp ${context.xMatrixGapsCount || 0}, Teammedlemmar ${context.membersCount || 0}. Fullständiga detaljer: ${JSON.stringify(context)}`
       });
     }
     res.json({ ok: true });
@@ -563,19 +618,22 @@ wss.on('connection', async (clientWs: WebSocket) => {
         throw new Error('GEMINI_API_KEY saknas i servermiljön');
       }
 
-      let systemPrompt = `Du är en strategisk röstcoach och sparringpartner i MålRamverk Alignment Engine.
-Ditt expertområde är Balanced Scorecard (Kaplan & Norton), Toyota Kata förbättringsmetodik och Kano-modellen med CTQ (Critical to Quality).
-Du pratar med användaren i realtid via röst.
-Håll dina svar naturliga, engagerande och koncisa (1-3 korta meningar per replik) så att det känns som ett äkta samtal.
-Ställ gärna relevanta coachingfrågor, t.ex. Toyota Katas 5 frågor eller hur de mäter sina KPI:er.
-Tala på svenska med trevlig, professionell ton.`;
+      let systemPrompt = `Du är en strategisk röstcoach och sparringpartner med FULL INSYN i hela MålRamverk Alignment Engine (Mål, Delmål, BSC, Hoshin X-Matris & Glapp, VSM-flöden, Kano & CTQ, Projekt, Initiativ, Uppgifter, KPI:er, Toyota Kata, Team & Processkarta).
+Håll dina svar naturliga, engagerande och koncisa (1-3 korta meningar per replik) på trevlig, professionell svenska.`;
 
       if (initialContext) {
         systemPrompt += `\n\nAktuellt läge i organisationen:
 - Mål (${initialContext.goalsCount || 0} st): ${JSON.stringify(initialContext.goals || [])}
-- KPIer (${initialContext.kpisCount || 0} st): ${JSON.stringify(initialContext.kpis || [])}
+- Delmål (${initialContext.objectivesCount || 0} st): ${JSON.stringify(initialContext.objectives || [])}
 - Projekt (${initialContext.projectsCount || 0} st): ${JSON.stringify(initialContext.projects || [])}
-- Kata-sessioner (${initialContext.kataCount || 0} st): ${JSON.stringify(initialContext.kataSessions || [])}`;
+- Initiativ (${initialContext.initiativesCount || 0} st): ${JSON.stringify(initialContext.initiatives || [])}
+- Uppgifter (${initialContext.tasksCount || 0} st): ${JSON.stringify(initialContext.tasks || [])}
+- KPIer (${initialContext.kpisCount || 0} st): ${JSON.stringify(initialContext.kpis || [])}
+- VSM-flöden (${initialContext.vsmStreamsCount || 0} st): ${JSON.stringify(initialContext.vsmStreams || [])}
+- Kano/CTQ (${initialContext.kanoCount || 0} st): ${JSON.stringify(initialContext.ctqKanoItems || [])}
+- X-Matrisglapp (${initialContext.xMatrixGapsCount || 0} st): ${JSON.stringify(initialContext.xMatrixGaps || [])}
+- Kata-sessioner (${initialContext.kataCount || 0} st): ${JSON.stringify(initialContext.kataSessions || [])}
+- Team (${initialContext.membersCount || 0} st): ${JSON.stringify(initialContext.members || [])}`;
       }
 
       session = await ai.live.connect({

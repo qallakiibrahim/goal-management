@@ -34,13 +34,27 @@ import {
   floatTo16BitPCM, 
   uint8ArrayToBase64 
 } from '../utils/audioStreamer';
-import { Goal, Project, KPI, KataSession, CtqKanoItem, MatrixRelation } from '../types';
+import {
+  Goal,
+  Objective,
+  Project,
+  Initiative,
+  Task,
+  KPI,
+  KataSession,
+  CtqKanoItem,
+  MatrixRelation,
+  Member
+} from '../types';
+import { summarizeVsmStreamsForAi } from '../utils/vsmHelpers';
+import { computeXMatrixGaps } from '../utils/xMatrixHelpers';
 
 export type VoiceCoachTopic = 
   | 'all' 
   | 'goals' 
   | 'projects' 
   | 'kpis' 
+  | 'x-matrix'
   | 'vsm' 
   | 'kano' 
   | 'kata';
@@ -49,11 +63,17 @@ interface VoiceCoachModalProps {
   isOpen: boolean;
   onClose: () => void;
   goals: Goal[];
+  objectives?: Objective[];
   projects: Project[];
+  initiatives?: Initiative[];
+  tasks?: Task[];
   kpis: KPI[];
   kataSessions: KataSession[];
   ctqKanoItems: CtqKanoItem[];
   matrixRelations?: MatrixRelation[];
+  members?: Member[];
+  activeProfile?: { name: string; email?: string; role: string };
+  currentView?: string;
   initialTopic?: VoiceCoachTopic;
 }
 
@@ -68,11 +88,17 @@ export default function VoiceCoachModal({
   isOpen,
   onClose,
   goals,
+  objectives = [],
   projects,
+  initiatives = [],
+  tasks = [],
   kpis,
   kataSessions,
   ctqKanoItems,
   matrixRelations = [],
+  members = [],
+  activeProfile,
+  currentView,
   initialTopic = 'all'
 }: VoiceCoachModalProps) {
   // Topic Focus Selector
@@ -148,6 +174,11 @@ export default function VoiceCoachModal({
       'Hur balanserar våra 4 Balanced Scorecard-perspektiv?',
       'Har vi bra ledande indikatorer (Lead) eller bara släpande (Lag)?',
       'Föreslå KPI:er för perspektivet Lärande & Förnyelse'
+    ],
+    'x-matrix': [
+      'Vilka strategiska glapp finns i vår Hoshin X-Matris just nu?',
+      'Vilka KPI:er saknar drivande projekt eller utpekad ägare?',
+      'Hur stärker vi kopplingen från Mål till Projekt?'
     ],
     vsm: [
       'Hur analyserar vi våra flaskhalsar och kötider i VSM?',
@@ -261,15 +292,16 @@ export default function VoiceCoachModal({
     setSelectedTopic(topic);
     const labels: Record<VoiceCoachTopic, string> = {
       all: 'Hela Verksamheten',
-      goals: 'Strategiska Mål (Goals)',
-      projects: 'Operativa Projekt',
-      kpis: 'KPI:er & Scorecard',
+      goals: 'Strategiska Mål & Delmål',
+      projects: 'Operativa Projekt, Initiativ & Uppgifter',
+      kpis: 'KPI:er & Balanced Scorecard',
+      'x-matrix': 'Hoshin Kanri X-Matris & Strategiska Glapp',
       vsm: 'Värdeflödesanalys (VSM)',
       kano: 'Kano & Kundkrav (CTQ)',
       kata: 'Toyota Kata Coaching'
     };
     sendInputToLiveSession({
-      text: `[Fokusbyte]: Jag vill nu diskutera och fokusera på området "${labels[topic]}". Ge mig en kort introduktion och fråga vad vi ska börja med inom detta område.`
+      text: `[Fokusbyte]: Jag vill nu diskutera och fokusera på området "${labels[topic]}". Ge mig en kort introduktion baserad på vår verkliga data och fråga vad vi ska börja med.`
     });
   };
 
@@ -448,22 +480,48 @@ export default function VoiceCoachModal({
             sessionReadyRef.current = true;
             setConnectionStatus('ready');
             setStatusMessage('Klar! Mikrofonen lyssnar — prata fritt eller skriv.');
-            // Ground with current strategic context
+            // Ground with complete strategic context across the entire app
+            const vsmStreams = summarizeVsmStreamsForAi();
+            const xMatrixGaps = computeXMatrixGaps({
+              goals,
+              objectives,
+              projects,
+              initiatives,
+              kpis,
+              relations: matrixRelations,
+              members
+            });
             sendInputToLiveSession({
               context: {
+                currentView,
+                activeProfile,
                 goalsCount: goals.length,
-                goals: goals.map((g) => ({ title: g.title, category: g.category, progress: g.progress })),
+                goals: goals.map((g) => ({ id: g.id, title: g.title, category: g.category, progress: g.progress, deadline: g.deadline, ownerId: g.ownerId })),
+                objectivesCount: objectives.length,
+                objectives: objectives.map((o) => ({ id: o.id, goalId: o.goalId, title: o.title, kpi: o.kpi, progress: o.progress, deadline: o.deadline })),
                 projectsCount: projects.length,
-                projects: projects.map((p) => ({ title: p.title, progress: p.progress })),
+                projects: projects.map((p) => ({ id: p.id, title: p.title, goalId: p.goalId, objectiveId: p.objectiveId, progress: p.progress, deadline: p.deadline, ownerId: p.ownerId })),
+                initiativesCount: initiatives.length,
+                initiatives: initiatives.map((i) => ({ id: i.id, projectId: i.projectId, title: i.title, kpi: i.kpi, progress: i.progress })),
+                tasksCount: tasks.length,
+                completedTasksCount: tasks.filter((t) => t.completed).length,
+                tasks: tasks.map((t) => ({ title: t.title, completed: t.completed, projectId: t.projectId, initiativeId: t.initiativeId })),
                 kpisCount: kpis.length,
-                kpis: kpis.map((k) => ({ title: k.title, value: k.value, target: k.target, progress: k.progress })),
+                kpis: kpis.map((k) => ({ id: k.id, title: k.title, category: k.category, value: k.value, target: k.target, progress: k.progress, ownerId: k.ownerId })),
                 kataCount: kataSessions.length,
-                kataSessions: kataSessions.map((k) => ({ title: k.title, nextStep: k.nextStep, obstacles: k.obstacles })),
+                kataSessions: kataSessions.map((k) => ({ title: k.title, goal: k.goal, current: k.current, obstacles: k.obstacles, nextStep: k.nextStep, learnings: k.learnings, progress: k.progress })),
                 kanoCount: ctqKanoItems.length,
+                ctqKanoItems: ctqKanoItems.map((c) => ({ voc: c.voc, driver: c.driver, specification: c.specification, kanoCategory: c.kanoCategory, priority: c.priority })),
                 matrixRelationsCount: matrixRelations.filter((r) => r.strength > 0).length,
                 matrixRelations: matrixRelations
                   .filter((r) => r.strength > 0)
-                  .map((r) => ({ fromId: r.fromId, toId: r.toId, strength: r.strength, note: r.note }))
+                  .map((r) => ({ fromId: r.fromId, toId: r.toId, strength: r.strength, note: r.note })),
+                xMatrixGapsCount: xMatrixGaps.length,
+                xMatrixGaps: xMatrixGaps.map((g) => ({ severity: g.severity, entityType: g.entityType, entityTitle: g.entityTitle, message: g.message })),
+                vsmStreamsCount: vsmStreams.length,
+                vsmStreams,
+                membersCount: members.length,
+                members: members.map((m) => ({ id: m.id, name: m.name, role: m.role, status: m.status }))
               }
             });
           } else {
@@ -583,9 +641,10 @@ export default function VoiceCoachModal({
 
   const topicsList: { id: VoiceCoachTopic; label: string; icon: any }[] = [
     { id: 'all', label: 'Hela Appen', icon: Globe },
-    { id: 'goals', label: 'Mål & Visioner', icon: Target },
-    { id: 'projects', label: 'Projekt', icon: Briefcase },
+    { id: 'goals', label: 'Mål & Delmål', icon: Target },
+    { id: 'projects', label: 'Projekt & Uppgifter', icon: Briefcase },
     { id: 'kpis', label: 'KPI & BSC', icon: TrendingUp },
+    { id: 'x-matrix', label: 'X-Matris', icon: Compass },
     { id: 'vsm', label: 'VSM Flöde', icon: Activity },
     { id: 'kano', label: 'Kano & CTQ', icon: Scale },
     { id: 'kata', label: 'Toyota Kata', icon: RefreshCw }
