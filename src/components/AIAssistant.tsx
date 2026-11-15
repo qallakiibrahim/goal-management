@@ -15,7 +15,6 @@ import {
   TrendingUp, 
   RefreshCw,
   Scale,
-  Mic,
   Radio,
   Activity
 } from 'lucide-react';
@@ -253,23 +252,8 @@ export default function AIAssistant({
 
   return (
     <>
-      {/* 1. Floating Round Trigger Buttons */}
-      <div className="fixed bottom-6 right-6 flex items-center gap-3 z-40">
-        {onOpenVoiceCoach && (
-          <button
-            id="aiVoiceTrigger"
-            onClick={onOpenVoiceCoach}
-            className="h-12 px-3.5 bg-gradient-to-tr from-rose-600 via-indigo-700 to-indigo-900 border border-white/20 text-white rounded-full flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 cursor-pointer transition-transform duration-150 group"
-            title="Starta Strategisk Röstcoach (gemini-3.8-live)"
-          >
-            <div className="relative flex items-center justify-center">
-              <Mic className="w-5 h-5 text-rose-200 group-hover:scale-110 transition-transform animate-pulse" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 border-2 border-indigo-950 rounded-full" />
-            </div>
-            <span className="text-xs font-semibold tracking-wide pr-1 hidden sm:inline">Röstcoach</span>
-          </button>
-        )}
-
+      {/* 1. Floating Round Trigger Button */}
+      <div className="fixed bottom-6 right-6 z-40">
         <button
           id="aiAssistantTrigger"
           onClick={() => setIsOpen(!isOpen)}
@@ -368,11 +352,11 @@ export default function AIAssistant({
 
             {/* Suggestion Quick Chips */}
             <div className="p-2.5 bg-slate-50 border-t border-slate-150 flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-              {suggestions.map((s) => (
+              {suggestions.map((s, idx) => (
                 <button
-                  key={s.query}
+                  key={`${currentView || 'default'}-${s.query}-${idx}`}
                   onClick={() => selectSuggestion(s.text)}
-                  className="px-2.5 py-1.5 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-150 rounded-lg text-[10px] font-semibold text-slate-600 hover:text-indigo-900 transition text-left cursor-pointer flex items-center gap-1 shrink-0"
+                  className="px-2.5 py-1.5 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-[10px] font-semibold text-slate-600 hover:text-indigo-900 transition text-left cursor-pointer flex items-center gap-1 shrink-0"
                 >
                   {s.query === 'kano' && <Scale className="w-3 h-3 text-amber-500" />}
                   {s.query === 'mål' && <Target className="w-3 h-3 text-indigo-700" />}
