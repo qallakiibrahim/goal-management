@@ -34,7 +34,7 @@ import {
   floatTo16BitPCM, 
   uint8ArrayToBase64 
 } from '../utils/audioStreamer';
-import { Goal, Project, KPI, KataSession, CtqKanoItem } from '../types';
+import { Goal, Project, KPI, KataSession, CtqKanoItem, MatrixRelation } from '../types';
 
 export type VoiceCoachTopic = 
   | 'all' 
@@ -53,6 +53,7 @@ interface VoiceCoachModalProps {
   kpis: KPI[];
   kataSessions: KataSession[];
   ctqKanoItems: CtqKanoItem[];
+  matrixRelations?: MatrixRelation[];
   initialTopic?: VoiceCoachTopic;
 }
 
@@ -71,6 +72,7 @@ export default function VoiceCoachModal({
   kpis,
   kataSessions,
   ctqKanoItems,
+  matrixRelations = [],
   initialTopic = 'all'
 }: VoiceCoachModalProps) {
   // Topic Focus Selector
@@ -457,7 +459,11 @@ export default function VoiceCoachModal({
                 kpis: kpis.map((k) => ({ title: k.title, value: k.value, target: k.target, progress: k.progress })),
                 kataCount: kataSessions.length,
                 kataSessions: kataSessions.map((k) => ({ title: k.title, nextStep: k.nextStep, obstacles: k.obstacles })),
-                kanoCount: ctqKanoItems.length
+                kanoCount: ctqKanoItems.length,
+                matrixRelationsCount: matrixRelations.filter((r) => r.strength > 0).length,
+                matrixRelations: matrixRelations
+                  .filter((r) => r.strength > 0)
+                  .map((r) => ({ fromId: r.fromId, toId: r.toId, strength: r.strength, note: r.note }))
               }
             });
           } else {

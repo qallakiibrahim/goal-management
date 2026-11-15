@@ -12,8 +12,8 @@ import {
   writeBatch,
   getDoc
 } from 'firebase/firestore';
-import { getFirebaseDb } from './firebase';
-import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile } from './types';
+import { getFirebaseDb, getFirebaseAuth } from './firebase';
+import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile, MatrixRelation } from './types';
 import { 
   DEFAULT_GOALS, 
   DEFAULT_OBJECTIVES, 
@@ -22,10 +22,41 @@ import {
   DEFAULT_TASKS, 
   DEFAULT_KPIS, 
   DEFAULT_KATA_SESSIONS, 
-  DEFAULT_USER_PROFILE 
+  DEFAULT_USER_PROFILE,
+  DEFAULT_MATRIX_RELATIONS
 } from './demoData';
 
 const db = getFirebaseDb();
+
+enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const auth = getFirebaseAuth();
+  const errInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+      tenantId: auth.currentUser?.tenantId,
+      providerInfo: auth.currentUser?.providerData?.map(provider => ({
+        providerId: provider.providerId,
+        email: provider.email,
+      })) || []
+    },
+    operationType,
+    path
+  };
+  console.warn('[Firestore Error]:', JSON.stringify(errInfo));
+}
 
 // Seed specific collection if it is empty
 async function seedCollectionIfEmpty(collectionName: string, defaultData: any[]) {
@@ -52,6 +83,7 @@ export async function bootstrapFirestore() {
     await seedCollectionIfEmpty('tasks', DEFAULT_TASKS);
     await seedCollectionIfEmpty('kpis', DEFAULT_KPIS);
     await seedCollectionIfEmpty('kataSessions', DEFAULT_KATA_SESSIONS);
+    await seedCollectionIfEmpty('matrixRelations', DEFAULT_MATRIX_RELATIONS);
 
     const profileRef = doc(db, 'userProfile', 'current');
     const profileDoc = await getDoc(profileRef);
@@ -256,5 +288,29 @@ export async function syncMembersToFirestore(items: any[]) {
     await batch.commit();
   } catch (err) {
     console.warn('[Firestore] Members Sync failure:', err);
+  }
+}
+
+export async function syncMatrixRelationsToFirestore(items: MatrixRelation[]) {
+  const path = 'matrixRelations';
+  try {
+    const colRef = collection(db, path);
+    const snapshot = await getDocs(colRef);
+    const existingIds = snapshot.docs.map(d => d.id);
+    const newIds = items.map(i => i.id);
+
+    const batch = writeBatch(db);
+    items.forEach(item => {
+      const docRef = doc(db, path, item.id);
+      batch.set(docRef, item);
+    });
+    existingIds.forEach(id => {
+      if (!newIds.includes(id)) {
+        batch.delete(doc(db, path, id));
+      }
+    });
+    await batch.commit();
+  } catch (err) {
+    handleFirestoreError(err, OperationType.WRITE, path);
   }
 }

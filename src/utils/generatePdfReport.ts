@@ -4,7 +4,7 @@
  */
 
 import { jsPDF } from 'jspdf';
-import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile } from '../types';
+import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile, MatrixRelation } from '../types';
 
 export interface GeneratePdfOptions {
   goals: Goal[];
@@ -14,6 +14,7 @@ export interface GeneratePdfOptions {
   tasks?: Task[];
   kpis: KPI[];
   kataSessions?: KataSession[];
+  matrixRelations?: MatrixRelation[];
   userProfile?: UserProfile;
 }
 
@@ -35,6 +36,7 @@ export function generateStrategicPdfReport({
   tasks = [],
   kpis,
   kataSessions = [],
+  matrixRelations = [],
   userProfile
 }: GeneratePdfOptions): void {
   const doc = new jsPDF({
@@ -516,6 +518,49 @@ export function generateStrategicPdfReport({
       drawProgressBar(marginX + contentWidth - 34, currentY + 8, 30, 2, session.progress);
 
       currentY += 16.5;
+    });
+  }
+
+  // ==========================================
+  // 6B. SECTION 5: HOSHIN KANRI X-MATRIX ALIGNMENT
+  // ==========================================
+  const activeRelations = matrixRelations.filter((r) => r.strength > 0);
+  if (activeRelations.length > 0) {
+    currentY += 4;
+    checkPageBreak(22);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(30, 27, 75);
+    doc.text(`5. Hoshin Kanri X-Matris Samband (${activeRelations.length} st)`, marginX, currentY);
+    currentY += 5;
+
+    const findTitle = (id: string) =>
+      goals.find((g) => g.id === id)?.title ||
+      objectives.find((o) => o.id === id)?.title ||
+      projects.find((p) => p.id === id)?.title ||
+      initiatives.find((i) => i.id === id)?.title ||
+      kpis.find((k) => k.id === id)?.title ||
+      id;
+
+    activeRelations.slice(0, 14).forEach((rel) => {
+      checkPageBreak(9);
+      const strengthLabel = rel.strength === 2 ? 'STARK' : rel.strength === 1 ? 'MEDEL' : 'SVAG';
+      doc.setFillColor(248, 250, 252);
+      doc.setDrawColor(226, 232, 240);
+      doc.roundedRect(marginX, currentY, contentWidth, 7.5, 1, 1, 'FD');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.5);
+      doc.setTextColor(13, 148, 136);
+      doc.text(strengthLabel, marginX + 3, currentY + 4.8);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(30, 41, 59);
+      const lineText = `${findTitle(rel.fromId)}  ->  ${findTitle(rel.toId)}${rel.note ? `  (${rel.note})` : ''}`;
+      const truncated = doc.splitTextToSize(lineText, contentWidth - 24)[0];
+      doc.text(truncated, marginX + 18, currentY + 4.8);
+      currentY += 8.5;
     });
   }
 

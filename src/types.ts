@@ -5,6 +5,17 @@
 
 export type GoalCategory = 'financial' | 'customer' | 'process' | 'learning';
 
+export type MatrixStrength = 0 | 0.5 | 1 | 2;
+
+export interface MatrixRelation {
+  id: string;
+  fromId: string;
+  toId: string;
+  strength: MatrixStrength;
+  note?: string;
+  updatedAt?: string;
+}
+
 export interface Goal {
   id: string;
   title: string;
@@ -13,6 +24,7 @@ export interface Goal {
   category: GoalCategory;
   progress: number;
   deadline: string;
+  ownerId?: string;
 }
 
 export interface Objective {
@@ -33,6 +45,7 @@ export interface Project {
   description: string;
   progress: number;
   deadline: string;
+  ownerId?: string;
 }
 
 export interface Initiative {
@@ -63,6 +76,8 @@ export interface KPI {
   progress: number;
   deadline: string;
   category?: GoalCategory;
+  ownerId?: string;
+  supportOwnerIds?: string[];
 }
 
 export interface KataSession {

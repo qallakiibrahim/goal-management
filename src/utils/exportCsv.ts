@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Goal, Project, KPI, KataSession } from '../types';
+import { Goal, Project, KPI, KataSession, MatrixRelation } from '../types';
 
 export interface ExportCsvData {
   goals: Goal[];
   projects: Project[];
   kpis: KPI[];
   kataSessions: KataSession[];
+  matrixRelations?: MatrixRelation[];
 }
 
 const escapeCsv = (val: string | number | undefined | null): string => {
@@ -21,7 +22,7 @@ const escapeCsv = (val: string | number | undefined | null): string => {
 /**
  * Generates and downloads a multi-section CSV file formatted with UTF-8 BOM for Microsoft Excel
  */
-export function exportStrategicCsv({ goals, projects, kpis, kataSessions }: ExportCsvData): void {
+export function exportStrategicCsv({ goals, projects, kpis, kataSessions, matrixRelations = [] }: ExportCsvData): void {
   const lines: string[] = [];
 
   // UTF-8 BOM so Excel opens Swedish characters cleanly
@@ -101,6 +102,26 @@ export function exportStrategicCsv({ goals, projects, kpis, kataSessions }: Expo
           escapeCsv(s.nextStep),
           escapeCsv(s.learnings),
           escapeCsv(s.progress)
+        ].join(';')
+      );
+    });
+    lines.push('');
+  }
+
+  // Section 6: Hoshin Kanri X-Matrix Relations
+  const activeRelations = matrixRelations.filter((r) => r.strength > 0);
+  if (activeRelations.length > 0) {
+    lines.push('--- HOSHIN KANRI X-MATRIS SAMBAND ---');
+    lines.push('ID;Från ID;Till ID;Styrka;Motivering');
+    activeRelations.forEach((r) => {
+      const label = r.strength === 2 ? 'Stark (2)' : r.strength === 1 ? 'Medel (1)' : 'Svag (0.5)';
+      lines.push(
+        [
+          escapeCsv(r.id),
+          escapeCsv(r.fromId),
+          escapeCsv(r.toId),
+          escapeCsv(label),
+          escapeCsv(r.note || '')
         ].join(';')
       );
     });

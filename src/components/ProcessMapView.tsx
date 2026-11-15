@@ -28,7 +28,8 @@ import {
   Info, 
   ShieldCheck,
   Zap,
-  Play
+  Play,
+  Grid3x3
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -132,6 +133,28 @@ export default function ProcessMapView({
         'Hur uppfattas vi av kunderna? (Kund)',
         'Vilka processer måste vi briljera i? (Processer)',
         'Hur behåller vi förmågan att förändras och växa? (Lärande)'
+      ]
+    },
+    {
+      id: 'x-matrix',
+      number: '3B',
+      title: 'Hoshin Kanri X-Matris',
+      subtitle: 'Korskoppla mål, projekt, KPI & ägare',
+      icon: Grid3x3,
+      category: 'strategi',
+      color: 'text-teal-600 dark:text-teal-400',
+      bgColor: 'bg-teal-50 dark:bg-teal-950/40',
+      borderColor: 'border-teal-200 dark:border-teal-800',
+      viewTarget: 'x-matrix',
+      description: 'Den klassiska fyrvingade Hoshin Kanri X-matrisen binder ihop långsiktiga mål (Söder), delmål (Väst), projekt/initiativ (Nord) och KPI:er (Öst) inklusive korsfunktionellt ägarskap (Sydost) – och varnar för strategiska glapp.',
+      methodology: 'Hoshin Kanri (Policy Deployment X-Matrix)',
+      inputs: ['Långsiktiga mål & delmål', 'Projektportfölj och initiativ', 'KPI:er och teammedlemmar'],
+      outputs: ['Visuell korrelationskarta (Stark/Medel/Svag)', 'Ansvarsmatris per KPI', 'Automatisk gap-analys'],
+      connectionToNext: 'Säkerställer att inga mål saknar drivande projekt och att varje projekt har mätbara KPI:er.',
+      keyQuestions: [
+        'Vilka projekt driver våra viktigaste långsiktiga mål starkast?',
+        'Finns det KPI:er utan tydligt projektstöd eller ansvarig ägare?',
+        'Hur ser hela orsak–verkan-kedjan ut från vision till mätetal?'
       ]
     },
     {

@@ -23,7 +23,8 @@ import {
   ArrowRight,
   X,
   Mic,
-  Workflow
+  Workflow,
+  Grid3x3
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Goal, Project, KPI, KataSession } from '../types';
@@ -97,6 +98,7 @@ export default function CommandPalette({
       { id: 'view-vsm', title: 'Värdeflödesanalys (VSM)', subtitle: 'Kartlägg processtider och ledtider', icon: Activity, view: 'vsm' },
       { id: 'view-kano', title: 'Kano & CTQ Analys', subtitle: 'Kunderbjudande och kritiska kvalitetsfaktorer', icon: Scale, view: 'kano' },
       { id: 'view-bsc', title: 'Balanced Scorecard', subtitle: 'Balanserad styrning över 4 perspektiv', icon: Users, view: 'bsc' },
+      { id: 'view-x-matrix', title: 'X-Matris (Hoshin Kanri)', subtitle: 'Orsak–verkan mellan mål, delmål, projekt, KPI och ägare', icon: Grid3x3, view: 'x-matrix' },
       { id: 'view-goals', title: 'Mål', subtitle: 'Företagsövergripande ambitioner och målnivåer', icon: Target, view: 'goals' },
       { id: 'view-projects', title: 'Projekt', subtitle: 'Pågående projektportfölj och milstolpar', icon: Briefcase, view: 'projects' },
       { id: 'view-kpis', title: 'KPI:er', subtitle: 'Nyckeltal och måluppfyllelser', icon: TrendingUp, view: 'kpis' },

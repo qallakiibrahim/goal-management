@@ -30,6 +30,9 @@ service cloud.firestore {
     match /members/{id} {
       allow read, write: if true;
     }
+    match /matrixRelations/{id} {
+      allow read, write: if true;
+    }
     
     // Deny access to other unmapped documents by default
     match /{document=**} {

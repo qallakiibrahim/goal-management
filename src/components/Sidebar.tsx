@@ -18,7 +18,8 @@ import {
   X,
   Mic,
   Radio,
-  Workflow
+  Workflow,
+  Grid3x3
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -42,6 +43,7 @@ export default function Sidebar({ currentView, onViewChange, stats, onClose, onO
     { id: 'vsm', name: 'Värdeflödesanalys (VSM)', icon: Activity, color: 'text-rose-500' },
     { id: 'kano', name: 'Kano & CTQ Analys', icon: Scale, color: 'text-indigo-505' },
     { id: 'bsc', name: 'Balanced Scorecard', icon: Users, color: 'text-emerald-600' },
+    { id: 'x-matrix', name: 'X-Matris (Hoshin)', icon: Grid3x3, color: 'text-teal-600' },
     { id: 'goals', name: 'Mål', icon: Target, color: 'text-indigo-600', badge: stats.goalsCount },
     { id: 'projects', name: 'Projekt', icon: Briefcase, color: 'text-violet-600', badge: stats.projectsCount },
     { id: 'kpis', name: 'KPI:er', icon: TrendingUp, color: 'text-emerald-600', subText: `${stats.kpiPercentage}%` },

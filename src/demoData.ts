@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile, CtqKanoItem } from './types';
+import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile, CtqKanoItem, MatrixRelation } from './types';
 
 export const DEFAULT_GOALS: Goal[] = [
   {
@@ -286,5 +286,31 @@ export const DEFAULT_CTQ_KANO: CtqKanoItem[] = [
     dysfunctionalScore: 3,
     priority: 'Low'
   }
+];
+
+export const DEFAULT_MATRIX_RELATIONS: MatrixRelation[] = [
+  // Objective <-> Project (NW quadrant)
+  { id: 'mr-1', fromId: 'o-1', toId: 'p-1', strength: 2, note: 'Elektrifiering av flottan är den enskilt största drivkraften för -30% CO₂.' },
+  { id: 'mr-2', fromId: 'o-1', toId: 'p-2', strength: 2, note: 'Koldioxidsmart produktlinje reducerar utsläpp i värdekedjan.' },
+  { id: 'mr-3', fromId: 'o-2', toId: 'p-2', strength: 1, note: 'Grönt produkterbjudande stärker positioneringen vid nordisk expansion.' },
+  { id: 'mr-4', fromId: 'o-3', toId: 'p-3', strength: 2, note: 'Kompetenscentret möjliggör 40 timmar strukturerad utbildning per anställd.' },
+  { id: 'mr-5', fromId: 'o-3', toId: 'p-1', strength: 0.5, note: 'Kräver förar- och teknikträning för eldrift.' },
+
+  // Project <-> KPI (NE quadrant)
+  { id: 'mr-6', fromId: 'p-1', toId: 'k-1', strength: 2, note: 'Direkt påverkan på CO₂-reduktionsmålet.' },
+  { id: 'mr-7', fromId: 'p-1', toId: 'k-4', strength: 1, note: 'Ny ruttplanering och eldrift påverkar leveransprecision.' },
+  { id: 'mr-8', fromId: 'p-2', toId: 'k-1', strength: 2, note: 'Biologiskt nedbrytbara material sänker totalt utsläppsindex.' },
+  { id: 'mr-9', fromId: 'p-2', toId: 'k-2', strength: 2, note: 'Differentierande hållbara produkter driver nordisk marknadsandel.' },
+  { id: 'mr-10', fromId: 'p-3', toId: 'k-3', strength: 2, note: 'Intern utveckling och lärandekultur lyfter eNPS.' },
+  { id: 'mr-11', fromId: 'p-3', toId: 'k-4', strength: 0.5, note: 'Bättre utbildade team minskar operativa fel i logistiken.' },
+
+  // Objective <-> Initiative (when North wing is switched to Initiativ)
+  { id: 'mr-12', fromId: 'o-1', toId: 'i-1', strength: 1, note: 'Utvärdering av elbilstillverkare lägger grunden för flottbytet.' },
+  { id: 'mr-13', fromId: 'o-1', toId: 'i-2', strength: 2, note: 'Laddinfrastruktur krävs för att elektrifieringen ska ge utsläppseffekt.' },
+  { id: 'mr-14', fromId: 'o-1', toId: 'i-3', strength: 2, note: 'Livscykelanalys identifierar material med lägst klimatavtryck.' },
+  { id: 'mr-15', fromId: 'i-2', toId: 'k-1', strength: 2, note: 'Depåladdning låser upp daglig utsläppsfri drift.' },
+  { id: 'mr-16', fromId: 'i-2', toId: 'k-4', strength: 1, note: 'Stabil laddning säkrar punktliga avgångar.' },
+  { id: 'mr-17', fromId: 'i-3', toId: 'k-1', strength: 2, note: 'EPD-verifierade material minskar produktens CO₂-avtryck.' },
+  { id: 'mr-18', fromId: 'i-3', toId: 'k-2', strength: 1, note: 'Miljöcertifiering stärker affärer på nordiska marknader.' }
 ];
 

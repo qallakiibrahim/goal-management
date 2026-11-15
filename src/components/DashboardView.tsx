@@ -26,12 +26,14 @@ import {
   Table,
   Mic,
   Radio,
-  Workflow
+  Workflow,
+  Grid3x3
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile } from '../types';
+import { Goal, Objective, Project, Initiative, Task, KPI, KataSession, UserProfile, MatrixRelation, Member } from '../types';
 import AiAnalysisCard from './AiAnalysisCard';
 import { generateStrategicPdfReport } from '../utils/generatePdfReport';
+import { computeXMatrixGaps } from '../utils/xMatrixHelpers';
 
 interface DashboardViewProps {
   goals: Goal[];
@@ -50,6 +52,8 @@ interface DashboardViewProps {
   onDownloadPdf?: () => void;
   onExportCsv?: () => void;
   onOpenVoiceCoach?: () => void;
+  matrixRelations?: MatrixRelation[];
+  members?: Member[];
 }
 
 export default function DashboardView({
@@ -68,7 +72,9 @@ export default function DashboardView({
   onQuickAddKata,
   onDownloadPdf,
   onExportCsv,
-  onOpenVoiceCoach
+  onOpenVoiceCoach,
+  matrixRelations = [],
+  members = []
 }: DashboardViewProps) {
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
@@ -141,6 +147,16 @@ export default function DashboardView({
     ? Math.round(kpis.reduce((acc, kpi) => acc + kpi.progress, 0) / kpis.length)
     : 0;
   const kataSessionsCount = kataSessions.length;
+  const xMatrixGaps = computeXMatrixGaps({
+    goals,
+    objectives,
+    projects,
+    initiatives,
+    kpis,
+    relations: matrixRelations,
+    members
+  });
+  const activeMatrixLinksCount = matrixRelations.filter(r => r.strength > 0).length;
 
   return (
     <div className="space-y-8 text-left">
@@ -296,6 +312,33 @@ export default function DashboardView({
           className="px-3.5 py-2 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer shadow-xs"
         >
           <span>Öppna Processkarta & Flöde</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* Hoshin Kanri X-Matris Quick Alignment Card */}
+      <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5">
+          <div className="p-2.5 bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 rounded-xl shrink-0 border border-teal-200/70 dark:border-teal-800/60">
+            <Grid3x3 className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-xs font-bold font-display text-slate-900 dark:text-slate-100">
+              Hoshin Kanri X-Matris · Strategisk Alignment
+            </h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 tabular-nums">
+              {activeMatrixLinksCount} aktiva korskopplingar mellan Mål, Projekt och KPI:er ·{' '}
+              <span className={xMatrixGaps.length > 0 ? 'text-amber-600 dark:text-amber-400 font-semibold' : 'text-emerald-600 dark:text-emerald-400 font-semibold'}>
+                {xMatrixGaps.length === 0 ? 'Full täckning utan strategiska glapp' : `${xMatrixGaps.length} strategiska gap att granska`}
+              </span>
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => onNavigateToView('x-matrix')}
+          className="px-3.5 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer shadow-xs"
+        >
+          <span>Öppna X-Matris</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>

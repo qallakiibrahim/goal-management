@@ -218,6 +218,7 @@ Här är nuvarande tillstånd i databasen:
 - Projekt: ${JSON.stringify(state?.projects || [])}
 - Kata-sessioner: ${JSON.stringify(state?.kataSessions || [])}
 - Kano & CTQ-krav: ${JSON.stringify(state?.ctqKanoItems || [])}
+- Hoshin X-Matris samband: ${JSON.stringify(state?.matrixRelations || [])}
 `;
 
     const response = await callGeminiWithRetry({
@@ -414,6 +415,7 @@ Du är INTE bara till för Toyota Kata! Du har full insyn och behärskar samtlig
 4. Värdeflödesanalys (VSM): Sänka ledtider (LT), eliminera slöseri och optimera cykeltider (PT) och PCE.
 5. Kano & CTQ: Översätta kundens röst (Voice of Customer) till mätbara tekniska krav (Critical to Quality).
 6. Toyota Kata: Standardiserad coaching i de 5 frågorna och snabba PDCA-experiment när användaren vill förbättra ett processhinder.
+7. Hoshin Kanri X-Matris: Spåra orsak-verkan-kedjan mellan långsiktiga mål, delmål, projekt/initiativ, KPI:er och ägare, samt identifiera strategiska glapp.
 
 Regler för samtalet:
 - Du samtalar med användaren i realtid via röst och text.

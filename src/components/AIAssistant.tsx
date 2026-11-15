@@ -20,7 +20,7 @@ import {
   Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Goal, Project, KPI, KataSession, CtqKanoItem } from '../types';
+import { Goal, Project, KPI, KataSession, CtqKanoItem, MatrixRelation } from '../types';
 
 interface AIAssistantProps {
   goals: Goal[];
@@ -28,6 +28,7 @@ interface AIAssistantProps {
   kpis: KPI[];
   kataSessions: KataSession[];
   ctqKanoItems: CtqKanoItem[];
+  matrixRelations?: MatrixRelation[];
   onOpenVoiceCoach?: () => void;
   currentView?: string;
 }
@@ -45,6 +46,7 @@ export default function AIAssistant({
   kpis,
   kataSessions,
   ctqKanoItems,
+  matrixRelations = [],
   onOpenVoiceCoach,
   currentView
 }: AIAssistantProps) {
@@ -102,7 +104,7 @@ export default function AIAssistant({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           query,
-          state: { goals, projects, kpis, kataSessions, ctqKanoItems }
+          state: { goals, projects, kpis, kataSessions, ctqKanoItems, matrixRelations }
         })
       });
 
@@ -206,6 +208,12 @@ export default function AIAssistant({
           { text: 'Projektstatus & risker ⚠️', query: 'projekt' },
           { text: 'Bryt ner projekt i uppgifter 📋', query: 'projekt' },
           { text: 'Prioritera mellan projekt 🚀', query: 'projekt' }
+        ];
+      case 'x-matrix':
+        return [
+          { text: 'Analysera X-matrisens strategiska glapp', query: 'x-matris samband gap' },
+          { text: 'Vilka KPI:er saknar drivande projekt?', query: 'kpi projekt samband' },
+          { text: 'Hur stärker vi Hoshin-kopplingen?', query: 'hoshin strategi' }
         ];
       case 'kpis':
       case 'bsc':

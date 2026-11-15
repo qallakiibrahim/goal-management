@@ -40,7 +40,9 @@ import {
   UserProfile, 
   GoalCategory,
   Member,
-  CtqKanoItem
+  CtqKanoItem,
+  MatrixRelation,
+  MatrixStrength
 } from './types';
 import { 
   DEFAULT_GOALS, 
@@ -51,8 +53,10 @@ import {
   DEFAULT_KPIS, 
   DEFAULT_KATA_SESSIONS, 
   DEFAULT_USER_PROFILE,
-  DEFAULT_CTQ_KANO
+  DEFAULT_CTQ_KANO,
+  DEFAULT_MATRIX_RELATIONS
 } from './demoData';
+import { makeRelationId } from './utils/xMatrixHelpers';
 
 // Modular view components
 import Sidebar from './components/Sidebar';
@@ -72,6 +76,7 @@ import KanoCtqView from './components/KanoCtqView';
 import CommandPalette from './components/CommandPalette';
 import VoiceCoachModal from './components/VoiceCoachModal';
 import ProcessMapView from './components/ProcessMapView';
+import XMatrixView from './components/XMatrixView';
 
 // Firestore Integration imports
 import { collection, onSnapshot, doc } from 'firebase/firestore';
@@ -93,7 +98,8 @@ import {
   syncKpisToFirestore,
   syncKataSessionsToFirestore,
   syncUserProfileToFirestore,
-  syncMembersToFirestore
+  syncMembersToFirestore,
+  syncMatrixRelationsToFirestore
 } from './firebaseSync';
 
 export default function App() {
@@ -159,6 +165,10 @@ export default function App() {
     const local = localStorage.getItem('ctqKanoItems');
     return local ? JSON.parse(local) : DEFAULT_CTQ_KANO;
   });
+  const [matrixRelations, setMatrixRelations] = useState<MatrixRelation[]>(() => {
+    const local = localStorage.getItem('matrixRelations');
+    return local ? JSON.parse(local) : DEFAULT_MATRIX_RELATIONS;
+  });
 
   // Modal triggering states
   const [activeModal, setActiveModal] = useState<
@@ -215,6 +225,7 @@ export default function App() {
     const localProfile = localStorage.getItem('userProfile');
     const localMembers = localStorage.getItem('members');
     const localKano = localStorage.getItem('ctqKanoItems');
+    const localMatrix = localStorage.getItem('matrixRelations');
 
     if (localGoals) setGoals(JSON.parse(localGoals));
     if (localObjectives) setObjectives(JSON.parse(localObjectives));
@@ -226,6 +237,7 @@ export default function App() {
     if (localProfile) setUserProfile(JSON.parse(localProfile));
     if (localMembers) setMembers(JSON.parse(localMembers));
     if (localKano) setCtqKanoItems(JSON.parse(localKano));
+    if (localMatrix) setMatrixRelations(JSON.parse(localMatrix));
   }, []);
 
   // 2. Auth State Monitoring (runs once on mount)
@@ -262,6 +274,7 @@ export default function App() {
     let unsubKata: () => void = () => {};
     let unsubProfile: () => void = () => {};
     let unsubMembers: () => void = () => {};
+    let unsubMatrix: () => void = () => {};
 
     const handleSyncError = (error: any) => {
       console.warn('[Firestore] sync connection restricted/denied:', error);
@@ -358,6 +371,15 @@ export default function App() {
       localStorage.setItem('members', JSON.stringify(items));
     }, handleSyncError);
 
+    unsubMatrix = onSnapshot(collection(db, 'matrixRelations'), (snapshot) => {
+      const items: MatrixRelation[] = [];
+      snapshot.forEach((doc) => { items.push({ ...doc.data() } as MatrixRelation); });
+      if (items.length > 0) {
+        setMatrixRelations(items);
+        localStorage.setItem('matrixRelations', JSON.stringify(items));
+      }
+    }, handleSyncError);
+
     return () => {
       unsubGoals();
       unsubObjectives();
@@ -368,6 +390,7 @@ export default function App() {
       unsubKata();
       unsubProfile();
       unsubMembers();
+      unsubMatrix();
     };
   }, [authUser, authOfflineBypass]);
 
@@ -440,6 +463,59 @@ export default function App() {
   const saveCtqKanoItems = (items: CtqKanoItem[]) => {
     setCtqKanoItems(items);
     localStorage.setItem('ctqKanoItems', JSON.stringify(items));
+  };
+
+  const saveMatrixRelations = (items: MatrixRelation[]) => {
+    setMatrixRelations(items);
+    localStorage.setItem('matrixRelations', JSON.stringify(items));
+    if (!authOfflineBypass && authUser) {
+      syncMatrixRelationsToFirestore(items);
+    }
+  };
+
+  const handleUpsertMatrixRelation = (
+    fromId: string,
+    toId: string,
+    strength: MatrixStrength,
+    note?: string
+  ) => {
+    const existing = matrixRelations.find(
+      (r) => (r.fromId === fromId && r.toId === toId) || (r.fromId === toId && r.toId === fromId)
+    );
+    let updated: MatrixRelation[];
+    if (existing) {
+      updated = matrixRelations.map((r) =>
+        r.id === existing.id
+          ? { ...r, strength, note: note !== undefined ? note : r.note, updatedAt: new Date().toISOString() }
+          : r
+      );
+    } else {
+      const newRel: MatrixRelation = {
+        id: makeRelationId(fromId, toId),
+        fromId,
+        toId,
+        strength,
+        note,
+        updatedAt: new Date().toISOString()
+      };
+      updated = [...matrixRelations, newRel];
+    }
+    saveMatrixRelations(updated);
+    toast('X-Matris-koppling uppdaterad!', 'success');
+  };
+
+  const handleUpdateKpiOwnership = (kpiId: string, ownerId?: string, supportOwnerIds?: string[]) => {
+    const updated = kpis.map((k) =>
+      k.id === kpiId
+        ? {
+            ...k,
+            ownerId,
+            supportOwnerIds: supportOwnerIds ? supportOwnerIds.filter((id) => id !== ownerId) : k.supportOwnerIds
+          }
+        : k
+    );
+    saveKpis(updated);
+    toast('KPI-ägarskap uppdaterat!', 'success');
   };
 
   const handleInviteMember = (email: string, name: string, role: string) => {
@@ -556,8 +632,14 @@ export default function App() {
       title: 'Radera Strategiskt Mål',
       message: `Är du säker på att du vill ta bort målet "${title || 'detta mål'}" och alla dess underordnade målsättningar?`,
       onConfirm: () => {
+        const removedObjIds = new Set(objectives.filter(o => o.goalId === id).map(o => o.id));
         saveGoals(goals.filter(g => g.id !== id));
         saveObjectives(objectives.filter(o => o.goalId !== id));
+        saveMatrixRelations(
+          matrixRelations.filter(
+            r => r.fromId !== id && r.toId !== id && !removedObjIds.has(r.fromId) && !removedObjIds.has(r.toId)
+          )
+        );
       }
     });
   };
@@ -568,9 +650,15 @@ export default function App() {
       title: 'Radera Operativt Projekt',
       message: `Är du säker på att du vill ta bort projektet "${title || 'detta projekt'}"? Alla tillhörande uppgifter och initiativ raderas också permanently.`,
       onConfirm: () => {
+        const removedInitIds = new Set(initiatives.filter(i => i.projectId === id).map(i => i.id));
         saveProjects(projects.filter(p => p.id !== id));
         saveTasks(tasks.filter(t => t.projectId !== id));
         saveInitiatives(initiatives.filter(i => i.projectId !== id));
+        saveMatrixRelations(
+          matrixRelations.filter(
+            r => r.fromId !== id && r.toId !== id && !removedInitIds.has(r.fromId) && !removedInitIds.has(r.toId)
+          )
+        );
       }
     });
   };
@@ -582,6 +670,7 @@ export default function App() {
       message: `Är du säker på att du vill ta bort mätetalet "${title || 'denna KPI'}"?`,
       onConfirm: () => {
         saveKpis(kpis.filter(k => k.id !== id));
+        saveMatrixRelations(matrixRelations.filter(r => r.fromId !== id && r.toId !== id));
       }
     });
   };
@@ -617,6 +706,7 @@ export default function App() {
         saveKata(DEFAULT_KATA_SESSIONS);
         saveProfile(DEFAULT_USER_PROFILE);
         saveCtqKanoItems(DEFAULT_CTQ_KANO);
+        saveMatrixRelations(DEFAULT_MATRIX_RELATIONS);
         setTimeout(() => {
           window.location.reload();
         }, 100);
@@ -632,7 +722,8 @@ export default function App() {
       initiatives,
       tasks,
       kpis,
-      kataSessions
+      kataSessions,
+      matrixRelations
     };
     return JSON.stringify(fullJson, null, 2);
   };
@@ -646,6 +737,7 @@ export default function App() {
       tasks,
       kpis,
       kataSessions,
+      matrixRelations,
       userProfile: activeProfile
     });
     toast('PDF-rapporten har skapats och laddas ner!', 'success');
@@ -653,7 +745,7 @@ export default function App() {
 
   const handleExportStrategicCsv = () => {
     try {
-      exportStrategicCsv({ goals, projects, kpis, kataSessions });
+      exportStrategicCsv({ goals, projects, kpis, kataSessions, matrixRelations });
       toast('Strategisk statusrapport exporterades till CSV!', 'success');
     } catch (err) {
       console.error(err);
@@ -671,6 +763,7 @@ export default function App() {
       if (parsed.tasks && Array.isArray(parsed.tasks)) saveTasks(parsed.tasks);
       if (parsed.kpis && Array.isArray(parsed.kpis)) saveKpis(parsed.kpis);
       if (parsed.kataSessions && Array.isArray(parsed.kataSessions)) saveKata(parsed.kataSessions);
+      if (parsed.matrixRelations && Array.isArray(parsed.matrixRelations)) saveMatrixRelations(parsed.matrixRelations);
       toast('All data importerades framgångsrikt!', 'success');
       return true;
     } catch (e) {
@@ -774,6 +867,20 @@ export default function App() {
 
   const openAddKataModal = () => {
     setFormKata({ title: '', date: new Date().toISOString().split('T')[0], goal: '', current: '', obstacles: '', nextStep: '', learnings: '', progress: 0 });
+    setActiveModal('addKata');
+  };
+
+  const openAddKataFromGap = (prefill: { title: string; goal: string; current: string; obstacles: string }) => {
+    setFormKata({
+      title: prefill.title,
+      date: new Date().toISOString().split('T')[0],
+      goal: prefill.goal,
+      current: prefill.current,
+      obstacles: prefill.obstacles,
+      nextStep: '',
+      learnings: '',
+      progress: 0
+    });
     setActiveModal('addKata');
   };
 
@@ -1106,6 +1213,8 @@ export default function App() {
               onDownloadPdf={handleDownloadStrategicPdf}
               onExportCsv={handleExportStrategicCsv}
               onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
+              matrixRelations={matrixRelations}
+              members={members}
             />
           )}
 
@@ -1140,6 +1249,23 @@ export default function App() {
             <BscView
               kpis={kpis}
               onAddKpi={(cat) => openAddKpiModal(cat)}
+            />
+          )}
+
+          {currentView === 'x-matrix' && (
+            <XMatrixView
+              goals={goals}
+              objectives={objectives}
+              projects={projects}
+              initiatives={initiatives}
+              kpis={kpis}
+              members={members}
+              ctqKanoItems={ctqKanoItems}
+              matrixRelations={matrixRelations}
+              onUpsertRelation={handleUpsertMatrixRelation}
+              onUpdateKpiOwnership={handleUpdateKpiOwnership}
+              onNavigateToView={(v) => setCurrentView(v)}
+              onStartKataFromGap={openAddKataFromGap}
             />
           )}
 
@@ -1608,6 +1734,7 @@ export default function App() {
         kpis={kpis}
         kataSessions={kataSessions}
         ctqKanoItems={ctqKanoItems}
+        matrixRelations={matrixRelations}
         onOpenVoiceCoach={() => setVoiceCoachOpen(true)}
         currentView={currentView}
       />
@@ -1620,6 +1747,7 @@ export default function App() {
         kpis={kpis}
         kataSessions={kataSessions}
         ctqKanoItems={ctqKanoItems}
+        matrixRelations={matrixRelations}
       />
 
         {confirmModal.show && (

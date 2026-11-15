@@ -11,7 +11,8 @@
         "kpi": { "type": "string", "description": "Huvudsakligt mätetal" },
         "category": { "type": "string", "enum": ["financial", "customer", "process", "learning"] },
         "progress": { "type": "number", "description": "Procentuell framgång (0-100)" },
-        "deadline": { "type": "string", "description": "Slutdatum" }
+        "deadline": { "type": "string", "description": "Slutdatum" },
+        "ownerId": { "type": "string", "description": "Ansvarig medlem ID (valfri)" }
       },
       "required": ["id", "title", "description", "kpi", "category", "progress", "deadline"]
     },
@@ -41,7 +42,8 @@
         "title": { "type": "string", "description": "Titel" },
         "description": { "type": "string", "description": "Beskrivning" },
         "progress": { "type": "number", "description": "Procentuell framgång" },
-        "deadline": { "type": "string", "description": "Slutdatum" }
+        "deadline": { "type": "string", "description": "Slutdatum" },
+        "ownerId": { "type": "string", "description": "Ansvarig medlem ID (valfri)" }
       },
       "required": ["id", "title", "description", "progress", "deadline"]
     },
@@ -86,7 +88,9 @@
         "target": { "type": "string", "description": "Bör-värde" },
         "progress": { "type": "number", "description": "Procent (%)" },
         "deadline": { "type": "string", "description": "Måldatum" },
-        "category": { "type": "string", "description": "Perspektiv" }
+        "category": { "type": "string", "description": "Perspektiv" },
+        "ownerId": { "type": "string", "description": "Huvudansvarig medlem ID (valfri)" },
+        "supportOwnerIds": { "type": "array", "description": "Stödansvariga medlems-ID:n (valfri)" }
       },
       "required": ["id", "title", "value", "target", "progress", "deadline"]
     },
@@ -135,6 +139,20 @@
         "invitedBy": { "type": "string", "description": "E-post till den som bjöd in medlemmen" }
       },
       "required": ["id", "email", "name", "role", "status", "invitedAt"]
+    },
+    "MatrixRelation": {
+      "title": "MatrixRelation",
+      "description": "Hoshin Kanri X-Matris korrelationssamband mellan mål, delmål, projekt/initiativ och KPI:er",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unikt relations-ID" },
+        "fromId": { "type": "string", "description": "Källnodens ID" },
+        "toId": { "type": "string", "description": "Målnodens ID" },
+        "strength": { "type": "number", "description": "Korrelationsstyrka (0, 0.5, 1, 2)" },
+        "note": { "type": "string", "description": "Motivering för sambandet (valfri)" },
+        "updatedAt": { "type": "string", "description": "Senast uppdaterad ISO-tidpunkt (valfri)" }
+      },
+      "required": ["id", "fromId", "toId", "strength"]
     }
   },
   "firestore": {
@@ -146,6 +164,7 @@
     "kpis": { "schema": { "$ref": "#/entities/KPI" }, "description": "Balanced Scorecard mätetal" },
     "kataSessions": { "schema": { "$ref": "#/entities/KataSession" }, "description": "Förbättrings- och experimentloggar" },
     "userProfile": { "schema": { "$ref": "#/entities/UserProfile" }, "description": "Inställningar" },
-    "members": { "schema": { "$ref": "#/entities/Member" }, "description": "Inbjudna användare & Medlemmar" }
+    "members": { "schema": { "$ref": "#/entities/Member" }, "description": "Inbjudna användare & Medlemmar" },
+    "matrixRelations": { "schema": { "$ref": "#/entities/MatrixRelation" }, "description": "Hoshin Kanri X-Matris samband" }
   }
 }
