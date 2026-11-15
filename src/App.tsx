@@ -24,7 +24,10 @@ import {
   Mic,
   Workflow,
   Table,
-  FileDown,
+  Download,
+  FileText,
+  Presentation,
+  Loader2,
   Layers,
   UserPlus,
   Settings,
@@ -32,6 +35,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { generateStrategicPdfReport } from './utils/generatePdfReport';
+import { generateStrategicPptReport } from './utils/generatePptReport';
 import { exportStrategicCsv } from './utils/exportCsv';
 import { ToastProvider, toast } from './components/Toast';
 
@@ -124,17 +128,26 @@ export default function App() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [voiceCoachOpen, setVoiceCoachOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [isExportingPpt, setIsExportingPpt] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
 
-  // Close profile dropdown on outside click or Escape
+  // Close profile and export dropdowns on outside click or Escape
   useEffect(() => {
     const handlePointerDown = (e: MouseEvent) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
         setProfileMenuOpen(false);
       }
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target as Node)) {
+        setExportMenuOpen(false);
+      }
     };
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setProfileMenuOpen(false);
+      if (e.key === 'Escape') {
+        setProfileMenuOpen(false);
+        setExportMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handlePointerDown);
     window.addEventListener('keydown', handleEsc);
@@ -781,6 +794,30 @@ export default function App() {
     }
   };
 
+  const handleDownloadStrategicPpt = async () => {
+    setIsExportingPpt(true);
+    try {
+      await generateStrategicPptReport({
+        goals,
+        objectives,
+        projects,
+        initiatives,
+        tasks,
+        kpis,
+        kataSessions,
+        matrixRelations,
+        members,
+        userProfile: activeProfile
+      });
+      toast('PowerPoint-presentationen (.pptx) har skapats och laddas ner!', 'success');
+    } catch (err) {
+      console.error('Failed to generate PPT:', err);
+      toast('Kunde inte skapa PowerPoint-presentationen.', 'error');
+    } finally {
+      setIsExportingPpt(false);
+    }
+  };
+
   const handleImportData = (rawString: string) => {
     try {
       const parsed = JSON.parse(rawString);
@@ -1174,23 +1211,96 @@ export default function App() {
               <span className="hidden lg:inline">Processkarta</span>
             </button>
 
-            <button
-              onClick={handleExportStrategicCsv}
-              className="h-8 px-2.5 bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 rounded-lg text-xs font-medium flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap shrink-0"
-              title="Exportera rådata till CSV för Excel / Google Sheets"
-            >
-              <Table className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span className="hidden xl:inline">CSV</span>
-            </button>
+            {/* Unified Download Dropdown (Excel/CSV, PDF, PowerPoint) */}
+            <div className="relative shrink-0" ref={exportMenuRef}>
+              <button
+                type="button"
+                onClick={() => setExportMenuOpen(prev => !prev)}
+                className={`h-8 w-8 rounded-lg flex items-center justify-center transition border cursor-pointer shrink-0 ${
+                  exportMenuOpen
+                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
+                }`}
+                title="Ladda ner rapport (Excel / PDF / PowerPoint)"
+                aria-label="Ladda ner rapport"
+                aria-expanded={exportMenuOpen}
+                aria-haspopup="menu"
+              >
+                {isExportingPpt ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-indigo-600 dark:text-indigo-400" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+              </button>
 
-            <button
-              onClick={handleDownloadStrategicPdf}
-              className="h-8 px-2.5 sm:px-3 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0"
-              title="Generera och ladda ner fullständig PDF-rapport"
-            >
-              <FileDown className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden md:inline">PDF-rapport</span>
-            </button>
+              {exportMenuOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-60 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-lg py-1.5 z-50 text-left"
+                >
+                  <div className="px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 select-none border-b border-slate-100 dark:border-slate-800">
+                    Exportera Rapport
+                  </div>
+
+                  <div className="p-1.5 space-y-0.5">
+                    <button
+                      role="menuitem"
+                      type="button"
+                      onClick={() => {
+                        setExportMenuOpen(false);
+                        handleExportStrategicCsv();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <Table className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-100">Excel / CSV</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">Rådata för Excel & Sheets</div>
+                      </div>
+                    </button>
+
+                    <button
+                      role="menuitem"
+                      type="button"
+                      onClick={() => {
+                        setExportMenuOpen(false);
+                        handleDownloadStrategicPdf();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                        <FileText className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-100">PDF-rapport</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">Utskriftsklar ledningsrapport</div>
+                      </div>
+                    </button>
+
+                    <button
+                      role="menuitem"
+                      type="button"
+                      disabled={isExportingPpt}
+                      onClick={() => {
+                        setExportMenuOpen(false);
+                        handleDownloadStrategicPpt();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-60"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                        <Presentation className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-100">PowerPoint (.pptx)</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">5-bilders 16:9-presentation</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5 hidden sm:block shrink-0" />
 
