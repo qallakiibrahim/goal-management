@@ -49,20 +49,25 @@ interface MenuSection {
 export default function Sidebar({ currentView, onViewChange, stats, isOpen, onClose, onToggle }: SidebarProps) {
   const sections: MenuSection[] = [
     {
-      title: 'Översikt & Analys',
+      title: 'Översikt & Insikt',
       items: [
         { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
         { id: 'process-map', name: 'Processkarta & Flöde', icon: Workflow },
-        { id: 'vsm', name: 'Värdeflödesanalys (VSM)', icon: Activity },
         { id: 'kano', name: 'Kano & CTQ Analys', icon: Scale },
+        { id: 'vsm', name: 'Värdeflödesanalys (VSM)', icon: Activity },
       ]
     },
     {
-      title: 'Strategisk Styrning',
+      title: 'Strategi & Planering',
       items: [
         { id: 'bsc', name: 'Balanced Scorecard', icon: Users },
-        { id: 'x-matrix', name: 'X-Matris (Hoshin)', icon: Grid3x3 },
         { id: 'goals', name: 'Mål', icon: Target, count: stats.goalsCount },
+        { id: 'x-matrix', name: 'X-Matris (Hoshin)', icon: Grid3x3 },
+      ]
+    },
+    {
+      title: 'Exekvering & Uppföljning',
+      items: [
         { id: 'projects', name: 'Projekt', icon: Briefcase, count: stats.projectsCount },
         { id: 'kpis', name: 'KPI:er', icon: TrendingUp, metric: `${stats.kpiPercentage}%` },
         { id: 'kata', name: 'Kata Coaching', icon: RefreshCw, count: stats.kataSessionsCount },
@@ -221,12 +226,12 @@ export default function Sidebar({ currentView, onViewChange, stats, isOpen, onCl
         }`}>
           {isOpen ? (
             <span className="block font-medium text-slate-500 dark:text-slate-400 truncate">
-              Mål → Målsättning → Projekt → KPI
+              Insikt → Strategi → Exekvering
             </span>
           ) : (
             <span
               className="text-[10px] font-mono font-semibold text-slate-400 dark:text-slate-500 select-none"
-              title="Mål → Målsättning → Projekt → KPI"
+              title="Insikt → Strategi → Exekvering"
             >
               Hoshin
             </span>

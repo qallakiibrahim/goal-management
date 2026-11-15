@@ -271,18 +271,6 @@ export default function DashboardView({
         </div>
       </div>
 
-      {/* AI Insights & Recommendations Module */}
-      <AiAnalysisCard 
-        type="dashboard" 
-        goals={goals} 
-        projects={projects} 
-        kpis={kpis} 
-        kataSessions={kataSessions} 
-        onQuickAddKpi={onQuickAddKpi}
-        onQuickAddProject={onQuickAddProject}
-        onQuickAddKata={onQuickAddKata}
-      />
-
       {/* Main Framework Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
@@ -784,6 +772,18 @@ export default function DashboardView({
         </div>
 
       </div>
+
+      {/* AI Insights & Recommendations Module */}
+      <AiAnalysisCard 
+        type="dashboard" 
+        goals={goals} 
+        projects={projects} 
+        kpis={kpis} 
+        kataSessions={kataSessions} 
+        onQuickAddKpi={onQuickAddKpi}
+        onQuickAddProject={onQuickAddProject}
+        onQuickAddKata={onQuickAddKata}
+      />
 
       {/* Action Guidance info banner */}
       <div className="p-4 bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
