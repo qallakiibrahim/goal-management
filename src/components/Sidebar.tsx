@@ -112,7 +112,7 @@ export default function Sidebar({ currentView, onViewChange, stats, isOpen, onCl
             className="flex items-center gap-2.5 min-w-0 cursor-pointer group text-left"
             title="Gå till Dashboard"
           >
-            <div className={`${isOpen ? 'w-8 h-8' : 'w-7 h-7'} bg-indigo-900 dark:bg-indigo-600 rounded-lg text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-indigo-950 dark:group-hover:bg-indigo-500 transition-colors`}>
+            <div className={`${isOpen ? 'w-8 h-8' : 'w-7 h-7'} bg-slate-800 dark:bg-indigo-600/85 rounded-lg text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-slate-900 dark:group-hover:bg-indigo-500 transition-colors`}>
               <Target className={isOpen ? 'w-4.5 h-4.5' : 'w-4 h-4'} />
             </div>
             {isOpen && (
@@ -190,26 +190,26 @@ export default function Sidebar({ currentView, onViewChange, stats, isOpen, onCl
                         : 'w-10 h-10 mx-auto justify-center rounded-xl'
                     } ${
                       isActive
-                        ? 'bg-indigo-50 text-indigo-950 dark:bg-indigo-950/60 dark:text-indigo-200 font-semibold ring-1 ring-indigo-200/70 dark:ring-indigo-800/60'
+                        ? 'bg-slate-100/90 text-slate-900 dark:bg-slate-800/85 dark:text-slate-100 font-semibold ring-1 ring-slate-200/80 dark:ring-slate-700'
                         : 'text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100/70 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-slate-100'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon className={`shrink-0 ${isOpen ? 'w-4 h-4' : 'w-4.5 h-4.5'} ${isActive ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-400 dark:text-slate-500'}`} />
+                      <Icon className={`shrink-0 ${isOpen ? 'w-4 h-4' : 'w-4.5 h-4.5'} ${isActive ? 'text-indigo-700/85 dark:text-indigo-300' : 'text-slate-400 dark:text-slate-500'}`} />
                       {isOpen && <span className="truncate font-sans">{item.name}</span>}
                     </div>
                     
                     {isOpen && item.count !== undefined && (
                       <span className={`text-[11px] font-mono tabular-nums px-1.5 py-0.5 rounded-md shrink-0 ${
                         isActive
-                          ? 'bg-indigo-100/80 text-indigo-900 dark:bg-indigo-900/70 dark:text-indigo-200 font-semibold'
+                          ? 'bg-white text-slate-800 dark:bg-slate-700 dark:text-slate-100 font-semibold'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium'
                       }`}>
                         {item.count}
                       </span>
                     )}
                     {isOpen && item.metric !== undefined && (
-                      <span className="text-[11px] font-mono tabular-nums font-semibold px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 shrink-0">
+                      <span className="text-[11px] font-mono tabular-nums font-semibold px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-emerald-700/85 dark:text-emerald-300/90 shrink-0">
                         {item.metric}
                       </span>
                     )}

@@ -21,7 +21,6 @@ import {
   Moon,
   Menu,
   Search,
-  Workflow,
   Table,
   Download,
   FileText,
@@ -1187,18 +1186,15 @@ export default function App() {
           </div>
           
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Compact Strategic Actions */}
+            {/* Quick Command Palette Search Button */}
             <button
-              onClick={() => setCurrentView('process-map')}
-              className={`h-8 px-2.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition border cursor-pointer whitespace-nowrap shrink-0 ${
-                currentView === 'process-map'
-                  ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
-              }`}
-              title="Processkarta & Flöde — se hur hela systemet hänger ihop"
+              onClick={() => setCommandPaletteOpen(true)}
+              className="h-8 px-2.5 bg-slate-100/90 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs transition cursor-pointer border border-slate-200/70 dark:border-slate-700 flex items-center gap-1.5 whitespace-nowrap shrink-0"
+              title="Snabb sökning och kommandon (⌘K)"
             >
-              <Workflow className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-              <span className="hidden lg:inline">Processkarta</span>
+              <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <span className="hidden xl:inline">Sök</span>
+              <kbd className="hidden sm:inline-block font-mono text-[10px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 leading-none">⌘K</kbd>
             </button>
 
             {/* Unified Download Dropdown (Excel/CSV, PDF, PowerPoint) */}
@@ -1292,18 +1288,7 @@ export default function App() {
               )}
             </div>
 
-            <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5 hidden sm:block shrink-0" />
-
-            {/* Quick Command Palette Search Button */}
-            <button
-              onClick={() => setCommandPaletteOpen(true)}
-              className="h-8 px-2.5 bg-slate-100/90 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs transition cursor-pointer border border-slate-200/70 dark:border-slate-700 flex items-center gap-1.5 whitespace-nowrap shrink-0"
-              title="Snabb sökning och kommandon (⌘K)"
-            >
-              <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-              <span className="hidden xl:inline">Sök</span>
-              <kbd className="hidden sm:inline-block font-mono text-[10px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 leading-none">⌘K</kbd>
-            </button>
+            <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-0.5 shrink-0" />
             
             {/* Dark Mode Switch / Toggle Button */}
             <button

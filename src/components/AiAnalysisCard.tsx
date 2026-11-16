@@ -173,21 +173,9 @@ export default function AiAnalysisCard({
   const getCardStyle = () => {
     switch (type) {
       case 'dashboard':
-        return 'bg-gradient-to-br from-indigo-50/40 via-white to-slate-50/20 border-indigo-100/80 dark:from-slate-900/50 dark:via-slate-900 dark:to-slate-950/20 dark:border-slate-800/80';
-      case 'bsc':
-        return 'bg-emerald-50/30 border-emerald-100 dark:bg-emerald-950/10 dark:border-emerald-900/30';
-      case 'goals':
-        return 'bg-indigo-50/30 border-indigo-100 dark:bg-indigo-950/10 dark:border-indigo-900/30';
-      case 'projects':
-        return 'bg-purple-50/30 border-purple-100 dark:bg-purple-950/10 dark:border-purple-900/30';
-      case 'kpis':
-        return 'bg-emerald-50/30 border-emerald-100 dark:bg-emerald-950/10 dark:border-emerald-900/30';
-      case 'kata':
-        return 'bg-rose-50/30 border-rose-100 dark:bg-rose-950/10 dark:border-rose-900/30';
-      case 'hierarchy':
-        return 'bg-blue-50/30 border-blue-100 dark:bg-blue-950/10 dark:border-blue-900/30';
+        return 'bg-white border-slate-200/80 dark:bg-slate-900/60 dark:border-slate-800';
       default:
-        return 'bg-slate-50 border-slate-200 dark:bg-slate-900 dark:border-slate-800';
+        return 'bg-slate-50/70 border-slate-200/80 dark:bg-slate-900/60 dark:border-slate-800';
     }
   };
 
@@ -244,16 +232,16 @@ export default function AiAnalysisCard({
     return (
       <div className="p-0">
         {/* Upper Header strip detailing the AI process state */}
-        <div className="px-5 py-4 bg-indigo-900 text-white rounded-t-2xl flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-indigo-950/20">
+        <div className="px-5 py-4 bg-slate-800 dark:bg-slate-800/95 text-white rounded-t-2xl flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-700/60">
           <div className="flex items-center gap-2.5">
-            <span className="p-2 bg-white/15 rounded-xl text-amber-300 shadow-inner flex items-center justify-center shrink-0">
+            <span className="p-2 bg-white/10 rounded-xl text-indigo-300 shadow-inner flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5" />
             </span>
             <div>
               <h2 className="text-xs font-bold font-display uppercase tracking-wider text-slate-100 flex items-center gap-1.5">
                 AI Strategiskt Förbättringsflöde
               </h2>
-              <p className="text-[11px] text-indigo-200 leading-relaxed font-sans">
+              <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
                 Interaktivt optimeringsflöde baserat på ditt Balanced Scorecard och Toyota Kata-register.
               </p>
             </div>
@@ -412,8 +400,8 @@ export default function AiAnalysisCard({
                         disabled={completedSteps[activeStep]}
                         className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition duration-200 flex items-center justify-center gap-2 cursor-pointer ${
                           completedSteps[activeStep]
-                            ? 'bg-emerald-600 text-white shadow-inner pointer-events-none'
-                            : 'bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white shadow-xs active:scale-[0.99]'
+                            ? 'bg-emerald-700/90 text-white shadow-inner pointer-events-none'
+                            : 'bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white shadow-xs active:scale-[0.99]'
                         }`}
                       >
                         {completedSteps[activeStep] ? (

@@ -761,7 +761,7 @@ export default function XMatrixView({
 
                 {/* [1,2] NORTH WING: Projects or Initiatives */}
                 <div
-                  className="grid border-r border-b border-slate-300 dark:border-slate-700 bg-violet-50/70 dark:bg-violet-950/30"
+                  className="grid border-r border-b border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60"
                   style={{ gridTemplateRows: `repeat(${northCount}, minmax(0, 1fr))` }}
                 >
                   {northItems.length === 0 ? (
@@ -779,21 +779,21 @@ export default function XMatrixView({
                           key={item.id}
                           type="button"
                           onClick={() => setSelected({ type: 'north', id: item.id })}
-                          className={`border-b border-violet-200/80 dark:border-violet-900/50 px-3 py-1.5 flex items-center gap-2.5 text-left transition cursor-pointer min-w-0 ${
+                          className={`border-b border-slate-200/80 dark:border-slate-800 px-3 py-1.5 flex items-center gap-2.5 text-left transition cursor-pointer min-w-0 ${
                             isSel
-                              ? 'bg-violet-200/80 dark:bg-violet-900/70 ring-2 ring-inset ring-violet-600'
+                              ? 'bg-violet-100/70 dark:bg-violet-950/50 ring-2 ring-inset ring-violet-500/70'
                               : isRel
-                              ? 'bg-violet-100/90 dark:bg-violet-900/40'
-                              : 'hover:bg-violet-100/60 dark:hover:bg-violet-900/30'
+                              ? 'bg-violet-50/80 dark:bg-violet-950/30'
+                              : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/50'
                           } ${isMuted ? 'opacity-35' : ''}`}
                         >
-                          <span className="font-mono text-[10px] font-bold text-violet-800 dark:text-violet-300 bg-white/80 dark:bg-slate-900/70 px-1.5 py-0.5 rounded shrink-0">
+                          <span className="font-mono text-[10px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 px-1.5 py-0.5 rounded shrink-0">
                             {code}
                           </span>
                           <span className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate flex-1">
                             {item.title}
                           </span>
-                          <span className="font-mono text-[11px] font-bold text-violet-700 dark:text-violet-300 tabular-nums shrink-0">
+                          <span className="font-mono text-[11px] font-semibold text-slate-500 dark:text-slate-400 tabular-nums shrink-0">
                             {item.progress}%
                           </span>
                         </button>
@@ -853,7 +853,7 @@ export default function XMatrixView({
 
                 {/* [2,1] WEST WING: Annual/Operational Objectives (Vertical Columns) */}
                 <div
-                  className="grid border-r border-b border-slate-300 dark:border-slate-700 bg-amber-50/70 dark:bg-amber-950/25"
+                  className="grid border-r border-b border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60"
                   style={{ gridTemplateColumns: `repeat(${objCount}, minmax(0, 1fr))` }}
                 >
                   {filteredObjectives.length === 0 ? (
@@ -870,16 +870,16 @@ export default function XMatrixView({
                           key={obj.id}
                           type="button"
                           onClick={() => setSelected({ type: 'objective', id: obj.id })}
-                          className={`border-r border-amber-200/80 dark:border-amber-900/40 px-1 py-3 flex flex-col items-center justify-between gap-2 transition cursor-pointer min-w-0 ${
+                          className={`border-r border-slate-200/80 dark:border-slate-800 px-1 py-3 flex flex-col items-center justify-between gap-2 transition cursor-pointer min-w-0 ${
                             isSel
-                              ? 'bg-amber-200/80 dark:bg-amber-900/60 ring-2 ring-inset ring-amber-600'
+                              ? 'bg-amber-100/70 dark:bg-amber-950/45 ring-2 ring-inset ring-amber-500/70'
                               : isRel
-                              ? 'bg-amber-100/90 dark:bg-amber-900/35'
-                              : 'hover:bg-amber-100/60 dark:hover:bg-amber-900/25'
+                              ? 'bg-amber-50/80 dark:bg-amber-950/25'
+                              : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/50'
                           } ${isMuted ? 'opacity-35' : ''}`}
                           title={obj.title}
                         >
-                          <span className="font-mono text-[10px] font-bold text-amber-800 dark:text-amber-300">
+                          <span className="font-mono text-[10px] font-bold text-amber-800/85 dark:text-amber-300/90">
                             O{idx + 1}
                           </span>
                           <span
@@ -888,7 +888,7 @@ export default function XMatrixView({
                           >
                             {obj.title}
                           </span>
-                          <span className="font-mono text-[10px] font-bold text-amber-700 dark:text-amber-300 tabular-nums">
+                          <span className="font-mono text-[10px] font-semibold text-slate-500 dark:text-slate-400 tabular-nums">
                             {obj.progress}%
                           </span>
                         </button>
@@ -899,43 +899,43 @@ export default function XMatrixView({
 
                 {/* [2,2] CENTER X-CORE (SVG Diamond / Quadrant Compass) */}
                 <div className="relative border-r border-b border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center overflow-hidden">
-                  <svg viewBox="0 0 320 290" className="w-full h-full" preserveAspectRatio="none" aria-hidden="true">
+                  <svg viewBox="0 0 320 290" className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
                     {/* Top: North Wing (Projects/Initiatives) */}
-                    <polygon points="0,0 320,0 160,145" className="fill-violet-600/90 dark:fill-violet-700/80" />
+                    <polygon points="0,0 320,0 160,145" className="fill-[#645c84] dark:fill-[#4a4463]" />
                     {/* Left: West Wing (Objectives) */}
-                    <polygon points="0,0 160,145 0,290" className="fill-amber-500/90 dark:fill-amber-600/80" />
+                    <polygon points="0,0 160,145 0,290" className="fill-[#a68346] dark:fill-[#7d6235]" />
                     {/* Right: East Wing (KPIs) */}
-                    <polygon points="320,0 320,290 160,145" className="fill-emerald-600/90 dark:fill-emerald-700/80" />
+                    <polygon points="320,0 320,290 160,145" className="fill-[#43786a] dark:fill-[#335c51]" />
                     {/* Bottom: South Wing (Goals) */}
-                    <polygon points="0,290 160,145 320,290" className="fill-indigo-700/95 dark:fill-indigo-800/90" />
-                    {/* Crisp White X Hairlines */}
-                    <line x1="0" y1="0" x2="320" y2="290" stroke="white" strokeWidth="2.5" strokeOpacity="0.9" />
-                    <line x1="320" y1="0" x2="0" y2="290" stroke="white" strokeWidth="2.5" strokeOpacity="0.9" />
+                    <polygon points="0,290 160,145 320,290" className="fill-[#3f507a] dark:fill-[#303d5e]" />
+                    {/* Crisp Subtle X Hairlines */}
+                    <line x1="0" y1="0" x2="320" y2="290" stroke="white" strokeWidth="2" strokeOpacity="0.75" />
+                    <line x1="320" y1="0" x2="0" y2="290" stroke="white" strokeWidth="2" strokeOpacity="0.75" />
                   </svg>
 
                   {/* Direction Labels */}
-                  <span className="absolute top-4 left-1/2 -translate-x-1/2 text-xs font-display font-bold text-white tracking-wide">
+                  <span className="absolute top-3.5 left-1/2 -translate-x-1/2 z-10 text-xs font-display font-bold text-white/95 tracking-wide pointer-events-none select-none whitespace-nowrap">
                     {northMode === 'projects' ? 'Projekt (Hur)' : 'Initiativ (Hur)'}
                   </span>
                   <span
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-display font-bold text-white tracking-wide"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 z-10 text-xs font-display font-bold text-white/95 tracking-wide pointer-events-none select-none whitespace-nowrap"
                     style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
                   >
                     Delmål (Vad)
                   </span>
                   <span
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-display font-bold text-white tracking-wide"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-xs font-display font-bold text-white/95 tracking-wide pointer-events-none select-none whitespace-nowrap"
                     style={{ writingMode: 'vertical-rl' }}
                   >
                     KPI:er (Mätning)
                   </span>
-                  <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs font-display font-bold text-white tracking-wide">
+                  <span className="absolute bottom-3.5 left-1/2 -translate-x-1/2 z-10 text-xs font-display font-bold text-white/95 tracking-wide pointer-events-none select-none whitespace-nowrap">
                     Långsiktiga Mål (Varför)
                   </span>
 
                   {/* Center Hub Emblem */}
-                  <div className="relative z-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-center shadow-sm max-w-[165px]">
-                    <div className="text-[10px] font-mono font-bold text-indigo-700 dark:text-indigo-400 tracking-wider">
+                  <div className="relative z-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-center shadow-md max-w-[165px]">
+                    <div className="text-[10px] font-mono font-bold text-slate-600 dark:text-indigo-300 tracking-wider">
                       HOSHIN KANRI
                     </div>
                     <div className="text-sm font-display font-bold text-slate-900 dark:text-white">
@@ -949,7 +949,7 @@ export default function XMatrixView({
 
                 {/* [2,3] EAST WING: KPIs (Vertical Columns) */}
                 <div
-                  className="grid border-b border-slate-300 dark:border-slate-700 bg-emerald-50/70 dark:bg-emerald-950/25"
+                  className="grid border-b border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60"
                   style={{ gridTemplateColumns: `repeat(${kpiCount}, minmax(0, 1fr))` }}
                 >
                   {filteredKpis.length === 0 ? (
@@ -966,16 +966,16 @@ export default function XMatrixView({
                           key={kpi.id}
                           type="button"
                           onClick={() => setSelected({ type: 'kpi', id: kpi.id })}
-                          className={`border-r border-emerald-200/80 dark:border-emerald-900/40 px-1 py-3 flex flex-col items-center justify-between gap-2 transition cursor-pointer min-w-0 ${
+                          className={`border-r border-slate-200/80 dark:border-slate-800 px-1 py-3 flex flex-col items-center justify-between gap-2 transition cursor-pointer min-w-0 ${
                             isSel
-                              ? 'bg-emerald-200/80 dark:bg-emerald-900/60 ring-2 ring-inset ring-emerald-600'
+                              ? 'bg-emerald-100/70 dark:bg-emerald-950/45 ring-2 ring-inset ring-emerald-500/70'
                               : isRel
-                              ? 'bg-emerald-100/90 dark:bg-emerald-900/35'
-                              : 'hover:bg-emerald-100/60 dark:hover:bg-emerald-900/25'
+                              ? 'bg-emerald-50/80 dark:bg-emerald-950/25'
+                              : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/50'
                           } ${isMuted ? 'opacity-35' : ''}`}
                           title={`${kpi.title} (${kpi.value} / ${kpi.target})`}
                         >
-                          <span className="font-mono text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
+                          <span className="font-mono text-[10px] font-bold text-emerald-800/85 dark:text-emerald-300/90">
                             K{idx + 1}
                           </span>
                           <span
@@ -984,7 +984,7 @@ export default function XMatrixView({
                           >
                             {kpi.title}
                           </span>
-                          <span className="font-mono text-[10px] font-bold text-emerald-700 dark:text-emerald-300 tabular-nums">
+                          <span className="font-mono text-[10px] font-semibold text-slate-500 dark:text-slate-400 tabular-nums">
                             {kpi.progress}%
                           </span>
                         </button>
@@ -1037,7 +1037,7 @@ export default function XMatrixView({
 
                 {/* [3,2] SOUTH WING: Long-Term Breakthrough Goals */}
                 <div
-                  className="grid border-r border-slate-300 dark:border-slate-700 bg-indigo-50/70 dark:bg-indigo-950/30"
+                  className="grid border-r border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60"
                   style={{ gridTemplateRows: `repeat(${goalCount}, minmax(0, 1fr))` }}
                 >
                   {filteredGoals.length === 0 ? (
@@ -1054,15 +1054,15 @@ export default function XMatrixView({
                           key={goal.id}
                           type="button"
                           onClick={() => setSelected({ type: 'goal', id: goal.id })}
-                          className={`border-b border-indigo-200/80 dark:border-indigo-900/50 px-3 py-1.5 flex items-center gap-2.5 text-left transition cursor-pointer min-w-0 ${
+                          className={`border-b border-slate-200/80 dark:border-slate-800 px-3 py-1.5 flex items-center gap-2.5 text-left transition cursor-pointer min-w-0 ${
                             isSel
-                              ? 'bg-indigo-200/80 dark:bg-indigo-900/70 ring-2 ring-inset ring-indigo-600'
+                              ? 'bg-indigo-100/70 dark:bg-indigo-950/50 ring-2 ring-inset ring-indigo-500/70'
                               : isRel
-                              ? 'bg-indigo-100/90 dark:bg-indigo-900/40'
-                              : 'hover:bg-indigo-100/60 dark:hover:bg-indigo-900/30'
+                              ? 'bg-indigo-50/80 dark:bg-indigo-950/30'
+                              : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/50'
                           } ${isMuted ? 'opacity-35' : ''}`}
                         >
-                          <span className="font-mono text-[10px] font-bold text-indigo-800 dark:text-indigo-300 bg-white/80 dark:bg-slate-900/70 px-1.5 py-0.5 rounded shrink-0">
+                          <span className="font-mono text-[10px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 px-1.5 py-0.5 rounded shrink-0">
                             G{idx + 1}
                           </span>
                           <div className="min-w-0 flex-1">
@@ -1073,7 +1073,7 @@ export default function XMatrixView({
                               {CATEGORY_LABELS[goal.category]} · {goal.deadline}
                             </div>
                           </div>
-                          <span className="font-mono text-[11px] font-bold text-indigo-700 dark:text-indigo-300 tabular-nums shrink-0">
+                          <span className="font-mono text-[11px] font-semibold text-slate-500 dark:text-slate-400 tabular-nums shrink-0">
                             {goal.progress}%
                           </span>
                         </button>

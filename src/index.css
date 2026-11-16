@@ -107,45 +107,45 @@ html.dark {
   
   /* Accent texts & icons in dark mode */
   .text-indigo-600 {
-    color: #818cf8 !important; /* indigo highlighter */
+    color: #93a3e8 !important; /* muted indigo highlighter */
   }
   
   /* Balance Scorecard indicator styles */
   .bg-indigo-50, .bg-indigo-50\/80 {
-    background-color: #1e1b4b !important; /* indigo dark-deep tint */
+    background-color: rgba(99, 102, 241, 0.12) !important;
     color: #c7d2fe !important;
   }
   
   /* Rose/Kata loops indicator styles */
   .bg-rose-50, .bg-rose-50\/50 {
-    background-color: #4c0519 !important; /* rose dark tint */
-    border-color: #9f1239 !important;
+    background-color: rgba(244, 63, 94, 0.1) !important;
+    border-color: rgba(244, 63, 94, 0.22) !important;
   }
   .text-rose-600 {
-    color: #fb7185 !important; /* soft pink-rose indicator */
+    color: #e58a99 !important; /* muted rose indicator */
   }
   
   /* Green/Success indicator style */
   .bg-emerald-50, .bg-emerald-50\/50 {
-    background-color: #022c22 !important; /* forest emerald bg */
-    border-color: #065f46 !important;
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: rgba(16, 185, 129, 0.22) !important;
   }
   .text-emerald-700, .text-emerald-600 {
-    color: #34d399 !important; /* soft green highlighter */
+    color: #6cc29f !important; /* muted sage-emerald highlighter */
   }
 
   /* Amber/Warning indicators */
   .bg-amber-50 {
-    background-color: #451a03 !important; /* warning dark bg */
-    border-color: #78350f !important;
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    border-color: rgba(245, 158, 11, 0.22) !important;
   }
   .text-amber-900 {
-    color: #fde047 !important;
+    color: #e6c27a !important;
   }
 
   /* Sticky Top Header */
   header.sticky {
-    background-color: #111827 !important; /* seamless card-matching header */
+    background-color: rgba(17, 24, 39, 0.92) !important;
     border-color: #1f2937 !important;
   }
 

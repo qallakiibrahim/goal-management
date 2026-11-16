@@ -152,12 +152,12 @@ export default function DashboardView({
           className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs hover:shadow-sm border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
           title="Klicka för att granska alla mål"
         >
-          <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 rounded-xl group-hover:scale-105 transition-transform shrink-0">
+          <div className="p-3 bg-slate-100/90 dark:bg-slate-800 text-slate-700 dark:text-indigo-300 rounded-xl group-hover:scale-105 transition-transform shrink-0">
             <Target className="w-5 h-5" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-2xl font-bold font-display tracking-tight text-slate-900 dark:text-slate-100 tabular-nums">{activeGoalsCount}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center gap-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors flex items-center gap-1">
               <span>Aktiva Målvisioner</span>
               <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
             </div>
@@ -170,12 +170,12 @@ export default function DashboardView({
           className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs hover:shadow-sm border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
           title="Klicka för att hantera projekt"
         >
-          <div className="p-3 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 rounded-xl group-hover:scale-105 transition-transform shrink-0">
+          <div className="p-3 bg-slate-100/90 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl group-hover:scale-105 transition-transform shrink-0">
             <Briefcase className="w-5 h-5" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-2xl font-bold font-display tracking-tight text-slate-900 dark:text-slate-100 tabular-nums">{activeProjectsCount}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors flex items-center gap-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors flex items-center gap-1">
               <span>Pågående Projekt</span>
               <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
             </div>
@@ -188,12 +188,12 @@ export default function DashboardView({
           className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs hover:shadow-sm border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
           title="Klicka för att granska KPI:er"
         >
-          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-xl group-hover:scale-105 transition-transform shrink-0">
+          <div className="p-3 bg-slate-100/90 dark:bg-slate-800 text-emerald-700/85 dark:text-emerald-400/90 rounded-xl group-hover:scale-105 transition-transform shrink-0">
             <TrendingUp className="w-5 h-5" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-2xl font-bold font-display tracking-tight text-slate-900 dark:text-slate-100 tabular-nums">{avgKpiProgress}%</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors flex items-center gap-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors flex items-center gap-1">
               <span>KPI-måluppfyllnad</span>
               <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
             </div>
@@ -206,12 +206,12 @@ export default function DashboardView({
           className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl shadow-xs hover:shadow-sm border border-slate-200/80 dark:border-slate-800 flex items-center gap-4 transition-all cursor-pointer group"
           title="Klicka för att öppna Toyota Kata coaching"
         >
-          <div className="p-3 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 rounded-xl group-hover:scale-105 transition-transform shrink-0">
+          <div className="p-3 bg-slate-100/90 dark:bg-slate-800 text-rose-700/80 dark:text-rose-300/90 rounded-xl group-hover:scale-105 transition-transform shrink-0">
             <RefreshCw className="w-5 h-5" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-2xl font-bold font-display tracking-tight text-slate-900 dark:text-slate-100 tabular-nums">{kataSessionsCount}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors flex items-center gap-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors flex items-center gap-1">
               <span>Kata Coaching-cykler</span>
               <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
             </div>
@@ -223,7 +223,7 @@ export default function DashboardView({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 rounded-xl shrink-0 border border-indigo-200/70 dark:border-indigo-800/60">
+            <div className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl shrink-0 border border-slate-200/80 dark:border-slate-700">
               <Workflow className="w-5 h-5" />
             </div>
             <div className="min-w-0">
@@ -237,7 +237,7 @@ export default function DashboardView({
           </div>
           <button
             onClick={() => onNavigateToView('process-map')}
-            className="px-3.5 py-2 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer whitespace-nowrap"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer whitespace-nowrap"
           >
             <span>Öppna</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -246,7 +246,7 @@ export default function DashboardView({
 
         <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div className="p-2.5 bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 rounded-xl shrink-0 border border-teal-200/70 dark:border-teal-800/60">
+            <div className="p-2.5 bg-slate-100 dark:bg-slate-800 text-teal-700/85 dark:text-teal-300/90 rounded-xl shrink-0 border border-slate-200/80 dark:border-slate-700">
               <Grid3x3 className="w-5 h-5" />
             </div>
             <div className="min-w-0">
@@ -255,7 +255,7 @@ export default function DashboardView({
               </h4>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 tabular-nums line-clamp-2">
                 {activeMatrixLinksCount} korskopplingar ·{' '}
-                <span className={xMatrixGaps.length > 0 ? 'text-amber-600 dark:text-amber-400 font-semibold' : 'text-emerald-600 dark:text-emerald-400 font-semibold'}>
+                <span className={xMatrixGaps.length > 0 ? 'text-amber-600/90 dark:text-amber-400/90 font-semibold' : 'text-emerald-600/90 dark:text-emerald-400/90 font-semibold'}>
                   {xMatrixGaps.length === 0 ? 'Full strategisk täckning' : `${xMatrixGaps.length} strategiska gap`}
                 </span>
               </p>
@@ -263,7 +263,7 @@ export default function DashboardView({
           </div>
           <button
             onClick={() => onNavigateToView('x-matrix')}
-            className="px-3.5 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer whitespace-nowrap"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer whitespace-nowrap"
           >
             <span>Öppna</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -306,73 +306,73 @@ export default function DashboardView({
                     <>
                       <div 
                         onClick={() => onNavigateToView('goals')}
-                        className="p-3 bg-emerald-50/50 dark:bg-emerald-950/15 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40 cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/25 transition text-left"
+                        className="p-3 bg-slate-50/80 dark:bg-slate-800/35 rounded-xl border border-slate-200/70 dark:border-slate-800 cursor-pointer hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition text-left"
                       >
-                        <div className="flex items-center justify-between text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                        <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-200">
                           <span className="flex items-center gap-1.5">
-                            <DollarSign className="w-3.5 h-3.5 shrink-0" />
+                            <DollarSign className="w-3.5 h-3.5 text-emerald-700/80 dark:text-emerald-400/80 shrink-0" />
                             <span>Finansiellt</span>
                           </span>
-                          <span className="tabular-nums font-mono text-[11px]">
+                          <span className="tabular-nums font-mono text-[11px] text-slate-500 dark:text-slate-400">
                             {fin.count} Mål · {fin.progress}%
                           </span>
                         </div>
-                        <div className="mt-2 h-1.5 bg-slate-200/70 dark:bg-slate-800 rounded-full overflow-hidden">
-                          <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${fin.progress}%` }}></div>
+                        <div className="mt-2 h-1.5 bg-slate-200/80 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div className="bg-emerald-600/75 dark:bg-emerald-500/70 h-full rounded-full transition-all duration-500" style={{ width: `${fin.progress}%` }}></div>
                         </div>
                       </div>
 
                       <div 
                         onClick={() => onNavigateToView('goals')}
-                        className="p-3 bg-blue-50/50 dark:bg-blue-950/15 rounded-xl border border-blue-100/80 dark:border-blue-900/40 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-950/25 transition text-left"
+                        className="p-3 bg-slate-50/80 dark:bg-slate-800/35 rounded-xl border border-slate-200/70 dark:border-slate-800 cursor-pointer hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition text-left"
                       >
-                        <div className="flex items-center justify-between text-xs font-semibold text-blue-800 dark:text-blue-300">
+                        <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-200">
                           <span className="flex items-center gap-1.5">
-                            <Users className="w-3.5 h-3.5 shrink-0" />
+                            <Users className="w-3.5 h-3.5 text-sky-700/80 dark:text-sky-400/80 shrink-0" />
                             <span>Kund</span>
                           </span>
-                          <span className="tabular-nums font-mono text-[11px]">
+                          <span className="tabular-nums font-mono text-[11px] text-slate-500 dark:text-slate-400">
                             {cust.count} Mål · {cust.progress}%
                           </span>
                         </div>
-                        <div className="mt-2 h-1.5 bg-slate-200/70 dark:bg-slate-800 rounded-full overflow-hidden">
-                          <div className="bg-blue-500 h-full rounded-full transition-all duration-500" style={{ width: `${cust.progress}%` }}></div>
+                        <div className="mt-2 h-1.5 bg-slate-200/80 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div className="bg-sky-600/75 dark:bg-sky-500/70 h-full rounded-full transition-all duration-500" style={{ width: `${cust.progress}%` }}></div>
                         </div>
                       </div>
 
                       <div 
                         onClick={() => onNavigateToView('goals')}
-                        className="p-3 bg-amber-50/50 dark:bg-amber-950/15 rounded-xl border border-amber-100/80 dark:border-amber-900/40 cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950/25 transition text-left"
+                        className="p-3 bg-slate-50/80 dark:bg-slate-800/35 rounded-xl border border-slate-200/70 dark:border-slate-800 cursor-pointer hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition text-left"
                       >
-                        <div className="flex items-center justify-between text-xs font-semibold text-amber-800 dark:text-amber-300">
+                        <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-200">
                           <span className="flex items-center gap-1.5">
-                            <Settings className="w-3.5 h-3.5 shrink-0" />
+                            <Settings className="w-3.5 h-3.5 text-amber-700/80 dark:text-amber-400/80 shrink-0" />
                             <span>Processer</span>
                           </span>
-                          <span className="tabular-nums font-mono text-[11px]">
+                          <span className="tabular-nums font-mono text-[11px] text-slate-500 dark:text-slate-400">
                             {proc.count} Mål · {proc.progress}%
                           </span>
                         </div>
-                        <div className="mt-2 h-1.5 bg-slate-200/70 dark:bg-slate-800 rounded-full overflow-hidden">
-                          <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${proc.progress}%` }}></div>
+                        <div className="mt-2 h-1.5 bg-slate-200/80 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div className="bg-amber-600/75 dark:bg-amber-500/70 h-full rounded-full transition-all duration-500" style={{ width: `${proc.progress}%` }}></div>
                         </div>
                       </div>
 
                       <div 
                         onClick={() => onNavigateToView('goals')}
-                        className="p-3 bg-pink-50/50 dark:bg-pink-950/15 rounded-xl border border-pink-100/80 dark:border-pink-900/40 cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-950/25 transition text-left"
+                        className="p-3 bg-slate-50/80 dark:bg-slate-800/35 rounded-xl border border-slate-200/70 dark:border-slate-800 cursor-pointer hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition text-left"
                       >
-                        <div className="flex items-center justify-between text-xs font-semibold text-pink-800 dark:text-pink-300">
+                        <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-200">
                           <span className="flex items-center gap-1.5">
-                            <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                            <BookOpen className="w-3.5 h-3.5 text-rose-700/75 dark:text-rose-400/80 shrink-0" />
                             <span>Lärande</span>
                           </span>
-                          <span className="tabular-nums font-mono text-[11px]">
+                          <span className="tabular-nums font-mono text-[11px] text-slate-500 dark:text-slate-400">
                             {learn.count} Mål · {learn.progress}%
                           </span>
                         </div>
-                        <div className="mt-2 h-1.5 bg-slate-200/70 dark:bg-slate-800 rounded-full overflow-hidden">
-                          <div className="bg-pink-500 h-full rounded-full transition-all duration-500" style={{ width: `${learn.progress}%` }}></div>
+                        <div className="mt-2 h-1.5 bg-slate-200/80 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div className="bg-rose-500/75 dark:bg-rose-400/70 h-full rounded-full transition-all duration-500" style={{ width: `${learn.progress}%` }}></div>
                         </div>
                       </div>
                     </>
@@ -397,12 +397,12 @@ export default function DashboardView({
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-1.5">
-                  <Activity className="w-4 h-4 text-rose-500" />
+                  <Activity className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                   <h3 className="font-display font-semibold text-slate-800 dark:text-slate-100 text-sm tracking-tight">
                     Värdeflöden (VSM)
                   </h3>
                 </div>
-                <span className="text-[10px] bg-rose-50 dark:bg-rose-950/45 text-rose-600 dark:text-rose-400 font-semibold px-2 py-0.5 rounded-md border border-rose-100 dark:border-rose-900/40">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold font-mono">
                   VSM-Takt
                 </span>
               </div>
@@ -411,7 +411,7 @@ export default function DashboardView({
                 Ledtidseffektivisering (PCE) genom eliminering av slöserier i verksamheten.
               </p>
 
-              <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800 p-3.5 rounded-xl space-y-2.5">
+              <div className="bg-slate-50/80 dark:bg-slate-950/30 border border-slate-200/70 dark:border-slate-800 p-3.5 rounded-xl space-y-2.5">
                 <div className="space-y-0.5">
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-semibold block tracking-wider">Aktivt flöde</span>
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">
@@ -446,7 +446,7 @@ export default function DashboardView({
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-semibold leading-none uppercase mb-1">Flödeseffektivitet</span>
-                    <strong className="text-sm font-bold text-rose-600 dark:text-rose-400 font-mono tabular-nums">
+                    <strong className="text-sm font-bold text-slate-800 dark:text-rose-300/90 font-mono tabular-nums">
                       {(() => {
                         try {
                           const local = localStorage.getItem('vsm_streams');
@@ -471,7 +471,7 @@ export default function DashboardView({
             <div className="mt-5">
               <button
                 onClick={() => onNavigateToView('vsm')}
-                className="w-full text-center py-2 bg-indigo-900 hover:bg-indigo-950 text-white dark:bg-indigo-600 dark:hover:bg-indigo-700 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full text-center py-2 bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-700 dark:hover:bg-slate-600 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <span>Analysera Värdeflöde</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -522,7 +522,7 @@ export default function DashboardView({
                     }}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       selectedGoalId === g.id
-                        ? 'bg-indigo-900 text-white shadow-xs dark:bg-indigo-600 dark:text-white'
+                        ? 'bg-slate-800 text-white shadow-xs dark:bg-indigo-600/85 dark:text-white'
                         : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/80 dark:bg-slate-800/60 dark:border-slate-700/80 dark:text-slate-300 dark:hover:bg-slate-700'
                     }`}
                   >
@@ -536,20 +536,20 @@ export default function DashboardView({
                 
                 {/* Visual block showing active goal */}
                 {goals.find(g => g.id === selectedGoalId) && (
-                  <div className="bg-indigo-900 dark:bg-indigo-950/60 dark:border dark:border-indigo-800/50 text-white p-3.5 rounded-xl">
+                  <div className="bg-slate-800 dark:bg-slate-800/90 border border-slate-700/80 text-white p-3.5 rounded-xl">
                     <div className="flex justify-between items-start gap-2 text-xs">
-                      <span className="font-bold flex items-center gap-1.5 text-white dark:text-indigo-100">
-                        <Target className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span className="font-bold flex items-center gap-1.5 text-white dark:text-slate-100">
+                        <Target className="w-3.5 h-3.5 text-indigo-300 shrink-0" />
                         {goals.find(g => g.id === selectedGoalId)?.title}
                       </span>
-                      <span className="bg-white/20 dark:bg-indigo-900/70 px-2 py-0.5 rounded font-bold font-mono text-white dark:text-indigo-200 tabular-nums shrink-0">
+                      <span className="bg-white/15 dark:bg-slate-700/80 px-2 py-0.5 rounded font-bold font-mono text-slate-100 tabular-nums shrink-0">
                         {goals.find(g => g.id === selectedGoalId)?.progress}%
                       </span>
                     </div>
-                    <p className="text-[11px] text-indigo-100 dark:text-indigo-300 mt-1">
+                    <p className="text-[11px] text-slate-300 mt-1">
                       {goals.find(g => g.id === selectedGoalId)?.description}
                     </p>
-                    <div className="text-[10px] text-amber-200 dark:text-amber-400 mt-1.5 font-mono">
+                    <div className="text-[10px] text-slate-300 mt-1.5 font-mono">
                       Mål-KPI: {goals.find(g => g.id === selectedGoalId)?.kpi}
                     </div>
                   </div>
@@ -707,12 +707,12 @@ export default function DashboardView({
           <div>
             <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-1.5">
-                <RefreshCw className="w-4 h-4 text-rose-500" />
+                <RefreshCw className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                 <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100">
                   Kata Coaching Loop
                 </h3>
               </div>
-              <span className="text-[10px] bg-rose-50 dark:bg-rose-950/45 text-rose-600 dark:text-rose-400 border border-rose-100/70 dark:border-rose-900/40 px-2 py-0.5 rounded font-semibold font-mono">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold font-mono">
                 PDCA
               </span>
             </div>
@@ -723,8 +723,8 @@ export default function DashboardView({
 
             {/* List of Kata coaching questions */}
             <div className="space-y-3">
-              <div className="text-[11px] p-3 bg-rose-50/50 dark:bg-rose-950/15 border border-rose-100/70 dark:border-rose-900/35 rounded-xl">
-                <span className="text-rose-700 dark:text-rose-400 font-bold block mb-0.5 uppercase tracking-wide text-[10px]">1. Måltillstånd</span>
+              <div className="text-[11px] p-3 bg-slate-50/80 dark:bg-slate-800/35 border border-slate-200/70 dark:border-slate-800 rounded-xl">
+                <span className="text-slate-700 dark:text-slate-300 font-bold block mb-0.5 uppercase tracking-wide text-[10px]">1. Måltillstånd</span>
                 <p className="text-slate-500 dark:text-slate-400 text-[11px] italic">"Vart vill vi ta oss på sikt?"</p>
                 {kataSessions.length > 0 && (
                   <p className="text-slate-800 dark:text-slate-200 text-[11px] font-semibold mt-1 line-clamp-1">
@@ -733,8 +733,8 @@ export default function DashboardView({
                 )}
               </div>
 
-              <div className="text-[11px] p-3 bg-rose-50/50 dark:bg-rose-950/15 border border-rose-100/70 dark:border-rose-900/35 rounded-xl">
-                <span className="text-rose-700 dark:text-rose-400 font-bold block mb-0.5 uppercase tracking-wide text-[10px]">2. Nu-tillstånd</span>
+              <div className="text-[11px] p-3 bg-slate-50/80 dark:bg-slate-800/35 border border-slate-200/70 dark:border-slate-800 rounded-xl">
+                <span className="text-slate-700 dark:text-slate-300 font-bold block mb-0.5 uppercase tracking-wide text-[10px]">2. Nu-tillstånd</span>
                 <p className="text-slate-500 dark:text-slate-400 text-[11px] italic">"Var befinner vi oss just nu?"</p>
                 {kataSessions.length > 0 && (
                   <p className="text-slate-800 dark:text-slate-200 text-[11px] font-semibold mt-1 line-clamp-1">
@@ -743,8 +743,8 @@ export default function DashboardView({
                 )}
               </div>
 
-              <div className="text-[11px] p-3 bg-rose-50/50 dark:bg-rose-950/15 border border-rose-100/70 dark:border-rose-900/35 rounded-xl">
-                <span className="text-rose-700 dark:text-rose-400 font-bold block mb-0.5 uppercase tracking-wide text-[10px]">3. Hinder & Tester</span>
+              <div className="text-[11px] p-3 bg-slate-50/80 dark:bg-slate-800/35 border border-slate-200/70 dark:border-slate-800 rounded-xl">
+                <span className="text-slate-700 dark:text-slate-300 font-bold block mb-0.5 uppercase tracking-wide text-[10px]">3. Hinder & Tester</span>
                 <p className="text-slate-500 dark:text-slate-400 text-[11px] italic">"Vilka är hindren & vad testar vi?"</p>
                 {kataSessions.length > 0 && (
                   <p className="text-slate-800 dark:text-slate-200 text-[11px] font-semibold mt-1 line-clamp-1">
@@ -758,7 +758,7 @@ export default function DashboardView({
           <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
             <button
               onClick={onStartKata}
-              className="w-full text-center text-xs py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              className="w-full text-center text-xs py-2 bg-slate-800 hover:bg-slate-900 dark:bg-rose-700/80 dark:hover:bg-rose-700 text-white rounded-xl font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Starta Aktiv Kata
             </button>
@@ -788,7 +788,7 @@ export default function DashboardView({
       {/* Action Guidance info banner */}
       <div className="p-4 bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
         <div className="flex items-center gap-3.5">
-          <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-800 dark:text-indigo-300 rounded-xl shrink-0 border border-indigo-100 dark:border-indigo-900/50">
+          <div className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-indigo-300 rounded-xl shrink-0 border border-slate-200/80 dark:border-slate-700">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
@@ -800,7 +800,7 @@ export default function DashboardView({
         </div>
         <button 
           onClick={() => onNavigateToView('hierarchy-editor')}
-          className="px-4 py-2 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl tracking-tight transition whitespace-nowrap cursor-pointer self-start sm:self-auto"
+          className="px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white text-xs font-semibold rounded-xl tracking-tight transition whitespace-nowrap cursor-pointer self-start sm:self-auto"
         >
           Konfigurera min struktur
         </button>
