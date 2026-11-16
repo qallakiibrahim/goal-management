@@ -361,8 +361,8 @@ export default function ProcessMapView({
                     onClick={() => setSelectedStepId(step.id)}
                     className={`relative p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer group flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-slate-50 dark:bg-slate-850 border-indigo-500 ring-2 ring-indigo-500/20 shadow-sm'
-                        : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-850/50'
+                        ? 'bg-slate-50 dark:bg-slate-800/80 border-indigo-500 ring-2 ring-indigo-500/20 shadow-sm'
+                        : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/70 dark:hover:bg-slate-800/50'
                     }`}
                   >
                     <div>
@@ -375,7 +375,7 @@ export default function ProcessMapView({
                         </span>
                       </div>
                       
-                      <h4 className="font-display font-bold text-sm text-slate-900 dark:text-slate-100 group-hover:text-indigo-900 dark:group-hover:text-indigo-400 transition-colors">
+                      <h4 className="font-display font-bold text-sm text-slate-900 dark:text-slate-100 group-hover:text-indigo-800 dark:group-hover:text-indigo-300 transition-colors">
                         {step.title}
                       </h4>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
@@ -389,7 +389,7 @@ export default function ProcessMapView({
                         <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                       </span>
                       {isSelected && (
-                        <div className="w-2 h-2 rounded-full bg-indigo-600 animate-ping" />
+                        <div className="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400" />
                       )}
                     </div>
                   </button>
@@ -429,7 +429,7 @@ export default function ProcessMapView({
                 {selectedStep.viewTarget && (
                   <button
                     onClick={() => onNavigateToView(selectedStep.viewTarget!)}
-                    className="px-4 py-2.5 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
+                    className="px-4 py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
                   >
                     <span>Öppna {selectedStep.title}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -438,7 +438,7 @@ export default function ProcessMapView({
                 {selectedStep.actionTarget === 'voiceCoach' && onOpenVoiceCoach && (
                   <button
                     onClick={onOpenVoiceCoach}
-                    className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
+                    className="px-4 py-2.5 bg-rose-700/90 hover:bg-rose-700 dark:bg-rose-700/85 dark:hover:bg-rose-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
                   >
                     <Mic className="w-3.5 h-3.5" />
                     <span>Starta Röstcoachen</span>
@@ -447,7 +447,7 @@ export default function ProcessMapView({
                 {selectedStep.actionTarget === 'voiceCoach' && onDownloadPdf && (
                   <button
                     onClick={onDownloadPdf}
-                    className="px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
+                    className="px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-xs cursor-pointer"
                   >
                     <FileDown className="w-3.5 h-3.5" />
                     <span>Ladda ner PDF</span>

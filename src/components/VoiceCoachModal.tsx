@@ -663,15 +663,15 @@ export default function VoiceCoachModal({
           {/* Header Bar */}
           <div className="p-4 px-6 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                <Radio className="w-5 h-5 animate-pulse" />
+              <div className="w-10 h-10 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-indigo-400 shadow-sm">
+                <Radio className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="font-display font-bold text-sm text-white">
                     Strategisk AI-Röstpartner
                   </h2>
-                  <span className="text-[11px] font-mono text-indigo-300">
+                  <span className="text-[11px] font-mono text-slate-400">
                     · gemini-3.8-live
                   </span>
                 </div>
@@ -679,10 +679,10 @@ export default function VoiceCoachModal({
                   <span
                     className={`w-2 h-2 rounded-full ${
                       connectionStatus === 'ready' || connectionStatus === 'speaking' || connectionStatus === 'listening'
-                        ? 'bg-emerald-400 animate-ping'
+                        ? 'bg-emerald-400'
                         : connectionStatus === 'connecting'
-                        ? 'bg-amber-400 animate-pulse'
-                        : 'bg-rose-500'
+                        ? 'bg-amber-400'
+                        : 'bg-rose-400'
                     }`}
                   />
                   <p className="text-[11px] text-slate-300 font-mono">
@@ -699,7 +699,7 @@ export default function VoiceCoachModal({
                 <select
                   value={activeVoice}
                   onChange={(e) => handleVoiceChange(e.target.value)}
-                  className="bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs rounded-xl px-3 py-1.5 pr-8 appearance-none border border-slate-700 focus:outline-hidden font-medium cursor-pointer"
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-xl px-3 py-1.5 pr-8 appearance-none border border-slate-700 focus:outline-hidden font-medium cursor-pointer"
                   title="Välj röst"
                 >
                   <option value="Zephyr">Röst: Zephyr (Lugn, balanserad)</option>
@@ -736,8 +736,8 @@ export default function VoiceCoachModal({
                   onClick={() => handleTopicSwitch(t.id)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-850 hover:bg-slate-800 text-slate-300 hover:text-white'
+                      ? 'bg-indigo-600/85 text-white shadow-xs'
+                      : 'bg-slate-800/70 hover:bg-slate-800 text-slate-300 hover:text-white'
                   }`}
                 >
                   <Icon className="w-3 h-3" />
@@ -748,9 +748,9 @@ export default function VoiceCoachModal({
           </div>
 
           {/* Central Animated Visualizer Section */}
-          <div className="bg-gradient-to-b from-slate-900 via-slate-920 to-slate-950 p-5 flex flex-col items-center justify-center relative overflow-hidden border-b border-slate-800/80">
+          <div className="bg-gradient-to-b from-slate-900 to-slate-950 p-5 flex flex-col items-center justify-center relative overflow-hidden border-b border-slate-800/80">
             {/* Background Glow effects */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15),transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.10),transparent_70%)] pointer-events-none" />
 
             {/* Pulsing Orb Visualizer */}
             <div className="relative w-28 h-28 flex items-center justify-center my-1">
@@ -773,18 +773,18 @@ export default function VoiceCoachModal({
               />
 
               <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 relative z-10 ${
+                className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 relative z-10 ${
                   aiAudioLevel > 0.05
-                    ? 'bg-gradient-to-tr from-rose-600 to-amber-500 text-white shadow-rose-500/50 scale-105'
+                    ? 'bg-rose-600/85 text-white shadow-rose-500/30 scale-105'
                     : userAudioLevel > 0.05
-                    ? 'bg-gradient-to-tr from-indigo-600 to-blue-500 text-white shadow-indigo-500/50 scale-105'
+                    ? 'bg-indigo-600/85 text-white shadow-indigo-500/30 scale-105'
                     : 'bg-slate-800 border border-slate-700 text-slate-300 shadow-slate-900/50'
                 }`}
               >
                 {aiAudioLevel > 0.05 ? (
-                  <Activity className="w-7 h-7 animate-pulse text-white" />
+                  <Activity className="w-7 h-7 text-white" />
                 ) : userAudioLevel > 0.05 ? (
-                  <Mic className="w-7 h-7 animate-bounce text-white" />
+                  <Mic className="w-7 h-7 text-white" />
                 ) : (
                   <Bot className="w-7 h-7 text-indigo-400" />
                 )}
@@ -795,7 +795,7 @@ export default function VoiceCoachModal({
             <div className="mt-1 text-center z-10 flex items-center gap-2 text-xs font-medium text-slate-300">
               {aiAudioLevel > 0.05 ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
+                  <span className="w-2 h-2 rounded-full bg-rose-400" />
                   <span>AI talar i högtalaren (24kHz)...</span>
                 </>
               ) : micStatus === 'denied' || micStatus === 'unavailable' ? (
@@ -810,7 +810,7 @@ export default function VoiceCoachModal({
                 </>
               ) : userAudioLevel > 0.05 ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+                  <span className="w-2 h-2 rounded-full bg-indigo-400" />
                   <span className="text-indigo-200">Hör din röst i realtid...</span>
                 </>
               ) : micStatus === 'active' ? (
@@ -820,7 +820,7 @@ export default function VoiceCoachModal({
                 </>
               ) : (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
                   <span>Begär mikrofonåtkomst...</span>
                 </>
               )}
@@ -894,7 +894,7 @@ export default function VoiceCoachModal({
               >
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-white ${
-                    item.role === 'user' ? 'bg-indigo-600' : 'bg-slate-800 border border-slate-700'
+                    item.role === 'user' ? 'bg-slate-800 dark:bg-indigo-600/85' : 'bg-slate-800 border border-slate-700'
                   }`}
                 >
                   {item.role === 'user' ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5 text-rose-400" />}
@@ -904,7 +904,7 @@ export default function VoiceCoachModal({
                   <div
                     className={`p-3 rounded-2xl text-xs sm:text-[13px] leading-relaxed ${
                       item.role === 'user'
-                        ? 'bg-indigo-600 text-white rounded-br-xs shadow-sm font-medium'
+                        ? 'bg-slate-800 dark:bg-indigo-600/85 text-white rounded-br-xs shadow-sm font-medium'
                         : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-xs shadow-xs'
                     }`}
                   >
@@ -929,7 +929,7 @@ export default function VoiceCoachModal({
               <button
                 key={i}
                 onClick={() => handleSendPrompt(prompt)}
-                className="px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition shrink-0 cursor-pointer text-left"
+                className="px-2.5 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 transition shrink-0 cursor-pointer text-left"
               >
                 {prompt}
               </button>
@@ -945,10 +945,10 @@ export default function VoiceCoachModal({
                 onClick={toggleMic}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition shadow-xs cursor-pointer select-none ${
                   micStatus === 'denied' || micStatus === 'unavailable'
-                    ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                    ? 'bg-amber-600/90 hover:bg-amber-600 text-white'
                     : isMicMuted
                     ? 'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-800'
-                    : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    : 'bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white'
                 }`}
                 title={
                   micStatus === 'denied' || micStatus === 'unavailable'
@@ -970,7 +970,7 @@ export default function VoiceCoachModal({
                   </>
                 ) : (
                   <>
-                    <Mic className="w-4 h-4 animate-pulse" />
+                    <Mic className="w-4 h-4" />
                     <span>Mikrofon aktiv</span>
                   </>
                 )}
@@ -1023,12 +1023,12 @@ export default function VoiceCoachModal({
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
                 placeholder="Skriv textfråga eller tala i mic..."
-                className="flex-1 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-hidden focus:border-indigo-600 dark:text-white placeholder-slate-400"
+                className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
               />
               <button
                 type="submit"
                 disabled={!textInput.trim()}
-                className="p-2 bg-slate-900 hover:bg-black dark:bg-indigo-600 dark:hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl transition cursor-pointer"
+                className="p-2 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 disabled:opacity-40 text-white rounded-xl transition cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>

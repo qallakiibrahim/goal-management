@@ -1092,10 +1092,10 @@ export default function App() {
   // If loading auth state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-800 font-sans">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-800 dark:text-slate-200 font-sans">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-4 border-rose-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs font-mono tracking-wider text-slate-500">Verifierar behörighetsstatus...</p>
+          <div className="w-10 h-10 border-4 border-rose-600/80 dark:border-rose-400/80 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-mono tracking-wider text-slate-500 dark:text-slate-400">Verifierar behörighetsstatus...</p>
         </div>
       </div>
     );
@@ -1116,25 +1116,25 @@ export default function App() {
   // If logged in but NOT on the invitations/members register
   if (!authOfflineBypass && authUser && !isMember) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-6 font-sans">
-        <div className="bg-white border border-slate-200 p-8 rounded-3xl max-w-md w-full shadow-lg text-center space-y-6">
-          <div className="w-14 h-14 bg-rose-50 border border-rose-100 rounded-full flex items-center justify-center mx-auto text-rose-600 animate-pulse">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 flex items-center justify-center p-6 font-sans">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-8 rounded-3xl max-w-md w-full shadow-lg text-center space-y-6">
+          <div className="w-14 h-14 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/70 dark:border-rose-900/50 rounded-full flex items-center justify-center mx-auto text-rose-600 dark:text-rose-400">
             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0-6V9m0-2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div className="space-y-2 text-center">
-            <h3 className="text-lg font-display font-bold text-slate-800">Åtkomst nekad</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Ditt Google-konto <strong className="text-slate-700">{authUser.email}</strong> är verifierat, men du saknar en aktiv inbjudan till denna plattform.
+            <h3 className="text-lg font-display font-bold text-slate-900 dark:text-slate-100">Åtkomst nekad</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Ditt Google-konto <strong className="text-slate-700 dark:text-slate-200">{authUser.email}</strong> är verifierat, men du saknar en aktiv inbjudan till denna plattform.
             </p>
-            <p className="text-[11px] text-rose-700 bg-rose-50 p-2.5 rounded-xl border border-rose-100/50 font-mono text-center">
+            <p className="text-[11px] text-rose-700 dark:text-rose-300 bg-rose-50/80 dark:bg-rose-950/25 p-2.5 rounded-xl border border-rose-200/60 dark:border-rose-900/40 font-mono text-center">
               Tips: Kontakta systemets huvudadministratör och be dem lägga till din e-post.
             </p>
           </div>
           <button
             onClick={handleSignOut}
-            className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-705 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+            className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold transition cursor-pointer"
           >
             Logga ut / Byt konto
           </button>
@@ -1192,7 +1192,7 @@ export default function App() {
               className="h-8 px-2.5 bg-slate-100/90 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs transition cursor-pointer border border-slate-200/70 dark:border-slate-700 flex items-center gap-1.5 whitespace-nowrap shrink-0"
               title="Snabb sökning och kommandon (⌘K)"
             >
-              <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <Search className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
               <span className="hidden xl:inline">Sök</span>
               <kbd className="hidden sm:inline-block font-mono text-[10px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 leading-none">⌘K</kbd>
             </button>
@@ -1204,8 +1204,8 @@ export default function App() {
                 onClick={() => setExportMenuOpen(prev => !prev)}
                 className={`h-8 w-8 rounded-lg flex items-center justify-center transition border cursor-pointer shrink-0 ${
                   exportMenuOpen
-                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800'
-                    : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-700'
+                    ? 'bg-slate-100 text-slate-900 border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700'
+                    : 'bg-white hover:bg-slate-50 text-slate-600 border-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
                 }`}
                 title="Ladda ner rapport (Excel / PDF / PowerPoint)"
                 aria-label="Ladda ner rapport"
@@ -1213,7 +1213,7 @@ export default function App() {
                 aria-haspopup="menu"
               >
                 {isExportingPpt ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-indigo-600 dark:text-indigo-400" />
+                  <Loader2 className="w-4 h-4 animate-spin text-slate-600 dark:text-slate-300" />
                 ) : (
                   <Download className="w-4 h-4" />
                 )}
@@ -1238,7 +1238,7 @@ export default function App() {
                       }}
                       className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
                         <Table className="w-3.5 h-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -1256,7 +1256,7 @@ export default function App() {
                       }}
                       className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-lg bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 flex items-center justify-center shrink-0">
                         <FileText className="w-3.5 h-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -1275,7 +1275,7 @@ export default function App() {
                       }}
                       className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-60"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-lg bg-rose-50/80 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 flex items-center justify-center shrink-0">
                         <Presentation className="w-3.5 h-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -1300,7 +1300,7 @@ export default function App() {
               {darkMode ? (
                 <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-indigo-900" />
+                <Moon className="w-4 h-4 text-slate-600" />
               )}
             </button>
 
@@ -1311,14 +1311,14 @@ export default function App() {
                 onClick={() => setProfileMenuOpen(prev => !prev)}
                 className={`h-8 pl-1 pr-2 rounded-full flex items-center gap-1.5 transition cursor-pointer border ${
                   profileMenuOpen || ['hierarchy-editor', 'members', 'settings'].includes(currentView)
-                    ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-950/60 dark:border-indigo-800'
+                    ? 'bg-slate-100 border-slate-300 dark:bg-slate-800 dark:border-slate-700'
                     : 'bg-slate-50 hover:bg-slate-100 border-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:border-slate-700'
                 }`}
                 title={`${activeProfile.name} (${activeProfile.role}) — Profil & Administration`}
                 aria-expanded={profileMenuOpen}
                 aria-haspopup="menu"
               >
-                <div className="w-6 h-6 rounded-full bg-indigo-900 dark:bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center font-display shrink-0 select-none">
+                <div className="w-6 h-6 rounded-full bg-slate-800 dark:bg-indigo-600/85 text-white text-[10px] font-bold flex items-center justify-center font-display shrink-0 select-none">
                   {activeProfile.name.slice(0, 2).toUpperCase()}
                 </div>
                 <ChevronDown className={`w-3.5 h-3.5 text-slate-500 dark:text-slate-400 transition-transform duration-150 ${profileMenuOpen ? 'rotate-180' : ''}`} />
@@ -1331,7 +1331,7 @@ export default function App() {
                 >
                   {/* Profile Identity Header */}
                   <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-indigo-900 dark:bg-indigo-600 text-white text-xs font-bold flex items-center justify-center font-display shrink-0 select-none">
+                    <div className="w-9 h-9 rounded-full bg-slate-800 dark:bg-indigo-600/85 text-white text-xs font-bold flex items-center justify-center font-display shrink-0 select-none">
                       {activeProfile.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div className="min-w-0">
@@ -1341,7 +1341,7 @@ export default function App() {
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                         {activeProfile.email}
                       </div>
-                      <div className="text-[10px] font-semibold text-indigo-700 dark:text-indigo-400 mt-0.5 truncate">
+                      <div className="text-[10px] font-semibold text-slate-600 dark:text-indigo-400 mt-0.5 truncate">
                         {activeProfile.role}
                       </div>
                     </div>
@@ -1362,11 +1362,11 @@ export default function App() {
                       }}
                       className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
                         currentView === 'hierarchy-editor'
-                          ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-200 font-semibold'
+                          ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 font-semibold'
                           : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800 font-medium'
                       }`}
                     >
-                      <Layers className="w-4 h-4 text-blue-500 shrink-0" />
+                      <Layers className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
                       <span>Hierarkiredigerare</span>
                     </button>
 
@@ -1379,11 +1379,11 @@ export default function App() {
                       }}
                       className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
                         currentView === 'members'
-                          ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-200 font-semibold'
+                          ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 font-semibold'
                           : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800 font-medium'
                       }`}
                     >
-                      <UserPlus className="w-4 h-4 text-violet-600 dark:text-violet-400 shrink-0" />
+                      <UserPlus className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
                       <span>Användare & Inbjudna</span>
                     </button>
 
@@ -1396,7 +1396,7 @@ export default function App() {
                       }}
                       className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
                         currentView === 'settings'
-                          ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-200 font-semibold'
+                          ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 font-semibold'
                           : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800 font-medium'
                       }`}
                     >
@@ -1433,19 +1433,19 @@ export default function App() {
           
           {/* Firebase rules restriction warning */}
           {firebaseError === 'rules_restricted' && (
-            <div className="p-4 bg-amber-50 text-amber-900 border border-amber-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs text-xs font-semibold text-left">
+            <div className="p-4 bg-amber-50/90 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 border border-amber-200/80 dark:border-amber-800/50 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs text-xs font-semibold text-left">
               <span className="flex items-start gap-2.5">
-                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5 animate-bounce" />
+                <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div>
-                  <strong className="block text-amber-950 font-bold mb-0.5">Firebase/Firestore: Åtkomst Nekad (Permission Denied)</strong>
+                  <strong className="block text-amber-950 dark:text-amber-100 font-bold mb-0.5">Firebase/Firestore: Åtkomst Nekad (Permission Denied)</strong>
                   Applikationen använder lokalt minne som reserv (så att allt fungerar offline), men dina säkerhetsregler i Firebase blockerar moln-synkning. 
-                  Gå till din <span className="font-mono text-indigo-900 bg-amber-100 px-1 py-0.5 rounded">Firebase Console</span> under 
-                  <strong className="text-slate-900"> Firestore Database ➔ Rules</strong> och ändra raden till <code className="font-mono bg-lime-100 text-lime-800 px-1.5 py-0.5 rounded">allow read, write: if true;</code> för att tillåta läsning och skrivning under utveckling.
+                  Gå till din <span className="font-mono text-slate-900 dark:text-amber-100 bg-amber-100 dark:bg-amber-900/40 px-1 py-0.5 rounded">Firebase Console</span> under 
+                  <strong className="text-slate-900 dark:text-amber-100"> Firestore Database ➔ Rules</strong> och ändra raden till <code className="font-mono bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 px-1.5 py-0.5 rounded">allow read, write: if true;</code> för att tillåta läsning och skrivning under utveckling.
                 </div>
               </span>
               <button 
                 onClick={() => setFirebaseError(null)}
-                className="hover:bg-amber-100 p-1.5 rounded-lg text-amber-600 hover:text-amber-950 transition self-end md:self-center cursor-pointer font-mono text-[10px]"
+                className="hover:bg-amber-100 dark:hover:bg-amber-900/40 p-1.5 rounded-lg text-amber-700 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 transition self-end md:self-center cursor-pointer font-mono text-[10px]"
               >
                 Ignorera
               </button>
@@ -1611,15 +1611,15 @@ export default function App() {
       {/* 3. Global Dynamic Overlay Modals with AnimatePresence */}
       <AnimatePresence>
         {activeModal && (
-          <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-100 flex flex-col justify-start text-left max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col justify-start text-left max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-slate-150 pb-3 mb-4">
-                <h3 className="font-display font-bold text-base text-indigo-900">
+              <div className="flex justify-between items-center border-b border-slate-200/80 dark:border-slate-800 pb-3 mb-4">
+                <h3 className="font-display font-bold text-base text-slate-900 dark:text-slate-100">
                   {activeModal === 'addGoal' && 'Lägg till Strategiskt Mål'}
                   {activeModal === 'editGoal' && 'Redigera Strategiskt Mål'}
                   {activeModal === 'addProject' && 'Lägg till Operativt Projekt'}
@@ -1631,7 +1631,7 @@ export default function App() {
                 </h3>
                 <button
                   onClick={() => setActiveModal(null)}
-                  className="p-1 px-2.5 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-500 text-xs font-semibold border"
+                  className="p-1 px-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition cursor-pointer"
                 >
                   Stäng
                 </button>
@@ -1641,48 +1641,48 @@ export default function App() {
               {(activeModal === 'addGoal' || activeModal === 'editGoal') && (
                 <form onSubmit={submitGoalForm} className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Rubrik / Målrubrik:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Rubrik / Målrubrik:</label>
                     <input
                       type="text"
                       required
                       value={formGoal.title}
                       onChange={(e) => setFormGoal({ ...formGoal, title: e.target.value })}
                       placeholder="Bli fullständigt CO2 neutrala..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Beskrivning av målvisionen:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Beskrivning av målvisionen:</label>
                     <textarea
                       required
                       value={formGoal.description}
                       onChange={(e) => setFormGoal({ ...formGoal, description: e.target.value })}
                       placeholder="Förklara syfte, tidsaspekter samt förväntat mervärde..."
                       rows={3}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Konkret mätetal (KPI):</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Konkret mätetal (KPI):</label>
                     <input
                       type="text"
                       required
                       value={formGoal.kpi}
                       onChange={(e) => setFormGoal({ ...formGoal, kpi: e.target.value })}
                       placeholder="Mäts via totalt avtryck i ton..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Kategori:</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Kategori:</label>
                       <select
                         value={formGoal.category}
                         onChange={(e: any) => setFormGoal({ ...formGoal, category: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       >
                         <option value="financial">💰 Finansiellt</option>
                         <option value="customer">🤝 Kund</option>
@@ -1692,32 +1692,32 @@ export default function App() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Framsteg (0-100%):</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Framsteg (0-100%):</label>
                       <input
                         type="number"
                         min="0"
                         max="100"
                         value={formGoal.progress}
                         onChange={(e) => setFormGoal({ ...formGoal, progress: parseInt(e.target.value) || 0 })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Deadline:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Deadline:</label>
                     <input
                       type="text"
                       value={formGoal.deadline}
                       onChange={(e) => setFormGoal({ ...formGoal, deadline: e.target.value })}
                       placeholder="Dec 2026"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-indigo-900 hover:bg-indigo-950 text-white font-bold rounded-lg text-xs mt-4 transition"
+                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white font-semibold rounded-lg text-xs mt-4 transition cursor-pointer"
                   >
                     Spara Mål
                   </button>
@@ -1728,57 +1728,57 @@ export default function App() {
               {(activeModal === 'addProject' || activeModal === 'editProject') && (
                 <form onSubmit={submitProjectForm} className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Projekttitel:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Projekttitel:</label>
                     <input
                       type="text"
                       required
                       value={formProject.title}
                       onChange={(e) => setFormProject({ ...formProject, title: e.target.value })}
                       placeholder="Elektrifiera distributionsledningen..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Projektbeskrivning:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Projektbeskrivning:</label>
                     <textarea
                       required
                       value={formProject.description}
                       onChange={(e) => setFormProject({ ...formProject, description: e.target.value })}
                       placeholder="Skriv målsättning samt omfattning..."
                       rows={3}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Framsteg (0-100%):</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Framsteg (0-100%):</label>
                       <input
                         type="number"
                         min="0"
                         max="100"
                         value={formProject.progress}
                         onChange={(e) => setFormProject({ ...formProject, progress: parseInt(e.target.value) || 0 })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Deadline:</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Deadline:</label>
                       <input
                         type="text"
                         value={formProject.deadline}
                         onChange={(e) => setFormProject({ ...formProject, deadline: e.target.value })}
                         placeholder="Dec 2026"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       />
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-indigo-900 hover:bg-indigo-950 text-white font-bold rounded-lg text-xs mt-4 transition"
+                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white font-semibold rounded-lg text-xs mt-4 transition cursor-pointer"
                   >
                     Spara Projekt
                   </button>
@@ -1789,50 +1789,50 @@ export default function App() {
               {(activeModal === 'addKpi' || activeModal === 'editKpi') && (
                 <form onSubmit={submitKpiForm} className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Mätetalsnamn (KPI):</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Mätetalsnamn (KPI):</label>
                     <input
                       type="text"
                       required
                       value={formKpi.title}
                       onChange={(e) => setFormKpi({ ...formKpi, title: e.target.value })}
                       placeholder="Leveranstid / eNPS index..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Aktuellt värde:</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Aktuellt värde:</label>
                       <input
                         type="text"
                         required
                         value={formKpi.value}
                         onChange={(e) => setFormKpi({ ...formKpi, value: e.target.value })}
                         placeholder="+35%"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Börvärde / Mål:</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Börvärde / Mål:</label>
                       <input
                         type="text"
                         required
                         value={formKpi.target}
                         onChange={(e) => setFormKpi({ ...formKpi, target: e.target.value })}
                         placeholder="+50%"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Category:</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Kategori:</label>
                       <select
                         value={formKpi.category}
                         onChange={(e: any) => setFormKpi({ ...formKpi, category: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       >
                         <option value="financial">💰 Finansiellt</option>
                         <option value="customer">🤝 Kund</option>
@@ -1842,32 +1842,32 @@ export default function App() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Framsteg (0-100%):</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Framsteg (0-100%):</label>
                       <input
                         type="number"
                         min="0"
                         max="100"
                         value={formKpi.progress}
                         onChange={(e) => setFormKpi({ ...formKpi, progress: parseInt(e.target.value) || 0 })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Tidsfrist:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Tidsfrist:</label>
                     <input
                       type="text"
                       value={formKpi.deadline}
                       onChange={(e) => setFormKpi({ ...formKpi, deadline: e.target.value })}
                       placeholder="12 mån / Löpande"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-indigo-500"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-indigo-900 hover:bg-indigo-950 text-white font-bold rounded-lg text-xs mt-4 transition"
+                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white font-semibold rounded-lg text-xs mt-4 transition cursor-pointer"
                   >
                     Spara Mätetal
                   </button>
@@ -1878,105 +1878,105 @@ export default function App() {
               {(activeModal === 'addKata' || activeModal === 'editKata') && (
                 <form onSubmit={submitKataForm} className="space-y-3.5">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">Sessionstitel / Ämne:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Sessionstitel / Ämne:</label>
                     <input
                       type="text"
                       required
                       value={formKata.title}
                       onChange={(e) => setFormKata({ ...formKata, title: e.target.value })}
                       placeholder="Effektivisera laddning vid distributionscentral..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Avstämningsdatum:</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Avstämningsdatum:</label>
                       <input
                         type="text"
                         required
                         value={formKata.date}
                         onChange={(e) => setFormKata({ ...formKata, date: e.target.value })}
                         placeholder="2026-06-16"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">Testprogression (0-100%):</label>
+                      <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">Testprogression (0-100%):</label>
                       <input
                         type="number"
                         min="0"
                         max="100"
                         value={formKata.progress}
                         onChange={(e) => setFormKata({ ...formKata, progress: parseInt(e.target.value) || 0 })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                        className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">1. Önskat tillstånd / Målbild:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">1. Önskat tillstånd / Målbild:</label>
                     <textarea
                       required
                       value={formKata.goal}
                       onChange={(e) => setFormKata({ ...formKata, goal: e.target.value })}
                       placeholder="Var vill vi vara nästa vecka?"
                       rows={2}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">2. Nuvarande läge:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">2. Nuvarande läge:</label>
                     <textarea
                       required
                       value={formKata.current}
                       onChange={(e) => setFormKata({ ...formKata, current: e.target.value })}
                       placeholder="Var står vi exakt nu?"
                       rows={2}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">3. Hinder på vägen:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">3. Hinder på vägen:</label>
                     <textarea
                       required
                       value={formKata.obstacles}
                       onChange={(e) => setFormKata({ ...formKata, obstacles: e.target.value })}
                       placeholder="Vilka utmaningar stoppar oss?"
                       rows={2}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">4. Nästa experiment / Steg:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">4. Nästa experiment / Steg:</label>
                     <textarea
                       required
                       value={formKata.nextStep}
                       onChange={(e) => setFormKata({ ...formKata, nextStep: e.target.value })}
                       placeholder="Vad testar vi i eftermiddag?"
                       rows={2}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-600 block">5. Lärdomar från föregående steg:</label>
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block">5. Lärdomar från föregående steg:</label>
                     <textarea
                       value={formKata.learnings}
                       onChange={(e) => setFormKata({ ...formKata, learnings: e.target.value })}
                       placeholder="Vad lärde vi oss av förra mätningen?"
                       rows={2}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-hidden"
+                      className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-lg p-2.5 text-xs focus:outline-hidden focus:border-slate-400 dark:focus:border-rose-500"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs mt-4 transition shadow-xs"
+                    className="w-full py-2.5 bg-rose-700/90 hover:bg-rose-700 dark:bg-rose-700/85 dark:hover:bg-rose-700 text-white font-semibold rounded-lg text-xs mt-4 transition shadow-xs cursor-pointer"
                   >
                     Spara Kata-Session
                   </button>
@@ -2025,10 +2025,10 @@ export default function App() {
           <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-3xs flex items-center justify-center p-4 z-[9999] flex-col">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-6 text-left animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-xl">
+                <div className="p-2.5 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 rounded-xl">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-display font-bold text-slate-800 dark:text-white">
+                <h3 className="text-sm font-display font-bold text-slate-800 dark:text-slate-100">
                   {confirmModal.title}
                 </h3>
               </div>
@@ -2039,7 +2039,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold select-none cursor-pointer"
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold select-none cursor-pointer transition"
                 >
                   Avbryt
                 </button>
@@ -2049,7 +2049,7 @@ export default function App() {
                     confirmModal.onConfirm();
                     setConfirmModal(prev => ({ ...prev, show: false }));
                   }}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold select-none cursor-pointer shadow-xs transition"
+                  className="px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white rounded-xl text-xs font-semibold select-none cursor-pointer shadow-xs transition"
                 >
                   Bekräfta
                 </button>

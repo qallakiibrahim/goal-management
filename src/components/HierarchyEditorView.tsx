@@ -118,11 +118,11 @@ export default function HierarchyEditorView({
 
   const getPreviewIcon = () => {
     switch (levelType) {
-      case 'goal': return <Target className="w-5 h-5 text-indigo-900" />;
-      case 'objective': return <Flag className="w-5 h-5 text-indigo-900" />;
-      case 'project': return <Briefcase className="w-5 h-5 text-indigo-900" />;
-      case 'initiative': return <Zap className="w-5 h-5 text-indigo-900" />;
-      case 'task': return <CheckCircle className="w-5 h-5 text-indigo-900" />;
+      case 'goal': return <Target className="w-5 h-5 text-slate-700 dark:text-indigo-400" />;
+      case 'objective': return <Flag className="w-5 h-5 text-slate-700 dark:text-indigo-400" />;
+      case 'project': return <Briefcase className="w-5 h-5 text-slate-700 dark:text-indigo-400" />;
+      case 'initiative': return <Zap className="w-5 h-5 text-slate-700 dark:text-indigo-400" />;
+      case 'task': return <CheckCircle className="w-5 h-5 text-slate-700 dark:text-indigo-400" />;
     }
   };
 
@@ -141,10 +141,10 @@ export default function HierarchyEditorView({
       
       {/* Header */}
       <div>
-        <h2 className="text-xl font-display font-bold text-slate-800 tracking-tight">
+        <h2 className="text-xl font-display font-bold text-slate-800 dark:text-slate-100 tracking-tight">
           Visual Hierarchy Editor
         </h2>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
           Bygg och synkronisera noder i företagets måltrappa. Varje projekt och uppgift spåras i en obruten kedja.
         </p>
       </div>
@@ -155,9 +155,9 @@ export default function HierarchyEditorView({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         
         {/* Form panel */}
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-5">
+        <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-5">
           <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Plus className="w-4 h-4 text-indigo-900 dark:text-indigo-400" /> Lägg till en ny nod
+            <Plus className="w-4 h-4 text-slate-700 dark:text-indigo-400" /> Lägg till en ny nod
           </h3>
 
           <div className="space-y-4">
@@ -167,7 +167,7 @@ export default function HierarchyEditorView({
               <select
                 value={levelType}
                 onChange={(e: any) => setLevelType(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-600 font-semibold"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500 font-semibold"
               >
                 <option value="goal">Goal (Steg 1: Långsiktigt Strategiskt Mål)</option>
                 <option value="objective">Objective (Steg 2: Taktisk Målsättning)</option>
@@ -180,11 +180,11 @@ export default function HierarchyEditorView({
             {/* Link Selector - Dynamic depending on level selected */}
             {levelType === 'goal' && (
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">Balanced Scorecard Kategori:</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Balanced Scorecard Kategori:</label>
                 <select
                   value={category}
                   onChange={(e: any) => setCategory(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-650"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
                 >
                   <option value="financial">💰 Finansiella mätetal (Lönsamhet, CO2-kostnad)</option>
                   <option value="customer">🤝 Kundmätetal (NPS, Varumärkesvärde)</option>
@@ -196,11 +196,11 @@ export default function HierarchyEditorView({
 
             {levelType === 'objective' && (
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">Koppla till överordnat Mål (Goal):</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Koppla till överordnat Mål (Goal):</label>
                 <select
                   value={selectedGoalId}
                   onChange={(e) => setSelectedGoalId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-650"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
                 >
                   {goals.map(g => (
                     <option key={g.id} value={g.id}>{g.title} ({g.id})</option>
@@ -212,11 +212,11 @@ export default function HierarchyEditorView({
 
             {levelType === 'project' && (
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">Koppla till överordnad Målsättning (Objective):</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Koppla till överordnad Målsättning (Objective):</label>
                 <select
                   value={selectedObjectiveId}
                   onChange={(e) => setSelectedObjectiveId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-650"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
                 >
                   {objectives.map(o => (
                     <option key={o.id} value={o.id}>{o.title} ({o.id})</option>
@@ -228,11 +228,11 @@ export default function HierarchyEditorView({
 
             {(levelType === 'initiative' || levelType === 'task') && (
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">Koppla till underordnat Projekt:</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Koppla till underordnat Projekt:</label>
                 <select
                   value={selectedProjectId}
                   onChange={(e) => setSelectedProjectId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-650"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
                 >
                   {projects.map(p => (
                     <option key={p.id} value={p.id}>{p.title} ({p.id})</option>
@@ -244,38 +244,38 @@ export default function HierarchyEditorView({
 
             {/* Node Title input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Titel på noden:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Titel på noden:</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="T.ex. Installera laddstolpar / Skicka enkät"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               />
             </div>
 
             {/* Description area */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Beskrivning av insatsen:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Beskrivning av insatsen:</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 placeholder="Detaljera arbetets omfattning, roller och långsiktiga värde..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               />
             </div>
 
             {/* KPI metric */}
             {levelType !== 'task' && (
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">Mätetal / KPI som mäter framstegen:</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Mätetal / KPI som mäter framstegen:</label>
                 <input
                   type="text"
                   value={kpi}
                   onChange={(e) => setKpi(e.target.value)}
                   placeholder="T.ex. Procentandel installerat / Kundbetyg 4.5"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-650"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
             )}
@@ -283,7 +283,7 @@ export default function HierarchyEditorView({
 
           <button
             onClick={handleSave}
-            className="w-full py-3 bg-indigo-900 hover:bg-indigo-950 text-white rounded-xl text-xs font-semibold shadow-xs transition"
+            className="w-full py-3 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl text-xs font-semibold shadow-xs transition cursor-pointer"
           >
             Spara Nod till Mållistan
           </button>
@@ -292,9 +292,9 @@ export default function HierarchyEditorView({
         {/* Preview and database panel */}
         <div className="space-y-6">
           {/* Card Preview */}
-          <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl">
-            <div className="flex items-center gap-1.5 text-indigo-900 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider mb-4">
-              <Sparkles className="w-4 h-4 text-indigo-950 dark:text-indigo-300" />
+          <div className="bg-slate-50/90 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl">
+            <div className="flex items-center gap-1.5 text-slate-700 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider mb-4">
+              <Sparkles className="w-4 h-4 text-slate-700 dark:text-indigo-300" />
               <span>Realtid Förhandsvisning</span>
             </div>
 
@@ -321,7 +321,7 @@ export default function HierarchyEditorView({
               {levelType !== 'task' && (
                 <div className="mt-4 pt-3 border-t border-slate-100/80 dark:border-slate-800 text-xs">
                   <span className="text-[10px] uppercase font-mono font-bold text-slate-400 dark:text-slate-500 block">Kopplat mätetal:</span>
-                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-750 p-2 rounded-lg block mt-1">
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700 p-2 rounded-lg block mt-1">
                     {kpi || 'Ingen KPI mätare definierad'}
                   </span>
                 </div>
@@ -330,15 +330,15 @@ export default function HierarchyEditorView({
           </div>
 
           {/* Import/Export Panel */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl text-left space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-150 dark:border-slate-800 pb-2 mb-2">
+          <div className="bg-white dark:bg-slate-900/75 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl text-left space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200/70 dark:border-slate-800 pb-2 mb-2">
               <h4 className="font-display font-semibold text-xs text-slate-800 dark:text-slate-100 uppercase tracking-wider">
                 Exportera & Importera Data (JSON)
               </h4>
               <div className="flex gap-2">
                 <button
                   onClick={handleExport}
-                  className="p-1 px-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-150 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 transition flex items-center gap-1 cursor-pointer"
+                  className="p-1 px-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 transition flex items-center gap-1 cursor-pointer"
                   title="Kopiera text"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -357,18 +357,18 @@ export default function HierarchyEditorView({
                 onChange={(e) => setImportJson(e.target.value)}
                 placeholder='Klistra in JSON-sträng här för att importera...'
                 rows={4}
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-xs font-mono focus:outline-hidden"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl p-2.5 text-xs font-mono focus:outline-hidden focus:border-indigo-500"
               />
 
               {importStatus && (
-                <div className={`p-2.5 rounded-lg text-xs font-semibold ${importStatus.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-100 dark:border-emerald-800' : 'bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-200 border border-red-100 dark:border-red-800'}`}>
+                <div className={`p-2.5 rounded-lg text-xs font-semibold ${importStatus.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-800'}`}>
                   {importStatus.msg}
                 </div>
               )}
 
               <button
                 onClick={handleImportSubmit}
-                className="w-full py-2 bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-950 dark:hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer"
+                className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs"
               >
                 <Upload className="w-3.5 h-3.5" /> Läs in och skriv över lokalt lager
               </button>

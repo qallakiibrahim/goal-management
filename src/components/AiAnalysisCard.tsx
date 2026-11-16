@@ -360,11 +360,11 @@ export default function AiAnalysisCard({
                 >
                   {/* Step bubble header */}
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-lg uppercase tracking-wider tabular-nums">
+                    <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-indigo-300 text-[10px] font-bold rounded-lg uppercase tracking-wider tabular-nums">
                       Steg {activeStep + 1} av {list.length}
                     </span>
                     {completedSteps[activeStep] && (
-                      <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
+                      <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/30 px-2 py-0.5 rounded-lg border border-emerald-200/60 dark:border-emerald-900/30">
                         <Check className="w-3.5 h-3.5" /> Genomförd
                       </span>
                     )}
@@ -382,17 +382,17 @@ export default function AiAnalysisCard({
 
                   {/* Interactive Action Builder Card */}
                   <div className="pt-2">
-                    <div className="p-4 bg-indigo-500/5 dark:bg-indigo-950/20 rounded-2xl border border-indigo-100/70 dark:border-indigo-900/40 space-y-3">
+                    <div className="p-4 bg-slate-50/90 dark:bg-slate-800/45 rounded-2xl border border-slate-200/70 dark:border-slate-700/80 space-y-3">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <span className="text-[10px] font-bold text-indigo-900 dark:text-indigo-300 block tracking-wider uppercase">Automatisk Inmatningsmall</span>
+                          <span className="text-[10px] font-bold text-slate-700 dark:text-indigo-300 block tracking-wider uppercase">Automatisk Inmatningsmall</span>
                           <span className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
                             {activeStep === 0 && "Inmatning: Nytt lärande-nyckeltal (8.0 h mål, 4.8 h nuvarande) skrivs till databasen."}
                             {activeStep === 1 && "Inmatning: Toyota Kata experimentsession för tidsavsättning i projektet."}
                             {activeStep === 2 && "Inmatning: Kopplat taktiskt fokusprojekt ('Medarbetarlyft och Innovationssprintar')."}
                           </span>
                         </div>
-                        <span className="text-xs text-indigo-500 dark:text-indigo-400 font-mono mt-0.5 font-semibold shrink-0">1-klick</span>
+                        <span className="text-xs text-slate-500 dark:text-indigo-400 font-mono mt-0.5 font-semibold shrink-0">1-klick</span>
                       </div>
 
                       <button
@@ -445,9 +445,9 @@ export default function AiAnalysisCard({
                     aria-label={`Steg ${idx + 1}`}
                     className={`h-1.5 rounded-full transition-all cursor-pointer ${
                       activeStep === idx 
-                        ? 'bg-indigo-900 dark:bg-indigo-500 w-8' 
+                        ? 'bg-slate-800 dark:bg-indigo-500 w-8' 
                         : completedSteps[idx] 
-                          ? 'bg-emerald-400 w-6' 
+                          ? 'bg-emerald-500/80 w-6' 
                           : 'bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 w-6'
                     }`}
                   ></button>
@@ -523,8 +523,8 @@ export default function AiAnalysisCard({
         </div>
 
         {analysis.recommendation && (
-          <div className="md:w-1/3 p-4 bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100/70 dark:border-indigo-900/40 rounded-xl space-y-2.5 flex flex-col justify-center text-left">
-            <span className="font-extrabold text-indigo-900 dark:text-indigo-300 text-[10px] uppercase tracking-wider block">AI-Rekommendation:</span>
+          <div className="md:w-1/3 p-4 bg-slate-50/90 dark:bg-slate-800/45 border border-slate-200/70 dark:border-slate-700/80 rounded-xl space-y-2.5 flex flex-col justify-center text-left">
+            <span className="font-extrabold text-slate-700 dark:text-indigo-300 text-[10px] uppercase tracking-wider block">AI-Rekommendation:</span>
             <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
               {analysis.recommendation}
             </p>

@@ -89,10 +89,10 @@ export default function SettingsView({
       
       {/* Header */}
       <div>
-        <h2 className="text-xl font-display font-bold text-slate-800 tracking-tight">
+        <h2 className="text-xl font-display font-bold text-slate-800 dark:text-slate-100 tracking-tight">
           Systeminställningar & Profil
         </h2>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
           Anpassa användarkonton, språkkrav, notifieringsfrekvenser och återställ systemets data lokalt.
         </p>
       </div>
@@ -103,38 +103,38 @@ export default function SettingsView({
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Left Card: Account profile */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-          <h3 className="font-display font-semibold text-sm text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2.5">
-            <User className="w-4.5 h-4.5 text-indigo-900" /> Profilinställningar
+        <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+          <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+            <User className="w-4.5 h-4.5 text-slate-700 dark:text-indigo-400" /> Profilinställningar
           </h3>
 
           <div className="space-y-3.5">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Ditt Namn:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Ditt Namn:</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">E-postadress:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">E-postadress:</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Din Roll på företaget:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Din Roll på företaget:</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-650"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               >
                 <option value="Administratör">Administratör (Fullständig läs/skrivbehörighet)</option>
                 <option value="Operativ ledare">Operativ ledare</option>
@@ -146,18 +146,18 @@ export default function SettingsView({
         </div>
 
         {/* Right Card: System settings */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-          <h3 className="font-display font-semibold text-sm text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2.5">
-            <Globe className="w-4.5 h-4.5 text-indigo-900" /> Regionala & Notiser
+        <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+          <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+            <Globe className="w-4.5 h-4.5 text-slate-700 dark:text-indigo-400" /> Regionala & Notiser
           </h3>
 
           <div className="space-y-3.5">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Systemets Språk:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Systemets Språk:</label>
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               >
                 <option value="Svenska">Svenska (Standard)</option>
                 <option value="Engelska">Engelska (English)</option>
@@ -165,11 +165,11 @@ export default function SettingsView({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Datumformat:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Datumformat:</label>
               <select
                 value={dateFormat}
                 onChange={(e) => setDateFormat(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               >
                 <option value="YYYY-MM-DD">YYYY-MM-DD (2026-06-16)</option>
                 <option value="DD/MM/YYYY">DD/MM/YYYY (16/06/2026)</option>
@@ -178,11 +178,11 @@ export default function SettingsView({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-600 block">Notisfrekvens:</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-400 block">Notisfrekvens:</label>
               <select
                 value={notificationFrequency}
                 onChange={(e) => setNotificationFrequency(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-hidden"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-2.5 text-sm focus:outline-hidden focus:border-indigo-500"
               >
                 <option value="Dagligen">Dagligen (Sammanställning i inkorgen)</option>
                 <option value="Veckovis">Veckovis (Endast förändringsrapporter på fredagar)</option>
@@ -195,13 +195,13 @@ export default function SettingsView({
         {/* Global Save Button */}
         <div className="col-span-1 md:col-span-2 flex justify-end gap-3.5 items-center">
           {savedStatus && (
-            <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 p-2 px-3 rounded-lg border border-emerald-100">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-300 font-semibold bg-emerald-50 dark:bg-emerald-950/35 p-2 px-3 rounded-lg border border-emerald-200/70 dark:border-emerald-900/50">
               <CheckCircle2 className="w-4 h-4" /> Sparat framgångsrikt!
             </div>
           )}
           <button
             type="submit"
-            className="px-6 py-3 bg-indigo-900 hover:bg-indigo-950 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition whitespace-nowrap shadow-xs"
+            className="px-6 py-3 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition whitespace-nowrap shadow-xs cursor-pointer"
           >
             <Save className="w-4 h-4" /> Spara inställningar
           </button>
@@ -210,11 +210,11 @@ export default function SettingsView({
       </form>
 
       {/* Strategic PDF Report Export Card */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3">
+      <div className="bg-white dark:bg-slate-900/75 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="text-left space-y-1">
             <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-              <FileDown className="w-4.5 h-4.5 text-indigo-700 dark:text-indigo-400" />
+              <FileDown className="w-4.5 h-4.5 text-slate-700 dark:text-indigo-400" />
               Strategisk Statusrapport (PDF)
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xl">
@@ -226,7 +226,7 @@ export default function SettingsView({
               <button
                 type="button"
                 onClick={onExportCsv}
-                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition whitespace-nowrap shadow-xs cursor-pointer"
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition whitespace-nowrap shadow-xs cursor-pointer"
                 title="Exportera data till CSV"
               >
                 <Table className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -238,7 +238,7 @@ export default function SettingsView({
               type="button"
               onClick={handleDownloadPdf}
               disabled={isDownloadingPdf}
-              className="px-5 py-2.5 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition whitespace-nowrap shadow-xs cursor-pointer disabled:opacity-75"
+              className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition whitespace-nowrap shadow-xs cursor-pointer disabled:opacity-75"
               title="Generera och ladda ner PDF-rapport"
             >
               {isDownloadingPdf ? (
@@ -263,19 +263,19 @@ export default function SettingsView({
       </div>
 
       {/* Danger Zone: Nollställ databasen */}
-      <div className="bg-red-50/50 border border-red-200/60 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-8">
+      <div className="bg-rose-50/70 dark:bg-rose-950/25 border border-rose-200/70 dark:border-rose-900/50 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-8">
         <div className="text-left space-y-1">
-          <h4 className="font-display font-semibold text-xs text-red-800 uppercase tracking-wider flex items-center gap-1">
+          <h4 className="font-display font-semibold text-xs text-rose-800 dark:text-rose-300 uppercase tracking-wider flex items-center gap-1">
             <RotateCcw className="w-4.5 h-4.5" /> FARA: Återställ Databasen
           </h4>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             Detta kommer att ta bort alla lokala moduler, nyligen tillagda KPI-mätare och Kata Experiment och återställa systemets startläge.
           </p>
         </div>
         <button
           type="button"
           onClick={handleReset}
-          className="px-4 py-2.5 bg-red-650 hover:bg-red-700 text-white text-xs font-semibold rounded-xl tracking-tight transition whitespace-nowrap self-stretch md:self-auto text-center"
+          className="px-4 py-2.5 bg-rose-700 hover:bg-rose-800 dark:bg-rose-700/90 dark:hover:bg-rose-700 text-white text-xs font-semibold rounded-xl tracking-tight transition whitespace-nowrap self-stretch md:self-auto text-center cursor-pointer shadow-xs"
         >
           Återställ demodata
         </button>

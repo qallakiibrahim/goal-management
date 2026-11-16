@@ -45,7 +45,7 @@ export default function LoginView({
       {/* Top Header */}
       <header className="max-w-7xl mx-auto w-full z-10 flex justify-between items-center opacity-90 py-2">
         <div className="flex items-center gap-2">
-          <div className="p-2.5 bg-indigo-650 rounded-xl text-white shadow-xs">
+          <div className="p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-slate-100 shadow-xs">
             <Target className="w-5 h-5" />
           </div>
           <div>
@@ -57,8 +57,8 @@ export default function LoginView({
             </p>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-full text-[10px] font-mono text-slate-350">
-          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+        <div className="hidden sm:flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-full text-[10px] font-mono text-slate-300">
+          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
           <span>Säker OAuth v2 Miljö</span>
         </div>
       </header>
@@ -109,8 +109,8 @@ export default function LoginView({
               disabled={authState.loading}
               className={`w-full flex items-center justify-between border transition duration-200 cursor-pointer py-3.5 px-5 rounded-2xl text-xs font-semibold ${
                 authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain')))
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border-emerald-500 shadow-lg animate-pulse'
-                  : 'bg-slate-700/40 hover:bg-slate-700/80 border-slate-650 text-slate-300'
+                  ? 'bg-emerald-700 hover:bg-emerald-600 text-white border-emerald-500/70 shadow-lg'
+                  : 'bg-slate-700/40 hover:bg-slate-700/80 border-slate-600 text-slate-300'
               }`}
             >
               <div className="flex items-center gap-2">
@@ -137,9 +137,9 @@ export default function LoginView({
           </div>
 
           {authState.error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-350 rounded-2xl text-left text-xs space-y-3">
-              <span className="font-bold flex items-center gap-1.5 text-red-400 font-display text-xs">
-                <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 animate-pulse" /> Inloggningsfel
+            <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded-2xl text-left text-xs space-y-3">
+              <span className="font-bold flex items-center gap-1.5 text-rose-400 font-display text-xs">
+                <ShieldAlert className="w-4 h-4 shrink-0 text-rose-400" /> Inloggningsfel
               </span>
               
               {authState.error && (typeof authState.error === 'string' && (authState.error === 'auth/unauthorized-domain' || authState.error.includes('unauthorized-domain'))) ? (
@@ -149,13 +149,13 @@ export default function LoginView({
                   </p>
                   
                   <div className="bg-emerald-950/40 border border-emerald-500/25 rounded-xl p-3 text-emerald-300 space-y-1.5 text-[11px]">
-                    <p className="font-semibold text-emerald-200">🚀 Snabb bypass tillgänglig:</p>
+                    <p className="font-semibold text-emerald-200">Snabb bypass tillgänglig:</p>
                     <p>
-                      Klicka på den gröna blinkande knappen <strong>"Börja genast! Starta i Demoläge / Gäst"</strong> ovan för att komma in direkt i appen med fullständigt administratörskonto utan krångliga inställningar.
+                      Klicka på den gröna knappen <strong>&quot;Börja genast! Starta i Demoläge / Gäst&quot;</strong> ovan för att komma in direkt i appen med fullständigt administratörskonto utan krångliga inställningar.
                     </p>
                   </div>
 
-                  <p className="font-semibold text-white pt-1 border-t border-slate-750">Föredrar du att aktivera Google Logga In nu? Gör så här:</p>
+                  <p className="font-semibold text-white pt-1 border-t border-slate-700">Föredrar du att aktivera Google Logga In nu? Gör så här:</p>
                   <ol className="list-decimal pl-4 space-y-1.5 text-slate-300 font-sans text-[10.5px]">
                     <li>Gå till <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer" className="text-indigo-400 font-bold underline hover:text-indigo-300 inline-flex items-center gap-0.5">Firebase Console <ExternalLink className="w-3 h-3 inline" /></a></li>
                     <li>Välj fliken <strong>Authentication</strong> &rarr; klicka på fliken <strong>Settings</strong></li>
@@ -163,7 +163,7 @@ export default function LoginView({
                     <li>Klicka på <strong>Add domain</strong> (Lägg till domän) och lägg till:</li>
                   </ol>
                   
-                  <div className="bg-slate-950 border border-slate-750 rounded-xl p-3 font-mono text-[10px] space-y-2 shadow-inner">
+                  <div className="bg-slate-950 border border-slate-700 rounded-xl p-3 font-mono text-[10px] space-y-2 shadow-inner">
                     <div className="text-slate-400 flex justify-between items-center text-[9px] uppercase tracking-wider font-semibold border-b border-slate-800 pb-1.5">
                       <span>Kopiera din aktuella domän:</span>
                       <span className="text-emerald-400">Aktiv</span>
@@ -195,7 +195,7 @@ export default function LoginView({
           )}
 
           {/* Quick instructions & security policy */}
-          <div className="border-t border-slate-750 pt-5 text-left text-[11px] text-slate-400 space-y-1.5">
+          <div className="border-t border-slate-700 pt-5 text-left text-[11px] text-slate-400 space-y-1.5">
             <button 
               onClick={() => setShowInfo(!showInfo)}
               className="text-indigo-400 font-semibold hover:underline flex items-center gap-1 font-sans cursor-pointer text-xs mb-1"
@@ -207,7 +207,7 @@ export default function LoginView({
               <motion.div 
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="bg-slate-850 p-3 rounded-xl border border-slate-750 leading-relaxed space-y-1.5 text-slate-300 font-mono text-[10px]"
+                className="bg-slate-800 p-3 rounded-xl border border-slate-700 leading-relaxed space-y-1.5 text-slate-300 font-mono text-[10px]"
               >
                 <p>1. När du loggar in med ditt Google-konto gör systemet en slagning mot inbjudningslistan (<code className="bg-slate-800 px-1 rounded">members</code>).</p>
                 <p>2. Om din e-post finns registrerad tas du direkt in med önskad behörighet.</p>

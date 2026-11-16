@@ -76,14 +76,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const getToastBorder = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/95 dark:bg-emerald-950/90 text-emerald-900 dark:text-emerald-100';
+        return 'border-emerald-200/80 dark:border-emerald-800/50 bg-emerald-50/95 dark:bg-slate-900/95 text-emerald-900 dark:text-emerald-200';
       case 'error':
-        return 'border-rose-200 dark:border-rose-800/60 bg-rose-50/95 dark:bg-rose-950/90 text-rose-900 dark:text-rose-100';
+        return 'border-rose-200/80 dark:border-rose-800/50 bg-rose-50/95 dark:bg-slate-900/95 text-rose-900 dark:text-rose-200';
       case 'warning':
-        return 'border-amber-200 dark:border-amber-800/60 bg-amber-50/95 dark:bg-amber-950/90 text-amber-900 dark:text-amber-100';
+        return 'border-amber-200/80 dark:border-amber-800/50 bg-amber-50/95 dark:bg-slate-900/95 text-amber-900 dark:text-amber-200';
       case 'info':
       default:
-        return 'border-indigo-200 dark:border-indigo-800/60 bg-indigo-50/95 dark:bg-indigo-950/90 text-indigo-900 dark:text-indigo-100';
+        return 'border-slate-200/80 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100';
     }
   };
 

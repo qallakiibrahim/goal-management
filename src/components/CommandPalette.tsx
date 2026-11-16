@@ -379,7 +379,7 @@ export default function CommandPalette({
           </div>
 
           {/* Results List */}
-          <div className="p-2 overflow-y-auto flex-1 divide-y divide-slate-50 dark:divide-slate-850">
+          <div className="p-2 overflow-y-auto flex-1 divide-y divide-slate-100/70 dark:divide-slate-800">
             {filteredItems.length === 0 ? (
               <div className="p-8 text-center text-slate-400 dark:text-slate-500 text-xs">
                 Inga resultat matchade &quot;{query}&quot;. Prova ett annat sökord.
@@ -395,15 +395,15 @@ export default function CommandPalette({
                     onMouseEnter={() => setSelectedIndex(idx)}
                     className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition cursor-pointer ${
                       isSelected
-                        ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-200'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850'
+                        ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100'
+                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/45'
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div
                         className={`p-2 rounded-lg shrink-0 ${
                           isSelected
-                            ? 'bg-indigo-900 text-white dark:bg-indigo-600'
+                            ? 'bg-slate-800 text-white dark:bg-indigo-600/85'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                         }`}
                       >
@@ -430,7 +430,7 @@ export default function CommandPalette({
                           {item.badge}
                         </span>
                       )}
-                      {isSelected && <ArrowRight className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
+                      {isSelected && <ArrowRight className="w-3.5 h-3.5 text-slate-600 dark:text-indigo-400" />}
                     </div>
                   </button>
                 );

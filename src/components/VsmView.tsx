@@ -381,11 +381,11 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="p-1 px-2.5 bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 rounded-lg text-[10px] font-bold tracking-wider uppercase">
+            <div className="p-1 px-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-900/40 rounded-lg text-[10px] font-bold tracking-wider uppercase">
               Lean & Six Sigma Engine
             </div>
-            <span className="flex items-center gap-1 text-xs text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/20 px-2 py-0.5 rounded-lg border border-rose-100 dark:border-rose-900/20">
-              <Activity className="w-3 h-3 animate-pulse" /> VSM-Verktyg
+            <span className="flex items-center gap-1 text-xs text-rose-700 dark:text-rose-300 font-bold bg-rose-50/80 dark:bg-rose-950/30 px-2 py-0.5 rounded-lg border border-rose-200/60 dark:border-rose-900/40">
+              <Activity className="w-3 h-3" /> VSM-Verktyg
             </span>
           </div>
           <h2 className="font-display font-black text-2xl text-slate-800 dark:text-slate-100 tracking-tight">
@@ -399,13 +399,13 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
         <div className="flex items-center gap-2">
           <button
             onClick={handleResetToDefaults}
-            className="text-xs px-3 py-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition font-semibold cursor-pointer"
+            className="text-xs px-3 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition font-semibold cursor-pointer"
           >
             Återställ Mallar
           </button>
           <button
             onClick={() => setShowNewStreamModal(true)}
-            className="text-xs px-3.5 py-2 bg-indigo-900 dark:bg-indigo-600 hover:bg-indigo-950 dark:hover:bg-indigo-550 text-white rounded-xl transition font-bold flex items-center gap-1.5 cursor-pointer shadow-sm"
+            className="text-xs px-3.5 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl transition font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
           >
             <Plus className="w-4 h-4" /> Nytt Värdeflöde
           </button>
@@ -416,9 +416,9 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       <AiAnalysisCard type="vsm" goals={goals} projects={projects} />
 
       {/* Stream Selector & Overview */}
-      <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
+      <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="space-y-1 md:max-w-xl">
-          <label className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Aktivt Värdeflöde</label>
+          <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 block tracking-wider">Aktivt Värdeflöde</label>
           <div className="flex flex-wrap gap-2 mt-1.5">
             {streams.map(s => (
               <button
@@ -427,10 +427,10 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   setSelectedStreamId(s.id);
                   setSelectedStepId(s.steps[0]?.id || null);
                 }}
-                className={`px-3.5 py-2 text-xs font-bold rounded-xl transition border text-left ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-xl transition border text-left cursor-pointer ${
                   selectedStreamId === s.id
-                    ? 'bg-indigo-900 border-indigo-900 text-white dark:bg-indigo-600 dark:border-indigo-600'
-                    : 'bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-850 dark:text-slate-300 dark:hover:bg-slate-800'
+                    ? 'bg-slate-800 border-slate-800 text-white dark:bg-indigo-600/85 dark:border-indigo-500'
+                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 dark:bg-slate-800/60 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'
                 }`}
               >
                 {s.name}
@@ -445,7 +445,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
         <div className="flex md:self-end">
           <button
             onClick={() => handleDeleteStream(selectedStreamId)}
-            className="text-xs px-3 py-1.5 border border-red-200 text-red-655 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition font-medium flex items-center gap-1 cursor-pointer"
+            className="text-xs px-3 py-1.5 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition font-medium flex items-center gap-1 cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" /> Radera Flöde
           </button>
@@ -455,42 +455,42 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       {/* Lean VSM Bento Metrics Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1 */}
-        <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-1.5">
+        <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Bearbetningstid (PT)</span>
-            <div className="p-1.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 rounded-lg">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Total Bearbetningstid (PT)</span>
+            <div className="p-1.5 bg-emerald-50 dark:bg-emerald-950/35 text-emerald-600 dark:text-emerald-400 rounded-lg">
               <Clock className="w-4 h-4" />
             </div>
           </div>
           <p className="text-2xl font-black font-display text-slate-800 dark:text-slate-100">
             {metrics.totalPt} h
           </p>
-          <span className="text-[10px] text-slate-400 block leading-tight">
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
             Den faktiska tiden då ett värdeskapande arbete utförs på produkten.
           </span>
         </div>
 
         {/* Metric 2 */}
-        <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-1.5">
+        <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Ledtid (LT)</span>
-            <div className="p-1.5 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 rounded-lg">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Total Ledtid (LT)</span>
+            <div className="p-1.5 bg-indigo-50 dark:bg-indigo-950/35 text-indigo-600 dark:text-indigo-400 rounded-lg">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-black font-display text-indigo-900 dark:text-indigo-400">
+          <p className="text-2xl font-black font-display text-slate-800 dark:text-indigo-300">
             {metrics.totalLt} h
           </p>
-          <span className="text-[10px] text-slate-400 block leading-tight">
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
             Den totala kalendertiden från flödesstart till slutlevererad kundnytta.
           </span>
         </div>
 
         {/* Metric 3 */}
-        <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-1.5">
+        <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Process-Effektivitet (PCE)</span>
-            <div className="p-1.5 bg-indigo-900 text-white rounded-lg">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Process-Effektivitet (PCE)</span>
+            <div className="p-1.5 bg-slate-800 dark:bg-indigo-600/80 text-white rounded-lg">
               <Activity className="w-4 h-4" />
             </div>
           </div>
@@ -502,30 +502,30 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
               {metrics.efficiency < 5 ? '(Hög potential!)' : metrics.efficiency < 15 ? '(Normalt)' : '(Bra flöde)'}
             </span>
           </div>
-          <span className="text-[10px] text-slate-400 block leading-tight">
-            Värde-adderande tidskvot: <code className="bg-slate-50 dark:bg-slate-800 px-1 py-0.2 rounded font-mono">PT / LT</code>. Mål inom industrin är ofta &gt;20%.
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
+            Värde-adderande tidskvot: <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.2 rounded font-mono text-slate-700 dark:text-slate-300">PT / LT</code>. Mål inom industrin är ofta &gt;20%.
           </span>
         </div>
 
         {/* Metric 4 */}
-        <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-1.5">
+        <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">First-Time-Right (RFT)</span>
-            <div className="p-1.5 bg-amber-50 dark:bg-amber-950/35 text-amber-600 rounded-lg">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">First-Time-Right (RFT)</span>
+            <div className="p-1.5 bg-amber-50 dark:bg-amber-950/35 text-amber-600 dark:text-amber-400 rounded-lg">
               <Award className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-black font-display text-amber-500">
+          <p className="text-2xl font-black font-display text-amber-600 dark:text-amber-400">
             {metrics.rolledYield}%
           </p>
-          <span className="text-[10px] text-slate-400 block leading-tight">
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
             Det sammanlagda flödesutbytet utan att omarbetningar behövs på vägen.
           </span>
         </div>
       </div>
 
       {/* Horizontal Value Stream Walkthrough Chart */}
-      <div className="bg-white dark:bg-slate-900/60 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-slate-900/75 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-1.5">
             <GitPullRequest className="text-indigo-600 dark:text-indigo-400 w-4 h-4" />
@@ -535,7 +535,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
           </div>
           <button
             onClick={handleAddNewStep}
-            className="text-xs px-2.5 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-bold border border-indigo-100 dark:border-indigo-850 rounded-xl transition flex items-center gap-1"
+            className="text-xs px-2.5 py-1.5 bg-indigo-50/80 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold border border-indigo-200/70 dark:border-indigo-800 rounded-xl transition flex items-center gap-1 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" /> Lägg till Processteg
           </button>
@@ -561,15 +561,15 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                     }}
                     className={`flex-1 p-4 rounded-xl border text-left cursor-pointer transition-all duration-300 select-none ${
                       isSelected
-                        ? 'bg-indigo-900 text-white border-indigo-900 shadow-md ring-4 ring-indigo-900/10 dark:bg-indigo-650'
-                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-800'
+                        ? 'bg-slate-800 text-white border-slate-800 shadow-md ring-4 ring-slate-800/10 dark:bg-indigo-600/85 dark:border-indigo-500 dark:ring-indigo-500/20'
+                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                     }`}
                   >
                     <div className="flex justify-between items-start gap-1">
                       <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
                         isSelected 
-                          ? 'bg-white/20 text-indigo-100' 
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                          ? 'bg-white/20 text-slate-100' 
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                       }`}>
                         Steg {idx + 1}
                       </span>
@@ -582,36 +582,36 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                     </div>
 
                     <h4 className={`text-xs font-bold font-display mt-2 line-clamp-1 ${
-                      isSelected ? 'text-white' : 'text-slate-850 dark:text-slate-100'
+                      isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'
                     }`}>
                       {step.name}
                     </h4>
 
                     <p className={`text-[10px] mt-1 line-clamp-1 ${
-                      isSelected ? 'text-indigo-200' : 'text-slate-400'
+                      isSelected ? 'text-slate-200' : 'text-slate-400 dark:text-slate-500'
                     }`}>
                       Rolle: <span className="font-semibold">{step.role}</span>
                     </p>
 
                     {/* PT, LT, C/O, Uptime box */}
                     <div className={`grid grid-cols-2 gap-y-1.5 gap-x-3 mt-3 pt-2.5 border-t ${
-                      isSelected ? 'border-white/10 text-indigo-100' : 'border-slate-100 dark:border-slate-800 text-slate-500'
+                      isSelected ? 'border-white/15 text-slate-200' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'
                     } text-[10px] font-mono`}>
                       <div>
-                        <span className="block text-[8px] uppercase tracking-wider text-slate-400">C/T (Cykeltid)</span>
-                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-300'}>{step.processTime}h</strong>
+                        <span className={`block text-[8px] uppercase tracking-wider ${isSelected ? 'text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>C/T (Cykeltid)</span>
+                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-200'}>{step.processTime}h</strong>
                       </div>
                       <div>
-                        <span className="block text-[8px] uppercase tracking-wider text-slate-400">C/O (Ställtid)</span>
-                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-300'}>{step.changeoverTime ?? 0}h</strong>
+                        <span className={`block text-[8px] uppercase tracking-wider ${isSelected ? 'text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>C/O (Ställtid)</span>
+                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-200'}>{step.changeoverTime ?? 0}h</strong>
                       </div>
                       <div>
-                        <span className="block text-[8px] uppercase tracking-wider text-slate-400">Uptime</span>
-                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-300'}>{step.uptime ?? 100}%</strong>
+                        <span className={`block text-[8px] uppercase tracking-wider ${isSelected ? 'text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>Uptime</span>
+                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-200'}>{step.uptime ?? 100}%</strong>
                       </div>
                       <div>
-                        <span className="block text-[8px] uppercase tracking-wider text-slate-400">Ledtid (LT)</span>
-                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-300'}>{step.leadTime}h</strong>
+                        <span className={`block text-[8px] uppercase tracking-wider ${isSelected ? 'text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>Ledtid (LT)</span>
+                        <strong className={isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-200'}>{step.leadTime}h</strong>
                       </div>
                     </div>
 
@@ -619,7 +619,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                     {(step.inventory !== undefined && step.inventory > 0) && (
                       <div className="mt-2 text-right">
                         <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold font-mono ${
-                          isSelected ? 'bg-indigo-950/30 text-indigo-200' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-650 dark:text-rose-400'
+                          isSelected ? 'bg-white/15 text-white' : 'bg-rose-50 dark:bg-rose-950/35 text-rose-700 dark:text-rose-300'
                         }`}>
                           <span>∆ Mellanlager:</span>
                           <strong>{step.inventory} st</strong>
@@ -629,11 +629,11 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
 
                     {/* Quality Rate Bar */}
                     <div className="mt-2.5 space-y-1">
-                      <div className="flex justify-between text-[8px] font-mono uppercase tracking-wider text-slate-400">
+                      <div className={`flex justify-between text-[8px] font-mono uppercase tracking-wider ${isSelected ? 'text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
                         <span>Rätt-Från-Mig (C&A)</span>
-                        <strong className={isSelected ? 'text-emerald-300' : 'text-emerald-600'}>{step.caRate}%</strong>
+                        <strong className={isSelected ? 'text-emerald-300' : 'text-emerald-600 dark:text-emerald-400'}>{step.caRate}%</strong>
                       </div>
-                      <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className={`h-1 w-full rounded-full overflow-hidden ${isSelected ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
                         <div 
                           className={`h-full ${isSelected ? 'bg-emerald-300' : 'bg-emerald-500'}`} 
                           style={{ width: `${step.caRate}%` }}
@@ -645,8 +645,8 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   {/* Arrow connector */}
                   {idx < activeStream.steps.length - 1 && (
                     <div className="flex flex-col items-center shrink-0">
-                      <ChevronRight className="w-5 h-5 text-slate-350 dark:text-slate-650" />
-                      <span className="text-[9px] font-mono text-slate-400 bg-slate-50 dark:bg-slate-850 dark:border dark:border-slate-800 px-1.5 py-0.5 rounded shadow-2xs mt-0.5">
+                      <ChevronRight className="w-5 h-5 text-slate-300 dark:text-slate-600" />
+                      <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700 px-1.5 py-0.5 rounded shadow-2xs mt-0.5">
                         {parseFloat((activeStream.steps[idx+1].leadTime - step.processTime).toFixed(1))}h väntetid
                       </span>
                     </div>
@@ -658,8 +658,8 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
         </div>
 
         {/* Beautiful Timeline Level Chart beneath the stream representation */}
-        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl space-y-2">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Verksamhetsmätning: Ledtidstrappa</span>
+        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 p-4 rounded-xl space-y-2">
+          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Verksamhetsmätning: Ledtidstrappa</span>
           <div className="min-w-[800px] flow-root pt-2">
             <div className="flex items-end h-16 text-center text-[10px] font-mono">
               {activeStream.steps.map((st, sidx) => {
@@ -670,24 +670,24 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                     {/* Process time block */}
                     <div className="flex-1 flex flex-col justify-end items-center h-full group px-1">
                       <div 
-                        className="w-full bg-emerald-500/20 dark:bg-emerald-500/10 border-b-2 border-emerald-500 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold"
+                        className="w-full bg-emerald-600/15 dark:bg-emerald-500/15 border-b-2 border-emerald-600/70 dark:border-emerald-500/70 flex items-center justify-center text-emerald-800 dark:text-emerald-300 font-bold"
                         style={{ height: `${Math.max(15, Math.min(100, (st.processTime / metrics.totalLt) * 150))}%` }}
                       >
                         {st.processTime}h
                       </div>
-                      <span className="text-[8px] text-slate-400 uppercase mt-1 leading-none">PT</span>
+                      <span className="text-[8px] text-slate-400 dark:text-slate-500 uppercase mt-1 leading-none">PT</span>
                     </div>
 
                     {/* Wait time block */}
                     {sidx < activeStream.steps.length - 1 && (
                       <div className="w-16 flex flex-col justify-end items-center h-full px-1">
                         <div 
-                          className="w-full bg-rose-500/20 dark:bg-rose-500/15 border-t-2 border-rose-500 flex items-center justify-center text-rose-700 dark:text-rose-450 font-semibold"
+                          className="w-full bg-rose-600/15 dark:bg-rose-500/15 border-t-2 border-rose-600/70 dark:border-rose-500/70 flex items-center justify-center text-rose-800 dark:text-rose-300 font-semibold"
                           style={{ height: `${Math.max(15, Math.min(100, (wt / metrics.totalLt) * 150))}%` }}
                         >
                           {parseFloat(wt.toFixed(1))}h
                         </div>
-                        <span className="text-[8px] text-slate-400 uppercase mt-1 leading-none">Väntan</span>
+                        <span className="text-[8px] text-slate-400 dark:text-slate-500 uppercase mt-1 leading-none">Väntan</span>
                       </div>
                     )}
                   </React.Fragment>
@@ -702,7 +702,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       {activeStep && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* View Details panel */}
-          <div className="lg:col-span-2 bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex flex-col justify-between">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between">
             <AnimatePresence mode="wait">
               {!isEditingStep ? (
                 <motion.div
@@ -714,8 +714,8 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Valt processteg</span>
-                      <h3 className="font-display font-bold text-lg text-slate-850 dark:text-slate-100">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Valt processteg</span>
+                      <h3 className="font-display font-bold text-lg text-slate-800 dark:text-slate-100">
                         {activeStep.name}
                       </h3>
                     </div>
@@ -725,13 +725,13 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           setStepForm({ ...activeStep });
                           setIsEditingStep(true);
                         }}
-                        className="text-xs px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl font-bold text-slate-700 dark:text-slate-350 transition cursor-pointer"
+                        className="text-xs px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 transition cursor-pointer"
                       >
                         Redigera tider & data
                       </button>
                       <button
                         onClick={() => handleDeleteStep(activeStep.id)}
-                        className="p-2 border border-red-100 hover:bg-red-50 text-red-550 rounded-xl transition cursor-pointer"
+                        className="p-2 border border-rose-200/80 dark:border-rose-900/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 rounded-xl transition cursor-pointer"
                         title="Radera detta steg"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -740,36 +740,36 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   </div>
 
                   {/* Flow KPIs Detail cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-slate-50/80 dark:bg-slate-800/45 p-4 rounded-xl border border-slate-200/70 dark:border-slate-700/80">
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Cykeltid (C/T)</span>
+                      <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold block">Cykeltid (C/T)</span>
                       <p className="text-sm font-black text-slate-800 dark:text-slate-100 font-mono mt-0.5">{activeStep.processTime} h</p>
                     </div>
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Ledtid (LT)</span>
+                      <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold block">Ledtid (LT)</span>
                       <p className="text-sm font-black text-slate-800 dark:text-slate-100 font-mono mt-0.5">{activeStep.leadTime} h</p>
                     </div>
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Kvalitetsgrad (C&A)</span>
+                      <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold block">Kvalitetsgrad (C&A)</span>
                       <p className="text-sm font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">{activeStep.caRate}%</p>
                     </div>
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Ställtid (C/O)</span>
+                      <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold block">Ställtid (C/O)</span>
                       <p className="text-sm font-black text-slate-800 dark:text-slate-100 font-mono mt-0.5">{activeStep.changeoverTime ?? 0} h</p>
                     </div>
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Tillgänglighet (Uptime)</span>
-                      <p className="text-sm font-black text-indigo-650 dark:text-indigo-400 font-mono mt-0.5">{activeStep.uptime ?? 100}%</p>
+                      <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold block">Tillgänglighet (Uptime)</span>
+                      <p className="text-sm font-black text-indigo-600 dark:text-indigo-400 font-mono mt-0.5">{activeStep.uptime ?? 100}%</p>
                     </div>
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block">Mellanlager (∆ Kö)</span>
-                      <p className="text-sm font-black text-rose-600 dark:text-rose-450 font-mono mt-0.5">{activeStep.inventory ?? 0} st</p>
+                      <span className="text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold block">Mellanlager (∆ Kö)</span>
+                      <p className="text-sm font-black text-rose-600 dark:text-rose-400 font-mono mt-0.5">{activeStep.inventory ?? 0} st</p>
                     </div>
                   </div>
 
                   {/* Waste detection analysis */}
                   <div className="space-y-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Verksamhetsanalys: Slöseridetektering (Muda/Waste)</span>
+                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Verksamhetsanalys: Slöseridetektering (Muda/Waste)</span>
                     <div className={`p-4.5 rounded-xl border flex gap-3 ${getWasteBadgeStyle(activeStep.wasteType)}`}>
                       <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                       <div className="space-y-1">
@@ -787,20 +787,20 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   </div>
 
                   {/* Strategic Action Plan Connector (Launch Improve Project!) */}
-                  <div className="p-4 bg-indigo-500/5 dark:bg-indigo-950/10 border border-indigo-100/50 dark:border-indigo-900/20 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="p-4 bg-indigo-50/60 dark:bg-indigo-950/25 border border-indigo-200/60 dark:border-indigo-900/40 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1 md:max-w-lg">
                       <div className="flex items-center gap-1.5">
                         <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                        <span className="text-[10px] font-bold text-indigo-950 dark:text-indigo-305 uppercase tracking-wider">Flödesoptimering / VSM-Initiativ</span>
+                        <span className="text-[10px] font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">Flödesoptimering / VSM-Initiativ</span>
                       </div>
-                      <p className="text-[11px] text-slate-650 dark:text-slate-400 leading-relaxed">
+                      <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
                         Har ni upptäckt ett högt slöseri eller långa köer? Koppla eller lansera ett helt nytt **strategiskt operativt projekt** som direkt adresserar detta steg som en del av verksamhetens taktförbättring!
                       </p>
                     </div>
                     
                     <button
                       onClick={openInitiateProject}
-                      className="whitespace-nowrap text-xs px-4 py-2.5 bg-indigo-900 dark:bg-indigo-600 hover:bg-slate-900 dark:hover:bg-indigo-500 text-white rounded-xl font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                      className="whitespace-nowrap text-xs px-4 py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Briefcase className="w-4 h-4" /> Starta Förbättringsprojekt
                     </button>
@@ -816,13 +816,13 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   className="space-y-4"
                 >
                   <div className="flex items-center justify-between border-b pb-3 border-slate-100 dark:border-slate-800">
-                    <h3 className="font-display font-bold text-sm text-indigo-900 dark:text-indigo-400">
+                    <h3 className="font-display font-bold text-sm text-slate-800 dark:text-indigo-300">
                       Redigera processteg: {activeStep.name}
                     </h3>
                     <button
                       type="button"
                       onClick={() => setIsEditingStep(false)}
-                      className="text-xs px-2.5 py-1 text-slate-500 border border-slate-200 dark:border-slate-800 dark:text-slate-400 rounded-lg hover:bg-slate-50"
+                      className="text-xs px-2.5 py-1 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                     >
                       Avbryt
                     </button>
@@ -831,18 +831,18 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   {stepForm && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1 col-span-2">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Stegnamn:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Stegnamn:</label>
                         <input
                           type="text"
                           required
                           value={stepForm.name ?? ''}
                           onChange={e => setStepForm({ ...stepForm, name: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Cykeltid (C/T) i timmar:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Cykeltid (C/T) i timmar:</label>
                         <input
                           type="number"
                           step="any"
@@ -850,12 +850,12 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           min="0.01"
                           value={stepForm.processTime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, processTime: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500 font-mono"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Ställtid (C/O) i timmar:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Ställtid (C/O) i timmar:</label>
                         <input
                           type="number"
                           step="any"
@@ -863,12 +863,12 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           min="0"
                           value={stepForm.changeoverTime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, changeoverTime: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500 font-mono"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Tillgänglighet (Uptime %) 0-100:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Tillgänglighet (Uptime %) 0-100:</label>
                         <input
                           type="number"
                           min="0"
@@ -876,24 +876,24 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           required
                           value={stepForm.uptime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, uptime: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500 font-mono"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Mellanlager i kö (∆) i st:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Mellanlager i kö (∆) i st:</label>
                         <input
                           type="number"
                           min="0"
                           required
                           value={stepForm.inventory ?? ''}
                           onChange={e => setStepForm({ ...stepForm, inventory: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500 font-mono"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Total Ledtid (LT) i timmar:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Total Ledtid (LT) i timmar:</label>
                         <input
                           type="number"
                           step="any"
@@ -901,12 +901,12 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           min="0.05"
                           value={stepForm.leadTime ?? ''}
                           onChange={e => setStepForm({ ...stepForm, leadTime: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500 font-mono"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Kvalitetsgrad (C&A %) 0-100:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Kvalitetsgrad (C&A %) 0-100:</label>
                         <input
                           type="number"
                           min="0"
@@ -914,27 +914,27 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                           required
                           value={stepForm.caRate ?? ''}
                           onChange={e => setStepForm({ ...stepForm, caRate: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-mono"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500 font-mono"
                         />
                       </div>
 
                       <div className="space-y-1 col-span-2">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Ansvarig roll/aktör:</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Ansvarig roll/aktör:</label>
                         <input
                           type="text"
                           required
                           value={stepForm.role ?? ''}
                           onChange={e => setStepForm({ ...stepForm, role: e.target.value })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500"
                         />
                       </div>
 
                       <div className="space-y-1 col-span-2">
-                        <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Huvudsaklig slöserityp (Muda/Waste):</label>
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Huvudsaklig slöserityp (Muda/Waste):</label>
                         <select
                           value={stepForm.wasteType ?? 'none'}
                           onChange={e => setStepForm({ ...stepForm, wasteType: e.target.value as any })}
-                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900 font-semibold"
+                          className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500 font-semibold"
                         >
                           <option value="none">Inget slöseri (Maximalt värdeskapande)</option>
                           <option value="overproduction">Överproduktion (Skapa mer än vad efterfrågas)</option>
@@ -950,14 +950,14 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
 
                       {(stepForm.wasteType ?? 'none') !== 'none' && (
                         <div className="space-y-1 col-span-2">
-                          <label className="text-xs font-bold text-slate-600 dark:text-slate-350">Beskrivning av flaskhals / slöseri:</label>
+                          <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Beskrivning av flaskhals / slöseri:</label>
                           <textarea
                             required
                             rows={2}
                             value={stepForm.wasteDescription ?? ''}
                             onChange={e => setStepForm({ ...stepForm, wasteDescription: e.target.value })}
                             placeholder="Hur tar sig detta slöseri uttryck i vardagen?"
-                            className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
+                            className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:outline-hidden focus:border-indigo-500"
                           />
                         </div>
                       )}
@@ -967,7 +967,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-2.5 bg-indigo-900 hover:bg-slate-900 text-white font-bold text-xs rounded-xl transition cursor-pointer"
+                      className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
                     >
                       Spara Processteg
                     </button>
@@ -978,24 +978,24 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
           </div>
 
           {/* Value Stream Coach recommendation panel */}
-          <div className="bg-white dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-slate-900/75 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-              <Sparkles className="w-4.5 h-4.5 text-amber-500 animate-pulse" />
+              <Sparkles className="w-4.5 h-4.5 text-amber-500" />
               <h3 className="font-display font-semibold text-sm text-slate-800 dark:text-slate-100">
                 Flödescoachning (Lean AI Tips)
               </h3>
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="bg-amber-500/5 border border-amber-500/10 p-3.5 rounded-xl space-y-1.5 text-[11px]">
-                <span className="font-extrabold text-amber-605 block uppercase tracking-wider text-[9px]">Gällande strategi:</span>
-                <p className="text-slate-650 dark:text-slate-350 leading-relaxed">
-                  Detta värdeflödes ledtidseffektivitet är <strong className="text-indigo-900 dark:text-indigo-400 font-black">{metrics.efficiency}%</strong>. Det betyder att för varje arbetad timme vilar flödet i snitt i <strong className="text-rose-600 font-bold">{parseFloat((100 / (metrics.efficiency || 1) - 1).toFixed(1))} timmar</strong>.
+              <div className="bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200/60 dark:border-amber-900/40 p-3.5 rounded-xl space-y-1.5 text-[11px]">
+                <span className="font-extrabold text-amber-800 dark:text-amber-300 block uppercase tracking-wider text-[9px]">Gällande strategi:</span>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                  Detta värdeflödes ledtidseffektivitet är <strong className="text-slate-900 dark:text-indigo-300 font-black">{metrics.efficiency}%</strong>. Det betyder att för varje arbetad timme vilar flödet i snitt i <strong className="text-rose-700 dark:text-rose-400 font-bold">{parseFloat((100 / (metrics.efficiency || 1) - 1).toFixed(1))} timmar</strong>.
                 </p>
               </div>
 
-              <div className="space-y-3 font-sans leading-relaxed text-slate-650 dark:text-slate-350">
-                <span className="font-bold text-xs text-slate-800 dark:text-slate-200 block">Identifierat fokusprojekt:</span>
+              <div className="space-y-3 font-sans leading-relaxed text-slate-600 dark:text-slate-300">
+                <span className="font-bold text-xs text-slate-800 dark:text-slate-100 block">Identifierat fokusprojekt:</span>
                 
                 {metrics.efficiency < 10 ? (
                   <p>
@@ -1007,7 +1007,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   </p>
                 )}
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg text-[11px] leading-normal italic text-slate-505">
+                <div className="p-3 bg-slate-50/80 dark:bg-slate-800/45 border border-slate-200/70 dark:border-slate-700/80 rounded-lg text-[11px] leading-normal italic text-slate-500 dark:text-slate-400">
                   "Regeln inom Lean är enkel: det handlar inte om att springa snabbare, utan om att eliminera den tid då ingen produkt eller information rör sig framåt i värdekedjan."
                 </div>
               </div>
@@ -1017,7 +1017,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       )}
 
       {/* Methodology Guide Segment based on user guidelines */}
-      <div className="bg-white dark:bg-slate-900/60 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs space-y-4 my-6">
+      <div className="bg-white dark:bg-slate-900/75 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4 my-6">
         <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <HelpCircle className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
           <h3 className="font-display font-extrabold text-sm text-slate-800 dark:text-slate-100">
@@ -1025,10 +1025,10 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs leading-relaxed text-slate-650 dark:text-slate-400">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
           <div className="space-y-2 text-left">
-            <h4 className="font-bold text-slate-850 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
-              <span className="p-1 px-1.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-455 rounded font-mono">VSM</span> 
+            <h4 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+              <span className="p-1 px-1.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded font-mono">VSM</span> 
               Vad är VSM?
             </h4>
             <p>
@@ -1037,8 +1037,8 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
           </div>
 
           <div className="space-y-2 text-left">
-            <h4 className="font-bold text-slate-850 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
-              <span className="p-1 px-1.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-455 rounded font-mono">KPI</span> 
+            <h4 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+              <span className="p-1 px-1.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded font-mono">KPI</span> 
               Begrepp i flödet
             </h4>
             <ul className="space-y-1 list-disc list-inside">
@@ -1050,24 +1050,24 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
           </div>
 
           <div className="space-y-2 text-left">
-            <h4 className="font-bold text-slate-850 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
-              <span className="p-1 px-1.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-455 rounded font-mono">PCE</span> 
+            <h4 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+              <span className="p-1 px-1.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded font-mono">PCE</span> 
               Flödeseffektivitet (PCE)
             </h4>
             <div className="space-y-1.5 font-sans">
               <div className="flex items-center gap-2">
-                <span className="px-1.5 py-0.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 font-mono font-bold rounded">&lt; 5%</span>
+                <span className="px-1.5 py-0.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-mono font-bold rounded">&lt; 5%</span>
                 <span>Mycket slöseri (ledtiden styrs av lager).</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-mono font-bold rounded">5 - 15%</span>
+                <span className="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-mono font-bold rounded">5 - 15%</span>
                 <span>Standard industriellt utflöde.</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/45 text-emerald-700 dark:text-emerald-400 font-mono font-bold rounded">&gt; 15%</span>
+                <span className="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/45 text-emerald-700 dark:text-emerald-300 font-mono font-bold rounded">&gt; 15%</span>
                 <span>Lean i världsklass (minimal väntetid i köer).</span>
               </div>
-              <p className="text-[10px] italic text-slate-500 mt-1 block">
+              <p className="text-[10px] italic text-slate-500 dark:text-slate-400 mt-1 block">
                 💡 Sänk ledtiden radikalt genom att angripa lager och köer mellan stegen, snarare än att tvinga operatörer att springa snabbare!
               </p>
             </div>
@@ -1078,20 +1078,20 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       {/* MODAL: Launching new custom stream */}
       <AnimatePresence>
         {showNewStreamModal && (
-          <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-3xs flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200"
+              className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800"
             >
               <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
-                <h3 className="font-display font-bold text-sm text-indigo-900 dark:text-indigo-400">
+                <h3 className="font-display font-bold text-sm text-slate-800 dark:text-slate-100">
                   Lägg till kundanpassat Värdeflöde
                 </h3>
                 <button
                   onClick={() => setShowNewStreamModal(false)}
-                  className="p-1 px-2.5 bg-slate-50 dark:bg-slate-800 text-slate-500 rounded-lg text-xs hover:bg-slate-100"
+                  className="p-1 px-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg text-xs hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
                 >
                   Avbryt
                 </button>
@@ -1099,31 +1099,31 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
 
               <form onSubmit={handleCreateNewStream} className="space-y-4 text-left">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-650 dark:text-slate-350">Namn på värdeflödet / processen:</label>
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Namn på värdeflödet / processen:</label>
                   <input
                     type="text"
                     required
                     placeholder="t.ex. Rekryteringsprocess eller Onboarding"
                     value={newStreamName}
                     onChange={e => setNewStreamName(e.target.value)}
-                    className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl"
+                    className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:outline-hidden focus:border-indigo-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-650 dark:text-slate-350">Beskrivning av syfte och räckvidd:</label>
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Beskrivning av syfte och räckvidd:</label>
                   <textarea
                     rows={3}
                     placeholder="Beskriv kort flödestrigger och slutleverabel..."
                     value={newStreamDescription}
                     onChange={e => setNewStreamDescription(e.target.value)}
-                    className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl"
+                    className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:outline-hidden focus:border-indigo-500"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-indigo-900 hover:bg-slate-900 text-white font-bold text-xs rounded-xl transition"
+                  className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white font-bold text-xs rounded-xl transition cursor-pointer shadow-xs"
                 >
                   Skapa Flödesmall & Generera Steg
                 </button>
@@ -1136,23 +1136,23 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       {/* MODAL: Launching a real strategic Project from a VSM bottleneck step */}
       <AnimatePresence>
         {showInitiateProjectModal && activeStep && (
-          <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-3xs flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-200 text-left"
+              className="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 text-left"
             >
               <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
                 <div className="flex items-center gap-1.5">
-                  <Briefcase className="w-4 h-4 text-indigo-700" />
-                  <h3 className="font-display font-bold text-sm text-indigo-900 dark:text-indigo-400">
+                  <Briefcase className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <h3 className="font-display font-bold text-sm text-slate-800 dark:text-slate-100">
                     Lansera Strategiskt Projekt från VSM
                   </h3>
                 </div>
                 <button
                   onClick={() => setShowInitiateProjectModal(false)}
-                  className="p-1 px-2.5 bg-slate-50 dark:bg-slate-800 text-slate-500 rounded-lg text-xs hover:bg-slate-100"
+                  className="p-1 px-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg text-xs hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
                 >
                   Stäng
                 </button>
@@ -1160,7 +1160,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
 
               {projectCreatedStatus ? (
                 <div className="py-8 flex flex-col items-center justify-center text-center space-y-3">
-                  <div className="p-3 bg-emerald-100 rounded-full text-emerald-700 shadow-sm animate-bounce">
+                  <div className="p-3 bg-emerald-100 dark:bg-emerald-950/50 rounded-full text-emerald-700 dark:text-emerald-300 shadow-xs">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <div>
@@ -1172,39 +1172,39 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                 </div>
               ) : (
                 <form onSubmit={handleInitiateProjectSubmit} className="space-y-4">
-                  <div className="p-3 bg-indigo-50 dark:bg-indigo-950/20 rounded-xl text-xs space-y-1 block border border-indigo-100/50 dark:border-indigo-900/30">
-                    <span className="font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-widest text-[9px] block">Detekterad koppling:</span>
+                  <div className="p-3 bg-indigo-50/70 dark:bg-indigo-950/30 rounded-xl text-xs space-y-1 block border border-indigo-200/60 dark:border-indigo-900/40 text-slate-700 dark:text-slate-200">
+                    <span className="font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-widest text-[9px] block">Detekterad koppling:</span>
                     Värdeflödesteg: <strong>{activeStep.name}</strong> • Slöserityp: <strong>{getWasteLabel(activeStep.wasteType)}</strong>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-650 dark:text-slate-350">Projektnamn:</label>
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Projektnamn:</label>
                     <input
                       type="text"
                       required
                       value={initiateProjectTitle}
                       onChange={e => setInitiateProjectTitle(e.target.value)}
-                      className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
+                      className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-650 dark:text-slate-350">Beskrivning av åtgärder / räckvidd:</label>
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Beskrivning av åtgärder / räckvidd:</label>
                     <textarea
                       required
                       rows={4}
                       value={initiateProjectDesc}
                       onChange={e => setInitiateProjectDesc(e.target.value)}
-                      className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
+                      className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-655 dark:text-slate-350">Koppla till strategisk målsättning (Objective):</label>
+                    <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Koppla till strategisk målsättning (Objective):</label>
                     <select
                       value={linkedObjectiveId}
                       onChange={e => setLinkedObjectiveId(e.target.value)}
-                      className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl focus:outline-indigo-900"
+                      className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-xl focus:outline-hidden focus:border-indigo-500"
                     >
                       <option value="">-- Ingen koppling (Skapa fristående projekt) --</option>
                       {objectives.map(obj => (
@@ -1213,16 +1213,16 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                         </option>
                       ))}
                     </select>
-                    <p className="text-[10px] text-slate-400 mt-1">
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
                       Genom att välja en målsättning kommer projektet automatiskt positionera sig i din **Interaktiva Målkedja** på dashboards!
                     </p>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-indigo-950 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-md transition"
+                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer"
                   >
-                    Bekräfta och lanserar förbättringsprojekt 🚀
+                    Bekräfta och lanserar förbättringsprojekt
                   </button>
                 </form>
               )}
@@ -1232,13 +1232,13 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
       </AnimatePresence>
 
       {vsmConfirm.show && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-3xs flex items-center justify-center p-4 z-[9999] flex-col">
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-[9999] flex-col">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-6 text-left animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-xl">
+              <div className="p-2.5 bg-rose-50 dark:bg-rose-950/35 text-rose-600 dark:text-rose-400 rounded-xl">
                 <AlertCircle className="w-5 h-5" />
               </div>
-              <h3 className="text-sm font-display font-bold text-slate-800 dark:text-white">
+              <h3 className="text-sm font-display font-bold text-slate-800 dark:text-slate-100">
                 {vsmConfirm.title}
               </h3>
             </div>
@@ -1259,7 +1259,7 @@ export default function VsmView({ goals, objectives, projects, onAddProject }: V
                   vsmConfirm.onConfirm();
                   setVsmConfirm(prev => ({ ...prev, show: false }));
                 }}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold select-none cursor-pointer shadow-xs transition"
+                className="px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white rounded-xl text-xs font-bold select-none cursor-pointer shadow-xs transition"
               >
                 Bekräfta
               </button>

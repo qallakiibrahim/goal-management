@@ -139,19 +139,19 @@ export default function KanoCtqView({
   return (
     <div className="space-y-6" id="kanoCtqView">
       {/* Overview Card */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs text-left">
+      <div className="bg-white dark:bg-slate-900/75 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs text-left">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
-            <span className="text-[10px] uppercase tracking-wider font-extrabold text-indigo-900 dark:text-indigo-400 block mb-1">
+            <span className="text-[10px] uppercase tracking-wider font-extrabold text-indigo-700 dark:text-indigo-400 block mb-1">
               Fokus: Kundcentrerat Måluppsättande & Kravanalys
             </span>
-            <h2 className="text-xl font-display font-bold text-slate-850 dark:text-white">
+            <h2 className="text-xl font-display font-bold text-slate-800 dark:text-slate-100">
               Kano Model & Critical to Quality (CTQ)
             </h2>
           </div>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-900 hover:bg-indigo-950 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer select-none"
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer select-none"
           >
             <Plus className="w-4 h-4" />
             Ny CTQ/Kano-specifikation
@@ -166,26 +166,26 @@ export default function KanoCtqView({
         </p>
 
         {/* Dynamic Synergy Explainer Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100 dark:border-slate-850">
-          <div className="bg-slate-50 dark:bg-slate-950/20 p-4 rounded-2xl border border-slate-100 dark:border-slate-850">
-            <div className="text-[10px] font-bold text-indigo-905 dark:text-indigo-400 uppercase tracking-wider mb-2">Steg 1: VOC</div>
-            <p className="font-display font-bold text-xs text-slate-800 dark:text-white mb-1">Voice of Customer</p>
-            <p className="text-[11px] text-slate-500 leading-relaxed">Kundens informella och ibland otydliga önskemål eller klagomål.</p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-200/70 dark:border-slate-800">
+          <div className="bg-slate-50/80 dark:bg-slate-800/45 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-700/80">
+            <div className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider mb-2">Steg 1: VOC</div>
+            <p className="font-display font-bold text-xs text-slate-800 dark:text-slate-100 mb-1">Voice of Customer</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Kundens informella och ibland otydliga önskemål eller klagomål.</p>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-950/20 p-4 rounded-2xl border border-slate-100 dark:border-slate-850">
-            <div className="text-[10px] font-bold text-indigo-905 dark:text-indigo-400 uppercase tracking-wider mb-2">Steg 2: Driver</div>
-            <p className="font-display font-bold text-xs text-slate-800 dark:text-white mb-1">CTQ Driver</p>
-            <p className="text-[11px] text-slate-500 leading-relaxed">Det underliggande behovet eller drivkraften som kunden egentligen värdesätter.</p>
+          <div className="bg-slate-50/80 dark:bg-slate-800/45 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-700/80">
+            <div className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider mb-2">Steg 2: Driver</div>
+            <p className="font-display font-bold text-xs text-slate-800 dark:text-slate-100 mb-1">CTQ Driver</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Det underliggande behovet eller drivkraften som kunden egentligen värdesätter.</p>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-950/20 p-4 rounded-2xl border border-slate-100 dark:border-slate-850">
-            <div className="text-[10px] font-bold text-indigo-905 dark:text-indigo-400 uppercase tracking-wider mb-2">Steg 3: CTQ Spec</div>
-            <p className="font-display font-bold text-xs text-slate-800 dark:text-white mb-1">Mätbar Specifikation</p>
-            <p className="text-[11px] text-slate-500 leading-relaxed">Ett konkret, mätbart och tekniskt gränsvärde som måste uppnås för att tillfredsställa behovet.</p>
+          <div className="bg-slate-50/80 dark:bg-slate-800/45 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-700/80">
+            <div className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider mb-2">Steg 3: CTQ Spec</div>
+            <p className="font-display font-bold text-xs text-slate-800 dark:text-slate-100 mb-1">Mätbar Specifikation</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Ett konkret, mätbart och tekniskt gränsvärde som måste uppnås för att tillfredsställa behovet.</p>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-950/20 p-4 rounded-2xl border border-slate-100 dark:border-slate-850 border-l-2 border-l-emerald-500 dark:border-l-emerald-600">
+          <div className="bg-emerald-50/50 dark:bg-emerald-950/25 p-4 rounded-2xl border border-emerald-200/70 dark:border-emerald-900/50">
             <div className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-2">Resultat: Goal Alignment</div>
-            <p className="font-display font-bold text-xs text-slate-800 dark:text-white mb-1">Målkalibrering</p>
-            <p className="text-[11px] text-slate-500 leading-relaxed">Koppla mätvärdet direkt som en KPI på dina strategiska mål. Nu vet du <strong>varför</strong> målet finns!</p>
+            <p className="font-display font-bold text-xs text-slate-800 dark:text-slate-100 mb-1">Målkalibrering</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Koppla mätvärdet direkt som en KPI på dina strategiska mål. Nu vet du <strong>varför</strong> målet finns!</p>
           </div>
         </div>
       </div>
@@ -197,14 +197,14 @@ export default function KanoCtqView({
       {showAddForm && (
         <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md text-left space-y-5 animate-in fade-in slide-in-from-top-5 duration-200">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-            <h3 className="text-sm font-display font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
+            <h3 className="text-sm font-display font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
               Ny Kravanalys: Från VOC till Mätbar KPI
             </h3>
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="text-slate-400 hover:text-slate-600 p-1"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 text-xs font-medium cursor-pointer"
             >
               Avbryt
             </button>
@@ -213,7 +213,7 @@ export default function KanoCtqView({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Column 1: Voice of Customer */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-350 block">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
                 1. Voice of Customer (VOC) <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -221,16 +221,16 @@ export default function KanoCtqView({
                 onChange={(e) => setVoc(e.target.value)}
                 rows={3}
                 placeholder="Ex. 'Jag blir så arg när mål vi har lagt in försvinner efter att vi laddat om sidan, eller när det inte synkas automatiskt!'"
-                className="w-full bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-white focus:outline-hidden focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-indigo-500"
               />
-              <span className="text-[10px] text-slate-400 block leading-tight">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
                 Användarens ord eller direkt feedback från fältet.
               </span>
             </div>
 
             {/* Column 2: Driver */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-350 block">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
                 2. Identifierad Drivkraft (Driver) <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -238,16 +238,16 @@ export default function KanoCtqView({
                 onChange={(e) => setDriver(e.target.value)}
                 rows={3}
                 placeholder="Ex. 'Säker datalagring och realtidssynk.'"
-                className="w-full bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-white focus:outline-hidden focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-indigo-500"
               />
-              <span className="text-[10px] text-slate-400 block leading-tight">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
                 Vad är den egentliga drivkraften kunden eftersträvar?
               </span>
             </div>
 
             {/* Column 3: Specification */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-350 block">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
                 3. CTQ Specifikation (Mätbar KPI) <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -255,22 +255,22 @@ export default function KanoCtqView({
                 onChange={(e) => setSpecification(e.target.value)}
                 rows={3}
                 placeholder="Ex. '100% automatisk molnsynkning till Firestore eller lokal fallback vid nätverksproblem, synkstatus visas inom 0.5 sekunder.'"
-                className="w-full bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-800 dark:text-white focus:outline-hidden focus:border-indigo-600"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-indigo-500"
               />
-              <span className="text-[10px] text-slate-400 block leading-tight">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
                 Det konkreta kravet som går att mäta, testa och verifiera.
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-slate-100 dark:border-slate-850">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-slate-100 dark:border-slate-800">
             {/* Kano Model Scorings */}
-            <div className="space-y-4 bg-slate-50 dark:bg-slate-950/10 p-4 rounded-2xl border border-slate-150 dark:border-slate-850">
-              <h4 className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-                <Scale className="w-4 h-4 text-indigo-600" />
+            <div className="space-y-4 bg-slate-50/80 dark:bg-slate-800/45 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+              <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                <Scale className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 Kano-modellen: Likert-frågor
               </h4>
-              <p className="text-[10px] text-slate-500 leading-tight">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
                 Svara på hur kunden reagerar på om specifikationen är uppfylld vs saknas, så räknar vi ut kategorin automatiskt.
               </p>
 
@@ -283,7 +283,7 @@ export default function KanoCtqView({
                   <select
                     value={functionalScore}
                     onChange={(e) => setFunctionalScore(Number(e.target.value))}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-850 dark:text-white"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-indigo-500"
                   >
                     <option value={5}>5 - Jag gillar det (Älskar det)</option>
                     <option value={4}>4 - Jag förväntar mig det</option>
@@ -301,7 +301,7 @@ export default function KanoCtqView({
                   <select
                     value={dysfunctionalScore}
                     onChange={(e) => setDysfunctionalScore(Number(e.target.value))}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-850 dark:text-white"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-indigo-500"
                   >
                     <option value={5}>5 - Jag gillar det (Vill ha det så)</option>
                     <option value={4}>4 - Jag förväntar mig det</option>
@@ -313,14 +313,14 @@ export default function KanoCtqView({
               </div>
 
               {/* Auto calculated Category Result banner */}
-              <div className="bg-indigo-50/50 dark:bg-indigo-950/20 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-900/30">
+              <div className="bg-indigo-50/70 dark:bg-indigo-950/30 p-3 rounded-xl border border-indigo-200/60 dark:border-indigo-900/40">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-bold text-indigo-900 dark:text-indigo-400">AUTOMATISK KATEGORI:</span>
-                  <span className="text-xs font-extrabold text-indigo-905 dark:text-indigo-300 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 rounded-sm">
+                  <span className="text-[10px] font-bold text-indigo-800 dark:text-indigo-400">AUTOMATISK KATEGORI:</span>
+                  <span className="text-xs font-extrabold text-indigo-900 dark:text-indigo-200 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 rounded-sm">
                     {currentCalc.cat}
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-550 dark:text-slate-400 italic">
+                <p className="text-[10px] text-slate-600 dark:text-slate-400 italic">
                   {currentCalc.desc}
                 </p>
               </div>
@@ -328,8 +328,8 @@ export default function KanoCtqView({
 
             {/* Strategic Goal & Project Linkages */}
             <div className="space-y-4">
-              <h4 className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-                <Target className="w-4 h-4 text-indigo-600" />
+              <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                <Target className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 Mål- och Projektsynergi (Målkalibrering)
               </h4>
 
@@ -341,7 +341,7 @@ export default function KanoCtqView({
                   <select
                     value={associatedGoalId}
                     onChange={(e) => setAssociatedGoalId(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-850 dark:text-white"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-indigo-500"
                   >
                     <option value="">-- Välj ett strategiskt mål (Valfritt) --</option>
                     {goals.map(g => (
@@ -357,7 +357,7 @@ export default function KanoCtqView({
                   <select
                     value={associatedProjectId}
                     onChange={(e) => setAssociatedProjectId(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-xs text-slate-850 dark:text-white"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-hidden focus:border-indigo-500"
                   >
                     <option value="">-- Välj ett projekt (Valfritt) --</option>
                     {projects.map(p => (
@@ -379,7 +379,7 @@ export default function KanoCtqView({
                           value={pVal}
                           checked={priority === pVal}
                           onChange={() => setPriority(pVal as any)}
-                          className="text-indigo-600 focus:ring-indigo-600 focus:ring-offset-0"
+                          className="accent-indigo-600 focus:ring-indigo-500 focus:ring-offset-0"
                         />
                         {pVal === 'High' ? 'Hög' : pVal === 'Medium' ? 'Mellan' : 'Låg'}
                       </label>
@@ -390,17 +390,17 @@ export default function KanoCtqView({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-850">
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold cursor-pointer transition"
             >
               Stäng
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-indigo-900 hover:bg-indigo-950 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-sm"
+              className="px-5 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600/85 dark:hover:bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition"
             >
               Lägg till kravspecifikation
             </button>
@@ -412,10 +412,10 @@ export default function KanoCtqView({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 cols: Interactive list of requirements */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs text-left">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100 dark:border-slate-850">
-              <h3 className="text-sm font-display font-bold text-slate-850 dark:text-white flex items-center gap-2">
-                <ListFilter className="w-4 h-4 text-slate-500" />
+          <div className="bg-white dark:bg-slate-900/75 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs text-left">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-sm font-display font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <ListFilter className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                 Kravspecifikationer & Mappningar ({filteredItems.length})
               </h3>
 
@@ -424,7 +424,7 @@ export default function KanoCtqView({
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className="bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-lg p-1.5 text-[11px] text-slate-600 dark:text-slate-300"
+                  className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 text-[11px] text-slate-600 dark:text-slate-300 focus:outline-hidden focus:border-indigo-500"
                 >
                   <option value="all">Alla Kano-kategorier</option>
                   <option value="Must-be">Must-be (Självklarheter)</option>
@@ -437,7 +437,7 @@ export default function KanoCtqView({
                 <select
                   value={filterPriority}
                   onChange={(e) => setFilterPriority(e.target.value)}
-                  className="bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-lg p-1.5 text-[11px] text-slate-600 dark:text-slate-300"
+                  className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 text-[11px] text-slate-600 dark:text-slate-300 focus:outline-hidden focus:border-indigo-500"
                 >
                   <option value="all">Alla prioriteter</option>
                   <option value="High">Hög prioritet</option>
@@ -449,7 +449,7 @@ export default function KanoCtqView({
 
             {filteredItems.length === 0 ? (
               <div className="py-12 text-center">
-                <p className="text-xs text-slate-400">Inga specifikationer matchar valda filter.</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">Inga specifikationer matchar valda filter.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -460,12 +460,12 @@ export default function KanoCtqView({
                   return (
                     <div 
                       key={item.id}
-                      className="border border-slate-150 dark:border-slate-850 rounded-2xl p-4 hover:shadow-xs transition bg-slate-50/30 dark:bg-slate-950/5 text-left"
+                      className="border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 hover:shadow-xs transition bg-slate-50/70 dark:bg-slate-800/35 text-left"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 mb-3">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 font-mono block">ID: {item.id}</span>
-                          <h4 className="font-display font-bold text-xs text-slate-800 dark:text-white leading-snug">
+                          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 font-mono block">ID: {item.id}</span>
+                          <h4 className="font-display font-bold text-xs text-slate-800 dark:text-slate-100 leading-snug">
                             {item.driver}
                           </h4>
                         </div>
@@ -476,16 +476,16 @@ export default function KanoCtqView({
                           </span>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                             item.priority === 'High' 
-                              ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/30 dark:text-rose-400' 
+                              ? 'bg-rose-100/80 text-rose-800 dark:bg-rose-950/35 dark:text-rose-300' 
                               : item.priority === 'Medium'
-                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/30 dark:text-amber-400'
-                                : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                                ? 'bg-amber-100/80 text-amber-800 dark:bg-amber-950/35 dark:text-amber-300'
+                                : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                           }`}>
                             {item.priority === 'High' ? 'Hög' : item.priority === 'Medium' ? 'Mellan' : 'Låg'} Priority
                           </span>
                           <button
                             onClick={() => onDeleteItem(item.id)}
-                            className="p-1 text-slate-400 hover:text-red-655 hover:bg-red-50 dark:hover:bg-red-950/20 rounded transition"
+                            className="p-1 text-slate-400 dark:text-slate-500 hover:text-rose-700 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded transition cursor-pointer"
                             title="Ta bort specifikation"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -496,46 +496,46 @@ export default function KanoCtqView({
                       {/* CTQ Transformation Pipeline */}
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch my-3">
                         {/* VOC Card */}
-                        <div className="md:col-span-5 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-3 rounded-xl">
-                          <span className="text-[9px] font-bold text-indigo-905 dark:text-indigo-400 uppercase tracking-wider block mb-1">
+                        <div className="md:col-span-5 bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-700/80 p-3 rounded-xl">
+                          <span className="text-[9px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider block mb-1">
                             Voice of Customer (VOC)
                           </span>
-                          <p className="text-[11px] text-slate-650 dark:text-slate-350 italic leading-relaxed">
+                          <p className="text-[11px] text-slate-600 dark:text-slate-300 italic leading-relaxed">
                             "{item.voc}"
                           </p>
                         </div>
 
                         {/* Arrow */}
-                        <div className="hidden md:flex md:col-span-1 items-center justify-center text-slate-300">
+                        <div className="hidden md:flex md:col-span-1 items-center justify-center text-slate-300 dark:text-slate-600">
                           <ArrowRight className="w-4 h-4" />
                         </div>
 
                         {/* Spec Card */}
-                        <div className="md:col-span-6 bg-indigo-950/5 dark:bg-indigo-950/20 border border-indigo-100/30 dark:border-indigo-900/10 p-3 rounded-xl border-l-3 border-l-indigo-600">
-                          <span className="text-[9px] font-bold text-indigo-900 dark:text-indigo-400 uppercase tracking-wider block mb-1">
+                        <div className="md:col-span-6 bg-indigo-50/50 dark:bg-indigo-950/25 border border-indigo-200/60 dark:border-indigo-900/40 p-3 rounded-xl">
+                          <span className="text-[9px] font-bold text-indigo-800 dark:text-indigo-400 uppercase tracking-wider block mb-1">
                             CTQ Specification (Measurable Target)
                           </span>
-                          <p className="text-[11px] text-slate-800 dark:text-white font-medium leading-relaxed">
+                          <p className="text-[11px] text-slate-800 dark:text-slate-100 font-medium leading-relaxed">
                             {item.specification}
                           </p>
                         </div>
                       </div>
 
                       {/* Links Info Footer */}
-                      <div className="flex flex-wrap items-center gap-3 pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-850 text-[10px]">
-                        <span className="text-slate-400 font-medium">Synergier:</span>
+                      <div className="flex flex-wrap items-center gap-3 pt-2.5 mt-2 border-t border-slate-200/70 dark:border-slate-800 text-[10px]">
+                        <span className="text-slate-400 dark:text-slate-500 font-medium">Synergier:</span>
                         
                         {linkedGoal ? (
-                          <div className="flex items-center gap-1 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-100/50 dark:border-indigo-900/20">
+                          <div className="flex items-center gap-1 bg-indigo-50 dark:bg-indigo-950/35 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-200/60 dark:border-indigo-900/40">
                             <Target className="w-3 h-3" />
                             <span>Kopplad till mål: <strong>{linkedGoal.title}</strong></span>
                           </div>
                         ) : (
-                          <span className="text-slate-400 italic">Inget kopplat strategiskt mål</span>
+                          <span className="text-slate-400 dark:text-slate-500 italic">Inget kopplat strategiskt mål</span>
                         )}
 
                         {linkedProject ? (
-                          <div className="flex items-center gap-1 bg-violet-50 dark:bg-violet-950/30 text-violet-700 dark:text-violet-300 px-2 py-0.5 rounded-md border border-violet-100/50 dark:border-violet-900/20">
+                          <div className="flex items-center gap-1 bg-violet-50 dark:bg-violet-950/35 text-violet-700 dark:text-violet-300 px-2 py-0.5 rounded-md border border-violet-200/60 dark:border-violet-900/40">
                             <Briefcase className="w-3 h-3" />
                             <span>Kopplad till projekt: <strong>{linkedProject.title}</strong></span>
                           </div>
@@ -552,66 +552,66 @@ export default function KanoCtqView({
         {/* Right 1 col: Explanations & Kano Matrix visualization */}
         <div className="space-y-6">
           {/* Kano Grid visualizer */}
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs text-left">
-            <h3 className="text-sm font-display font-bold text-slate-850 dark:text-white mb-4 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-slate-900/75 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs text-left">
+            <h3 className="text-sm font-display font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-1.5">
               <Lightbulb className="w-4 h-4 text-amber-500" />
               Kano-kategoriseringar
             </h3>
 
             {/* Matrix segments list */}
             <div className="space-y-3">
-              <div className="border border-slate-100 dark:border-slate-850 p-3 rounded-2xl bg-rose-50/10 dark:bg-rose-950/5">
+              <div className="border border-slate-200/70 dark:border-slate-800 p-3 rounded-2xl bg-rose-50/40 dark:bg-rose-950/15">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[11px] font-bold text-rose-700 dark:text-rose-400 flex items-center gap-1">
                     ● Must-be (Ska-krav)
                   </span>
-                  <span className="text-[10px] font-mono font-extrabold bg-rose-50 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-mono font-extrabold bg-rose-100/70 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300 px-1.5 py-0.5 rounded">
                     {items.filter(i => i.kanoCategory === 'Must-be').length} st
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
                   Basala förväntningar. Om dessa buggar ur eller saknas blir användaren katastrofalt missnöjd. (Ex. Mål sparas inte, inloggning misslyckas).
                 </p>
               </div>
 
-              <div className="border border-slate-100 dark:border-slate-850 p-3 rounded-2xl bg-amber-50/10 dark:bg-amber-950/5">
+              <div className="border border-slate-200/70 dark:border-slate-800 p-3 rounded-2xl bg-amber-50/40 dark:bg-amber-950/15">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1">
                     ● One-dimensional (Prestanda)
                   </span>
-                  <span className="text-[10px] font-mono font-extrabold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-mono font-extrabold bg-amber-100/70 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 px-1.5 py-0.5 rounded">
                     {items.filter(i => i.kanoCategory === 'One-dimensional').length} st
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
                   Ju bättre och snabbare detta fungerar, desto gladare blir användaren. (Ex. Gränssnittets svarstid, prestanda, detaljnivå).
                 </p>
               </div>
 
-              <div className="border border-slate-100 dark:border-slate-850 p-3 rounded-2xl bg-emerald-50/10 dark:bg-emerald-950/5">
+              <div className="border border-slate-200/70 dark:border-slate-800 p-3 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/15">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
                     ● Attractive (Wow-effekter)
                   </span>
-                  <span className="text-[10px] font-mono font-extrabold bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-mono font-extrabold bg-emerald-100/70 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 px-1.5 py-0.5 rounded">
                     {items.filter(i => i.kanoCategory === 'Attractive').length} st
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
                   Överraskningar som kunden inte vet att de vill ha, men som skapar fantastisk lojalitet och wow-känsla när de finns. (Ex. AI-analyser, Toyota Kata-coaching).
                 </p>
               </div>
 
-              <div className="border border-slate-100 dark:border-slate-850 p-3 rounded-2xl bg-slate-50/10 dark:bg-slate-950/5">
+              <div className="border border-slate-200/70 dark:border-slate-800 p-3 rounded-2xl bg-slate-50/70 dark:bg-slate-800/35">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1">
                     ● Indifferent (Likgiltiga)
                   </span>
-                  <span className="text-[10px] font-mono font-extrabold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-mono font-extrabold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 px-1.5 py-0.5 rounded">
                     {items.filter(i => i.kanoCategory === 'Indifferent').length} st
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-500 leading-relaxed">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
                   Användaren bryr sig inte nämnvärt. Att spendera mycket tid på dessa är ofta slöseri.
                 </p>
               </div>
@@ -619,9 +619,9 @@ export default function KanoCtqView({
           </div>
 
           {/* Goal Management Alignment / Debugging Explainer */}
-          <div className="bg-slate-950 text-white p-5 rounded-3xl text-left border border-slate-800 shadow-xl space-y-4">
+          <div className="bg-slate-900 text-slate-100 p-5 rounded-3xl text-left border border-slate-800 shadow-sm space-y-4">
             <h4 className="text-xs font-bold text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
+              <Sparkles className="w-4 h-4 text-indigo-400" />
               Varför hjälper detta till att "bugga" Goal Management?
             </h4>
             <p className="text-[11px] text-slate-300 leading-relaxed">
@@ -632,16 +632,16 @@ export default function KanoCtqView({
             </p>
             <ul className="text-[11px] text-slate-400 space-y-2 list-disc pl-4 leading-relaxed">
               <li>
-                <strong className="text-white">Validerade Mål:</strong> Du kan spåra varje mål bakåt till en specifik drivkraft och ett faktiskt kunduttalande (VOC).
+                <strong className="text-slate-100">Validerade Mål:</strong> Du kan spåra varje mål bakåt till en specifik drivkraft och ett faktiskt kunduttalande (VOC).
               </li>
               <li>
-                <strong className="text-white">Rätt Prioritering:</strong> Du upptäcker snabbt om du lagt upp dyra projekt för "Likgiltiga" krav istället för att säkra "Ska-krav" (Must-be).
+                <strong className="text-slate-100">Rätt Prioritering:</strong> Du upptäcker snabbt om du lagt upp dyra projekt för "Likgiltiga" krav istället för att säkra "Ska-krav" (Must-be).
               </li>
               <li>
-                <strong className="text-white">Mätbara KPI:er:</strong> Det blir glasklart vad målets framgångsmått (KPI) ska vara eftersom CTQ ger oss exakta, testbara gränsvärden.
+                <strong className="text-slate-100">Mätbara KPI:er:</strong> Det blir glasklart vad målets framgångsmått (KPI) ska vara eftersom CTQ ger oss exakta, testbara gränsvärden.
               </li>
             </ul>
-            <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center gap-2">
+            <div className="bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl flex items-center gap-2">
               <Info className="w-4 h-4 text-indigo-400 shrink-0" />
               <p className="text-[10px] text-indigo-300">
                 Detta är den ultimata bryggan mellan sex sigma / Lean-verktyg och ditt Balanced Scorecard!

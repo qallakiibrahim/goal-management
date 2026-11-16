@@ -494,7 +494,7 @@ export default function DashboardView({
               </div>
               <button 
                 onClick={() => onNavigateToView('hierarchy-editor')}
-                className="text-xs px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-lg text-indigo-700 font-semibold transition flex items-center gap-1 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 dark:border-indigo-800/40 dark:text-indigo-300 cursor-pointer shrink-0 whitespace-nowrap"
+                className="text-xs px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200/80 border border-slate-200/80 rounded-lg text-slate-700 font-semibold transition flex items-center gap-1 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 cursor-pointer shrink-0 whitespace-nowrap"
               >
                 <Plus className="w-3.5 h-3.5" /> Skapa Nivå
               </button>
@@ -569,13 +569,13 @@ export default function DashboardView({
                         onClick={() => setSelectedObjectiveId(obj.id)}
                         className={`p-3 rounded-xl border text-left cursor-pointer transition ${
                           activeObjective?.id === obj.id
-                            ? 'bg-indigo-50/80 border-indigo-200 text-slate-800 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-slate-100'
-                            : 'bg-slate-50 hover:bg-slate-100/80 border-slate-200/60 text-slate-600 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 dark:border-slate-800 dark:text-slate-300'
+                            ? 'bg-slate-100/90 border-slate-300/80 text-slate-900 dark:bg-indigo-950/35 dark:border-indigo-800/60 dark:text-slate-100'
+                            : 'bg-slate-50/70 hover:bg-slate-100/70 border-slate-200/60 text-slate-600 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 dark:border-slate-800 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex justify-between items-center gap-2 text-xs font-semibold">
                           <span className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
-                            <Flag className="w-3 h-3 text-indigo-800 dark:text-indigo-400 shrink-0" />
+                            <Flag className="w-3 h-3 text-slate-600 dark:text-indigo-400 shrink-0" />
                             {obj.title}
                           </span>
                           <span className="font-mono bg-slate-200/70 dark:bg-slate-800 px-1.5 py-0.5 rounded-sm text-slate-700 dark:text-slate-300 tabular-nums shrink-0">
@@ -585,7 +585,7 @@ export default function DashboardView({
                         <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                           {obj.description}
                         </p>
-                        <div className="text-[10px] text-indigo-700 dark:text-indigo-400 mt-1.5 font-mono">
+                        <div className="text-[10px] text-slate-600 dark:text-indigo-400 mt-1.5 font-mono">
                           Mätetal: {obj.kpi}
                         </div>
                       </div>
@@ -604,13 +604,13 @@ export default function DashboardView({
                 </div>
 
                 {activeProject ? (
-                  <div className="p-3 bg-violet-50/50 border border-violet-100 dark:bg-purple-950/20 dark:border-purple-900/40 rounded-xl text-left">
-                    <div className="flex justify-between items-center gap-2 text-xs font-semibold text-violet-900 dark:text-purple-300">
+                  <div className="p-3 bg-slate-50/90 border border-slate-200/80 dark:bg-slate-800/45 dark:border-slate-700/80 rounded-xl text-left">
+                    <div className="flex justify-between items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-100">
                       <span className="flex items-center gap-1.5 font-bold">
-                        <Briefcase className="w-3 h-3 text-violet-700 dark:text-purple-400 shrink-0" />
+                        <Briefcase className="w-3 h-3 text-slate-600 dark:text-indigo-400 shrink-0" />
                         {activeProject.title}
                       </span>
-                      <span className="bg-violet-100 dark:bg-purple-900/50 font-mono text-violet-700 dark:text-purple-300 px-1.5 py-0.5 rounded-sm tabular-nums shrink-0">
+                      <span className="bg-slate-200/70 dark:bg-slate-800 font-mono text-slate-700 dark:text-slate-200 px-1.5 py-0.5 rounded-sm tabular-nums shrink-0">
                         {activeProject.progress}%
                       </span>
                     </div>
@@ -633,14 +633,14 @@ export default function DashboardView({
                         Steg 4: Initiatives
                       </div>
                       {activeInitiative ? (
-                        <div className="p-2.5 bg-blue-50/60 border border-blue-100 dark:bg-blue-950/20 dark:border-blue-900/40 rounded-xl text-left">
-                          <h4 className="text-[11px] font-bold text-blue-900 dark:text-blue-300 leading-tight">
+                        <div className="p-2.5 bg-slate-50/80 border border-slate-200/70 dark:bg-slate-800/40 dark:border-slate-800 rounded-xl text-left">
+                          <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-tight">
                             {activeInitiative.title}
                           </h4>
                           <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">
                             {activeInitiative.description}
                           </p>
-                          <div className="mt-1.5 text-[10px] text-blue-800 dark:text-blue-300 font-mono bg-blue-100 dark:bg-blue-900/40 px-1.5 py-0.5 rounded inline-block">
+                          <div className="mt-1.5 text-[10px] text-slate-700 dark:text-indigo-300 font-mono bg-slate-200/60 dark:bg-slate-800 px-1.5 py-0.5 rounded inline-block">
                             Mätval: {activeInitiative.kpi}
                           </div>
                         </div>
